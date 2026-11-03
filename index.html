@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=14">
+<link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -52,37 +52,42 @@
       📰 <span id="news-text">...</span>
     </div>
 
-    <div class="panel" id="upgrades-panel">
+    <div class="panel" id="store-panel">
       <h3>⬆ Upgrades</h3>
-      <div id="upgrades"></div>
-    </div>
+      <div id="upgrades" class="upg-tiles"></div>
 
-    <div class="panel" id="buildings-panel">
-      <h3>Colonists
-        <span class="buy-mode">
-          <button data-buy="1" class="buy active">×1</button>
-          <button data-buy="10" class="buy">×10</button>
-          <button data-buy="max" class="buy">MAX</button>
-        </span>
-      </h3>
-      <div id="buildings"></div>
+      <div class="tab-bar">
+        <button class="store-tab active" data-tab="colonists">⛏ COLONISTS</button>
+        <button class="store-tab" data-tab="research">🧪 RESEARCH</button>
+        <button class="store-tab" data-tab="ascend">✦ ASCEND</button>
+      </div>
+
+      <div id="tab-colonists" class="tab-content">
+        <div class="tab-toolbar">
+          <span class="toolbar-label">Buy:</span>
+          <span class="buy-mode">
+            <button data-buy="1" class="buy active">×1</button>
+            <button data-buy="10" class="buy">×10</button>
+            <button data-buy="max" class="buy">MAX</button>
+          </span>
+        </div>
+        <div id="buildings"></div>
+      </div>
+
+      <div id="tab-research" class="tab-content" style="display:none">
+        <div id="techs"></div>
+        <div id="next-planet" class="next-planet"></div>
+      </div>
+
+      <div id="tab-ascend" class="tab-content" style="display:none">
+        <div id="shard-info"></div>
+        <button id="ascend-btn">ASCEND</button>
+        <div id="masteries"></div>
+      </div>
     </div>
   </section>
 
   <aside id="sidebar">
-    <div class="panel" id="research-view">
-      <h3>🧪 Research Lab</h3>
-      <div id="techs"></div>
-      <div id="next-planet" class="next-planet"></div>
-    </div>
-
-    <div class="panel" id="prestige-view">
-      <h3>✦ Ascendancy</h3>
-      <div id="shard-info"></div>
-      <button id="ascend-btn">ASCEND</button>
-      <div id="masteries"></div>
-    </div>
-
     <div class="panel" id="ach-view">
       <h3>🏆 Achievements <span id="ach-count"></span></h3>
       <div id="ach-grid"></div>
@@ -97,6 +102,6 @@
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
 
-<script src="game.js?v=14"></script>
+<script src="game.js?v=16"></script>
 </body>
 </html>

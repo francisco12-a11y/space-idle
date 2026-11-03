@@ -870,54 +870,47 @@ function renderPlanet(forced) {
 
   const resLine = $("planet-resource");
   const lockedNote = $("locked-note");
-  const bPanel = $("buildings-panel");
-  const uPanel = $("upgrades-panel");
+  const bl = $("buildings");
+  const ul = $("upgrades");
 
   if (!unlocked) {
-    resLine.innerHTML = `<span style="color:var(--danger)">⛔ LOCKED — colonization requires: ${costStr(unlockCost(p))}</span>`;
+    resLine.innerHTML = `<span style="color:var(--danger)">\u26D4 LOCKED \u2014 colonization requires: ${costStr(unlockCost(p))}</span>`;
     $("mine-info").textContent = "";
     lockedNote.style.display = "";
     lockedNote.innerHTML = `<span style="color:var(--dim)">Colonists, upgrades and mining unlock on this planet once colonized.</span>`;
-    bPanel.style.display = "none";
-    uPanel.style.display = "none";
+    bl.innerHTML = "";
+    ul.innerHTML = "";
     return;
   }
   lockedNote.style.display = "none";
-  bPanel.style.display = ""; uPanel.style.display = "";
 
   const rate = planetRate(pid);
   resLine.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
-  $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(pid))} ${p.res} per click`;
+  $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine \u00B7 </span>+${fmt(clickPower(pid))} ${p.res} per click`;
 
-  // buildings
-  const bl = $("buildings");
+  // buildings: compact CC strips - the whole row buys
   bl.innerHTML = "";
-  p.buildings.forEach((b, ti) => {
+  p.buildings.forEach((b) => {
     const have = S.buildings[pid + ":" + b.id] || 0;
     const n = S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : S.buyMode;
     const cost = bCost(pid, b, n);
     const can = canPay({ Metal: cost });
-    const row = document.createElement("div");
-    row.className = "row building-row" + (have > 0 ? " owned-b" : "");
-    row.innerHTML = `
-      <img class="b-icon" src="${iconFor(pid, b.id)}" width="36" height="36" alt="">
-      <div class="info">
-        <div class="name">${b.name} <span class="own-count">×${have}</span></div>
-        <div class="sub">${b.desc} — +${fmt(b.rate * prodMult(pid) * achMult() * buffMult())}/s each</div>
+    const each = b.rate * prodMult(pid) * achMult() * buffMult();
+    const strip = document.createElement("div");
+    strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
+    strip.innerHTML = `
+      <img class="strip-icon" src="${iconFor(pid, b.id)}" width="44" height="44" alt="">
+      <div class="strip-info">
+        <div class="strip-name">${b.name} <span class="own-count">\u00D7${have}</span></div>
+        <div class="strip-sub">+${fmt(each)}/s each</div>
       </div>
-      <button class="${can ? "can" : ""}">
-        Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n} — ${fmt(cost)} Metal
-        <span class="cost">produces ${fmt(b.rate * prodMult(pid) * achMult() * buffMult() * (S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : n))}/s total</span>
-      </button>`;
-    const btn = row.querySelector("button");
-    btn.disabled = !can;
-    btn.onclick = () => { buyBuilding(pid, b); renderPlanet(); };
-    attachTip(row, () => tipBuilding(pid, b));
-    bl.appendChild(row);
+      <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n}<br><b>${fmt(cost)}</b> \u2699</div>`;
+    strip.onclick = () => { if (canPay({ Metal: bCost(pid, b, n) })) { buyBuilding(pid, b); renderPlanet(); } };
+    attachTip(strip, () => tipBuilding(pid, b));
+    bl.appendChild(strip);
   });
 
   // upgrades as Cookie-Clicker style icon tiles
-  const ul = $("upgrades");
   ul.innerHTML = "";
   ul.className = "upg-tiles";
   for (const u of p.upgrades) {
@@ -1090,6 +1083,14 @@ function init() {
   setInterval(rotateNews, 9000);
   setInterval(renderStats, 3000);
   $("news-ticker").onclick = () => rotateNews(true);
+  document.querySelectorAll(".store-tab").forEach(t => {
+    t.onclick = () => {
+      document.querySelectorAll(".store-tab").forEach(x => x.classList.remove("active"));
+      t.classList.add("active");
+      document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
+      $("tab-" + t.dataset.tab).style.display = "";
+    };
+  });
   setInterval(renderTick, 200);
   setInterval(() => { renderPlanet(); renderResearch(); renderPrestige(); }, 1500); // refresh affordability
   setInterval(save, 10000);

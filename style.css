@@ -84,7 +84,7 @@ button.danger:hover { border-color: var(--danger); color: var(--danger); }
 main.game-grid {
   max-width: 1440px; margin: 0 auto; padding: 18px 20px;
   display: grid; gap: 0 16px; align-items: start;
-  grid-template-columns: minmax(360px, 1.1fr) minmax(380px, 1.3fr) minmax(320px, 0.9fr);
+  grid-template-columns: minmax(340px, 1fr) minmax(400px, 1.25fr) minmax(300px, 0.85fr);
   grid-template-areas: "nav nav nav" "clicker store sidebar";
 }
 #planet-nav { grid-area: nav; }
@@ -314,3 +314,33 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 .upg-tile:active { transform: translateY(1px); }
 .upg-tile.grayed { opacity: 0.35; filter: grayscale(0.7); }
 .tile-lv { font-size: 12px; color: var(--accent2); }
+
+/* ===== v1.6: CC-style compact store strips + tabs ===== */
+.tab-bar { display: flex; gap: 6px; margin: 14px 0 10px; }
+.store-tab { flex: 1; font-size: 15px; padding: 6px 4px; letter-spacing: 1px; }
+.store-tab.active { border-color: var(--accent); color: var(--accent); filter: brightness(1.25); }
+.tab-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.toolbar-label { color: var(--dim); font-size: 15px; }
+
+.store-strip {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 8px; margin-bottom: 2px;
+  border-bottom: 2px dashed rgba(140, 160, 220, 0.14);
+  cursor: pointer; transition: background .1s;
+}
+.store-strip:last-child { border-bottom: none; }
+.store-strip:hover { background: rgba(94, 230, 208, 0.07); }
+.store-strip.owned-b { border-left: 3px solid var(--border-hi); }
+.store-strip .strip-icon { image-rendering: pixelated; flex-shrink: 0; }
+.store-strip .strip-info { flex: 1; min-width: 0; }
+.store-strip .strip-name { font-size: 17px; font-weight: 700; }
+.store-strip .strip-sub { font-size: 13.5px; color: var(--dim); }
+.store-strip .own-count { font-size: 16px; margin-left: 4px; }
+.store-strip .strip-price { text-align: right; font-size: 13px; color: var(--dim); line-height: 1.3; }
+.store-strip .strip-price b { font-size: 15px; }
+.store-strip.can .strip-price { color: var(--accent); }
+.store-strip.can .strip-price b { color: var(--accent); }
+.store-strip:not(.can) { opacity: 0.55; }
+.store-strip:not(.can):hover { background: transparent; }
+#store-panel h3 { margin-bottom: 8px; }
+#store-panel .upg-tiles { margin-bottom: 4px; }
