@@ -620,8 +620,8 @@ function tipBuilding(b) {
 function renderTree() {
   const g = shardGain();
   $("shard-info").innerHTML =
-    `${ric("shard")} <span class="shards">${S.shards}</span> heavenly shards` +
-    ` <span style="color:var(--dim)">(+${Math.round((shardMult() - 1) * 100)}% production from shards)</span><br>` +
+    `${ric("shard")} <span class="shards">${S.shards}</span> spacetime shards` +
+    ` <span style="color:var(--dim)">(+${Math.round((shardMult() - 1) * 100)}% production, forever)</span><br>` +
     `<span style="color:var(--dim)">Ascending now: +${g} shards` +
     (g < 1 ? ` — need ${fmt(1e12)} lifetime stardust (have ${fmt(S.lifetime)})` : "") + `</span>`;
   const btn = $("ascend-btn");
@@ -745,6 +745,12 @@ function init() {
 
   $("big-planet").onclick = clickPlanet;
   $("ascend-btn").onclick = ascend;
+  $("ascend-open").onclick = () => {
+    initAudio();
+    $("ascend-overlay").style.display = "flex";
+    renderTree();
+  };
+  $("ascend-close").onclick = () => { $("ascend-overlay").style.display = "none"; };
   $("save-btn").onclick = () => { save(); $("save-btn").textContent = "Saved!"; setTimeout(() => $("save-btn").textContent = "Save", 800); };
   $("reset-btn").onclick = () => { if (confirm("Wipe ALL progress?")) { localStorage.removeItem(SAVE_KEY); S = newState(); renderAll(); } };
   $("mute-btn").onclick = () => {

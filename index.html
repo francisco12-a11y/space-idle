@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=40">
+<link rel="stylesheet" href="style.css?v=41">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -19,6 +19,7 @@
     <h1>STELLAR ASCENT</h1>
   </div>
   <div class="topbar">
+    <button id="ascend-open">ASCENSION</button>
     <button id="mute-btn" title="Toggle sound">Sound: ON</button>
     <button id="save-btn" title="Save now">Save</button>
     <button id="reset-btn" class="danger" title="Wipe progress">Reset</button>
@@ -27,13 +28,13 @@
 
 <main class="game-grid">
   <section id="clicker-view">
-    <div class="panel glow-panel planet-header">
+    <div class="planet-header">
       <div class="res-count">
         <div id="res-big">0 stardust</div>
         <div id="res-rate">per second: 0</div>
       </div>
       <button id="big-planet" title="Click to collect stardust!">
-        <img id="planet-art-img" width="220" height="220" alt="">
+        <img id="planet-art-img" width="300" height="300" alt="">
       </button>
       <div id="buff-strip"></div>
     </div>
@@ -59,13 +60,6 @@
   </section>
 
   <aside id="sidebar">
-    <div class="panel" id="ascend-panel">
-      <h3><img class="hicon" data-px="shard"> Ascension</h3>
-      <div id="shard-info"></div>
-      <button id="ascend-btn">ASCEND</button>
-      <div id="tree"></div>
-    </div>
-
     <div class="panel" id="ach-view">
       <h3><img class="hicon" data-px="trophy"> Achievements <span id="ach-count"></span></h3>
       <div id="ach-grid"></div>
@@ -80,6 +74,17 @@
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 60% RATE</small></footer>
 
-<script src="game.js?v=40"></script>
+<div id="ascend-overlay" style="display:none">
+  <div class="ascend-page">
+    <button id="ascend-close">CLOSE</button>
+    <h1><img class="hicon" data-px="shard"> ASCENSION</h1>
+    <p class="ascend-sub">Sacrifice your empire to the flow of spacetime. Shards are forever: each shard ever earned grants +2% production, across every run.</p>
+    <div id="shard-info"></div>
+    <button id="ascend-btn">ASCEND</button>
+    <div id="tree"></div>
+  </div>
+</div>
+
+<script src="game.js?v=41"></script>
 </body>
 </html>
