@@ -25,7 +25,7 @@ const PLANETS = [
   {
     id: "luna", name: "Luna", color: "#c0c0d8", ring: false, moons: 0,
     desc: "Regolith fields of helium-3. Perfect fusion fuel.",
-    res: "Helium-3", resIcon: "🫧", resColor: "#b8a9e8",
+    res: "Helium-3", resIcon: "helium", resColor: "#b8a9e8",
     unlockCost: { Metal: 50000 },
     buildings: [
       { id: "probe", name: "Harvest Probe", baseCost: 800, mult: 1.15, rate: 4.5,   desc: "Skims He-3 from the dust." },
