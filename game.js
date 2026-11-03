@@ -238,6 +238,7 @@ function load() {
 /* ============ ACTIONS ============ */
 
 function mine(planet, evt) {
+  if (!planet || !PLANET(planet)) planet = S.unlocked.includes(S.current) ? S.current : "terra";
   const p = PLANET(planet);
   const amt = clickPower(planet);
   S.res[p.res] += amt;
@@ -324,8 +325,8 @@ function renderNav() {
     b.textContent = unlocked ? p.name : "???";
     b.className = (unlocked ? "" : "locked") + (S.current === p.id ? " active" : "");
     b.onclick = () => {
-      if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); }
-      else { S.current = null; renderNav(); renderPlanet(p.id); }
+      if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); renderResearch(); }
+      else { renderNav(); renderPlanet(p.id); }
     };
     nav.appendChild(b);
   }
