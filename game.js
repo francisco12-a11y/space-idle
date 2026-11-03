@@ -9,90 +9,90 @@ const PLANETS = [
     res: "Metal", resIcon: "⚙️", resColor: "#9db4c0",
     unlockCost: null,
     buildings: [
-      { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.5,  desc: "A tireless robotic drill." },
-      { id: "rig",   name: "Mining Rig", baseCost: 220, mult: 1.15, rate: 4,   desc: "Industrial extraction array." },
-      { id: "quarry",name: "Strip Quarry", baseCost: 3200, mult: 1.15, rate: 28, desc: "Moves mountains. Literally." },
-      { id: "cannon", name: "Rail Cannon", baseCost: 45000, mult: 1.15, rate: 220, desc: "Fires ingots into orbit." },
-      { id: "elevator", name: "Orbital Elevator", baseCost: 650000, mult: 1.15, rate: 1800, desc: "A ribbon to the sky." },
-      { id: "forge", name: "Planetary Forge", baseCost: 9500000, mult: 1.15, rate: 15000, desc: "The crust is raw material." },
+      { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.25,  desc: "A tireless robotic drill." },
+      { id: "rig",   name: "Mining Rig", baseCost: 130, mult: 1.15, rate: 1,   desc: "Industrial extraction array." },
+      { id: "quarry",name: "Strip Quarry", baseCost: 900, mult: 1.15, rate: 4.5, desc: "Moves mountains. Literally." },
+      { id: "cannon", name: "Rail Cannon", baseCost: 6000, mult: 1.15, rate: 18, desc: "Fires ingots into orbit." },
+      { id: "elevator", name: "Orbital Elevator", baseCost: 38000, mult: 1.15, rate: 70, desc: "A ribbon to the sky." },
+      { id: "forge", name: "Planetary Forge", baseCost: 240000, mult: 1.15, rate: 320, desc: "The crust is raw material." },
     ],
     upgrades: [
-      { id: "pick",  name: "Plasma Pickaxe", cost: 100,  type: "click",  val: 2, desc: "Mining power ×2." },
-      { id: "conveyor", name: "Conveyor Network", cost: 1200, type: "prod", val: 2, desc: "Metal production ×2." },
-      { id: "droids", name: "Excavation Droids", cost: 15000, type: "prod", val: 3, desc: "Metal production ×3." },
+      { id: "pick",  name: "Plasma Pickaxe", cost: 150,  type: "click",  val: 2, desc: "Mining power ×2." },
+      { id: "conveyor", name: "Conveyor Network", cost: 2500, type: "prod", val: 2, desc: "Metal production ×2." },
+      { id: "droids", name: "Excavation Droids", cost: 40000, type: "prod", val: 3, desc: "Metal production ×3." },
     ],
   },
   {
     id: "luna", name: "Luna", color: "#c0c0d8", ring: false, moons: 0,
     desc: "Regolith fields of helium-3. Perfect fusion fuel.",
     res: "Helium-3", resIcon: "🫧", resColor: "#b8a9e8",
-    unlockCost: { Metal: 800 },
+    unlockCost: { Metal: 50000 },
     buildings: [
-      { id: "probe", name: "Harvest Probe", baseCost: 500, mult: 1.15, rate: 1,   desc: "Skims He-3 from the dust." },
-      { id: "scoop", name: "Regolith Scoop", baseCost: 4500, mult: 1.15, rate: 8,  desc: "Eats the surface, spits fuel." },
-      { id: "ranch", name: "He-3 Refinery", baseCost: 60000, mult: 1.15, rate: 60, desc: "Bulk isotope processing." },
-      { id: "driver", name: "Mass Driver", baseCost: 500000, mult: 1.15, rate: 700, desc: "Throws regolith by the ton." },
-      { id: "fplant", name: "Fusion Plant", baseCost: 6500000, mult: 1.15, rate: 5500, desc: "Burns its own product." },
-      { id: "breeder", name: "Helium Breeders", baseCost: 85000000, mult: 1.15, rate: 45000, desc: "Isotopes begetting isotopes." },
+      { id: "probe", name: "Harvest Probe", baseCost: 800, mult: 1.15, rate: 4.5,   desc: "Skims He-3 from the dust." },
+      { id: "scoop", name: "Regolith Scoop", baseCost: 6000, mult: 1.15, rate: 22,  desc: "Eats the surface, spits fuel." },
+      { id: "ranch", name: "He-3 Refinery", baseCost: 42000, mult: 1.15, rate: 105, desc: "Bulk isotope processing." },
+      { id: "driver", name: "Mass Driver", baseCost: 300000, mult: 1.15, rate: 500, desc: "Throws regolith by the ton." },
+      { id: "fplant", name: "Fusion Plant", baseCost: 2100000, mult: 1.15, rate: 2400, desc: "Burns its own product." },
+      { id: "breeder", name: "Helium Breeders", baseCost: 15000000, mult: 1.15, rate: 6670, desc: "Isotopes begetting isotopes." },
     ],
     upgrades: [
-      { id: "lunadrill", name: "Lunar Drill Tips", cost: 3000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
-      { id: "compress", name: "Isotope Compressors", cost: 20000, type: "prod", val: 2, desc: "Helium-3 production ×2." },
-      { id: "fusion", name: "Fusion Feedloops", cost: 250000, type: "prod", val: 3, desc: "Helium-3 production ×3." },
+      { id: "lunadrill", name: "Lunar Drill Tips", cost: 12000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
+      { id: "compress", name: "Isotope Compressors", cost: 90000, type: "prod", val: 2, desc: "Helium-3 production ×2." },
+      { id: "fusion", name: "Fusion Feedloops", cost: 1200000, type: "prod", val: 3, desc: "Helium-3 production ×3." },
     ],
   },
   {
     id: "ceres", name: "Ceres Belt", color: "#8d6e63", ring: true, moons: 0,
     desc: "An asteroid swarm glittering with raw crystal.",
     res: "Crystal", resIcon: "💎", resColor: "#7fdbff",
-    unlockCost: { Metal: 25000, "Helium-3": 2000 },
+    unlockCost: { Metal: 1500000, "Helium-3": 150000 },
     buildings: [
-      { id: "cutter", name: "Crystal Cutter", baseCost: 5000, mult: 1.15, rate: 1,  desc: "Lasers meet rock." },
-      { id: "sifter", name: "Belt Sifter", baseCost: 48000, mult: 1.15, rate: 8, desc: "Screens a thousand rocks an hour." },
-      { id: "crawn",   name: "Crystal Crawler", baseCost: 620000, mult: 1.15, rate: 60, desc: "Walks between asteroids, mining all of them." },
-      { id: "highway", name: "Belt Highway", baseCost: 6000000, mult: 1.15, rate: 700, desc: "A road made of checkpoints." },
-      { id: "foundry", name: "Crystal Foundry", baseCost: 75000000, mult: 1.15, rate: 5500, desc: "Cutting houses the size of cities." },
-      { id: "lattice", name: "Zero-G Lattice", baseCost: 900000000, mult: 1.15, rate: 45000, desc: "Crystal grows in the void, untended." },
+      { id: "cutter", name: "Crystal Cutter", baseCost: 20000, mult: 1.15, rate: 37,  desc: "Lasers meet rock." },
+      { id: "sifter", name: "Belt Sifter", baseCost: 140000, mult: 1.15, rate: 200, desc: "Screens a thousand rocks an hour." },
+      { id: "crawn",   name: "Crystal Crawler", baseCost: 1000000, mult: 1.15, rate: 1000, desc: "Walks between asteroids, mining all of them." },
+      { id: "highway", name: "Belt Highway", baseCost: 7000000, mult: 1.15, rate: 5000, desc: "A road made of checkpoints." },
+      { id: "foundry", name: "Crystal Foundry", baseCost: 50000000, mult: 1.15, rate: 25000, desc: "Cutting houses the size of cities." },
+      { id: "lattice", name: "Zero-G Lattice", baseCost: 350000000, mult: 1.15, rate: 52000, desc: "Crystal grows in the void, untended." },
     ],
     upgrades: [
-      { id: "lens", name: "Focused Lens Array", cost: 60000, type: "click", val: 2, desc: "Crystal mining power ×2." },
-      { id: "sort", name: "Spectral Sorters", cost: 350000, type: "prod", val: 2, desc: "Crystal production ×2." },
-      { id: "vein", name: "Vein Scanners", cost: 4000000, type: "prod", val: 3, desc: "Crystal production ×3." },
+      { id: "lens", name: "Focused Lens Array", cost: 300000, type: "click", val: 2, desc: "Crystal mining power ×2." },
+      { id: "sort", name: "Spectral Sorters", cost: 2500000, type: "prod", val: 2, desc: "Crystal production ×2." },
+      { id: "vein", name: "Vein Scanners", cost: 40000000, type: "prod", val: 3, desc: "Crystal production ×3." },
     ],
   },
   {
     id: "aurelia", name: "Aurelia", color: "#e8b04a", ring: true, moons: 2,
     desc: "A ringed giant. Its upper clouds condense pure antimatter.",
     res: "Antimatter", resIcon: "✴️", resColor: "#ff6b9d",
-    unlockCost: { Metal: 500000, Crystal: 40000, "Helium-3": 60000 },
+    unlockCost: { Metal: 300000000, "Helium-3": 40000000, Crystal: 20000000 },
     buildings: [
-      { id: "skimmer", name: "Cloud Skimmer", baseCost: 80000, mult: 1.15, rate: 2, desc: "Balloon-drifts through the storm layers." },
-      { id: "trap",   name: "Mag-Trap Station", baseCost: 900000, mult: 1.15, rate: 18, desc: "Catches the impossible in a bottle." },
-      { id: "carrier", name: "Antimatter Carrier", baseCost: 12000000, mult: 1.15, rate: 150, desc: "One crash = no more colony." },
-      { id: "harvest", name: "Storm Harvester", baseCost: 80000000, mult: 1.15, rate: 1200, desc: "Drinks hurricanes." },
-      { id: "eye", name: "Eye of Aurelia", baseCost: 1100000000, mult: 1.15, rate: 9500, desc: "A station in the calm center of the storm." },
-      { id: "continuum", name: "Continuum Engine", baseCost: 15000000000, mult: 1.15, rate: 78000, desc: "It shouldn't exist. It disagrees." },
+      { id: "skimmer", name: "Cloud Skimmer", baseCost: 1500000, mult: 1.15, rate: 926, desc: "Balloon-drifts through the storm layers." },
+      { id: "trap",   name: "Mag-Trap Station", baseCost: 11000000, mult: 1.15, rate: 4500, desc: "Catches the impossible in a bottle." },
+      { id: "carrier", name: "Antimatter Carrier", baseCost: 80000000, mult: 1.15, rate: 22000, desc: "One crash = no more colony." },
+      { id: "harvest", name: "Storm Harvester", baseCost: 560000000, mult: 1.15, rate: 105000, desc: "Drinks hurricanes." },
+      { id: "eye", name: "Eye of Aurelia", baseCost: 4000000000, mult: 1.15, rate: 600000, desc: "A station in the calm center of the storm." },
+      { id: "continuum", name: "Continuum Engine", baseCost: 30000000000, mult: 1.15, rate: 1500000, desc: "It shouldn't exist. It disagrees." },
     ],
     upgrades: [
-      { id: "penn", name: "Penning Fields", cost: 900000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
-      { id: "loop", name: "Storage Loops", cost: 6000000, type: "prod", val: 2, desc: "Antimatter production ×2." },
-      { id: "sing", name: "Micro-Singularities", cost: 80000000, type: "prod", val: 3, desc: "Antimatter production ×3." },
+      { id: "penn", name: "Penning Fields", cost: 8000000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
+      { id: "loop", name: "Storage Loops", cost: 70000000, type: "prod", val: 2, desc: "Antimatter production ×2." },
+      { id: "sing", name: "Micro-Singularities", cost: 900000000, type: "prod", val: 3, desc: "Antimatter production ×3." },
     ],
   },
 ];
 
 const TECHS = [
-  { id: "lab",   name: "Research Lab",     cost: { Metal: 150, Crystal: 0 },            desc: "Build labs that generate Science.", repeat: true, effect: "building" },
-  { id: "t_auto1", name: "Automation I",   cost: { Science: 10 },  desc: "All production +25%.", effect: "global", val: 0.25 },
-  { id: "t_auto2", name: "Automation II",  cost: { Science: 120 }, desc: "All production +50%.", req: "t_auto1", effect: "global", val: 0.5 },
-  { id: "t_auto3", name: "Automation III", cost: { Science: 1500 }, desc: "All production +100%.", req: "t_auto2", effect: "global", val: 1.0 },
-  { id: "t_mine1", name: "Mining I",       cost: { Science: 25 },  desc: "All mining power ×2.", effect: "click", val: 2 },
-  { id: "t_mine2", name: "Mining II",      cost: { Science: 250 }, desc: "All mining power ×3.", req: "t_mine1", effect: "click", val: 3 },
-  { id: "t_mine3", name: "Mining III",     cost: { Science: 3000 }, desc: "All mining power ×4.", req: "t_mine2", effect: "click", val: 4 },
-  { id: "t_sci1",  name: "Institutes",     cost: { Science: 50 },  desc: "Science output ×2.", req: "t_auto1", effect: "sci", val: 2 },
-  { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 800 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
-  { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 40 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
-  { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 400 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
+  { id: "lab",   name: "Research Lab",     cost: { Metal: 400, Crystal: 120 },            desc: "Build labs that generate Science.", repeat: true, effect: "building" },
+  { id: "t_auto1", name: "Automation I",   cost: { Science: 100 },  desc: "All production +25%.", effect: "global", val: 0.25 },
+  { id: "t_auto2", name: "Automation II",  cost: { Science: 800 }, desc: "All production +50%.", req: "t_auto1", effect: "global", val: 0.5 },
+  { id: "t_auto3", name: "Automation III", cost: { Science: 5000 }, desc: "All production +100%.", req: "t_auto2", effect: "global", val: 1.0 },
+  { id: "t_mine1", name: "Mining I",       cost: { Science: 150 },  desc: "All mining power ×2.", effect: "click", val: 2 },
+  { id: "t_mine2", name: "Mining II",      cost: { Science: 1200 }, desc: "All mining power ×3.", req: "t_mine1", effect: "click", val: 3 },
+  { id: "t_mine3", name: "Mining III",     cost: { Science: 8000 }, desc: "All mining power ×4.", req: "t_mine2", effect: "click", val: 4 },
+  { id: "t_sci1",  name: "Institutes",     cost: { Science: 400 },  desc: "Science output ×2.", req: "t_auto1", effect: "sci", val: 2 },
+  { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 3000 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
+  { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 250 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
+  { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 1500 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
 ];
 
 const MASTERY = [
@@ -244,7 +244,7 @@ function clickMult(planet) {
 }
 
 function upgLevel(id) { return S.upgrades[id] || 0; }
-function upgCost(u) { return Math.ceil(u.cost * Math.pow(2.2, upgLevel(u.id))); }
+function upgCost(u) { return Math.ceil(u.cost * Math.pow(3.5, upgLevel(u.id))); }
 
 function prodMult(planet) {
   let m = globalProdMult();
@@ -546,7 +546,7 @@ function buyLab() {
 }
 
 function labCost() {
-  return { Metal: Math.ceil(150 * Math.pow(1.6, S.labs)), Crystal: Math.ceil(40 * Math.pow(1.6, S.labs)) };
+  return { Metal: Math.ceil(400 * Math.pow(1.7, S.labs)), Crystal: Math.ceil(120 * Math.pow(1.7, S.labs)) };
 }
 
 function travel(planet) {
@@ -564,7 +564,7 @@ function travel(planet) {
 
 function shardGain() {
   const am = S.lifetime.Antimatter || 0;
-  let g = Math.floor(Math.sqrt(am / 1000));
+  let g = Math.floor(Math.sqrt(am / 100000));
   if (mOwned("m_shard")) g = Math.floor(g * 1.5);
   return g;
 }
@@ -593,7 +593,7 @@ function renderPrestige() {
     `<span class="shards">✦ ${S.shards}</span> Ascendancy Shards` +
     (S.ascensions ? ` · ${S.ascensions} ascension${S.ascensions > 1 ? "s" : ""}` : "") +
     `<br><span style="color:var(--dim)">Ascending now: +${g} shards` +
-    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(1000)})` : "") +
+    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(100000)})` : "") +
     `</span>`;
   const btn = $("ascend-btn");
   btn.disabled = g < 1;
@@ -673,7 +673,7 @@ function tipUpgrade(u) {
     <div class="tt-sub">${u.desc}</div>
     <div class="tt-line">Current effect: <b>×${fmt(Math.pow(u.val, lvl))}</b></div>
     <div class="tt-line">Next level: <b>×${fmt(Math.pow(u.val, lvl + 1))}</b></div>
-    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×2.2 per level)</div>`;
+    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×3.5 per level)</div>`;
 }
 
 /* pixel-art planet sprites, generated per planet */
@@ -916,29 +916,20 @@ function renderPlanet(forced) {
     bl.appendChild(row);
   });
 
-  // repeatable upgrades
+  // upgrades as Cookie-Clicker style icon tiles
   const ul = $("upgrades");
   ul.innerHTML = "";
+  ul.className = "upg-tiles";
   for (const u of p.upgrades) {
     const lvl = upgLevel(u.id);
     const cost = upgCost(u);
     const can = canPay({ Metal: cost });
-    const row = document.createElement("div");
-    row.className = "row";
-    row.innerHTML = `
-      <img class="b-icon" src="${iconForUpg(u.type)}" width="28" height="28" alt="">
-      <div class="info">
-        <div class="name">${u.name} ${lvl > 0 ? `<span class="lvl-badge">Lv ${lvl}</span>` : ""}</div>
-        <div class="sub">${u.desc} <span style="color:var(--accent2)">Now ×${fmt(Math.pow(u.val, lvl))} → next ×${fmt(Math.pow(u.val, lvl + 1))}</span></div>
-      </div>
-      <button class="${can ? "can" : ""}">Buy — ${fmt(cost)} Metal
-        <span class="cost">cost ×2.2 each level</span>
-      </button>`;
-    const btn = row.querySelector("button");
-    btn.disabled = !can;
-    btn.onclick = () => { buyUpgrade(u); renderPlanet(); };
-    attachTip(row, () => tipUpgrade(u));
-    ul.appendChild(row);
+    const tile = document.createElement("div");
+    tile.className = "upg-tile" + (can ? "" : " grayed");
+    tile.innerHTML = `<img src="${iconForUpg(u.type)}" width="26" height="26" alt="">${lvl > 0 ? `<span class="tile-lv">Lv${lvl}</span>` : ""}`;
+    tile.onclick = () => { if (canPay({ Metal: upgCost(u) })) { buyUpgrade(u); renderPlanet(); } };
+    attachTip(tile, () => tipUpgrade(u));
+    ul.appendChild(tile);
   }
 }
 

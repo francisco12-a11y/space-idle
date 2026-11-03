@@ -300,3 +300,75 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   header { flex-wrap: wrap; }
   .chips { order: 3; width: 100%; }
 }
+
+/* ===== v1.1: Cookie Clicker cream theme for store + sidebar ===== */
+#store-view .panel, #sidebar .panel {
+  background: #f2e6cd;
+  border-color: #b5a184;
+  color: #453623;
+  box-shadow: inset 0 3px 0 rgba(255,255,255,0.5), inset 0 -3px 0 rgba(0,0,0,0.12), 0 4px 0 rgba(0,0,0,0.3);
+}
+#store-view .panel h3, #sidebar .panel h3 {
+  color: #8a5a2a;
+  text-shadow: 2px 2px 0 rgba(255,255,255,0.4);
+}
+#store-view .row, #sidebar .row {
+  background: #eadcbd;
+  border-color: #cdbb97;
+}
+#store-view .row:hover, #sidebar .row:hover { background: #f6ecd6; border-color: #b5a184; }
+#store-view .sub, #sidebar .sub, #store-view .rate, #sidebar .rate,
+#store-view .stat-k, #next-planet .sub, #store-view .cost, #sidebar .cost { color: #8a7452; }
+#store-view .own-count, #sidebar .own-count, #store-view .name, #sidebar .name { color: #453623; }
+#store-view button, #sidebar button {
+  background: #e7d6ae; color: #453623; border-color: #b5a184;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), inset 0 -2px 0 rgba(0,0,0,0.15), 0 3px 0 rgba(0,0,0,0.2);
+}
+#store-view button:disabled, #sidebar button:disabled {
+  background: #d6c49e; color: #a08c6a; border-color: #cdbb97;
+  box-shadow: none;
+}
+#store-view button.can, #sidebar button.can { border-color: #1a7a5e; color: #1a7a5e; }
+#store-view .buy.active { background: #8a5a2a; color: #f2e6cd; border-color: #8a5a2a; }
+#store-view .buy.active:hover { border-color: #8a5a2a; }
+#news-ticker { background: #e7d6ae; border-color: #b5a184; }
+#news-text { color: #8a7452; }
+#next-planet { background: #e9dab6; border-color: #a08c6a; }
+.next-planet .name { color: #453623; }
+#shard-info { color: #453623; }
+#shard-info .shards { color: #6a3fa0; }
+#shard-info span[style] { color: #8a7452 !important; }
+#ascend-btn {
+  background: linear-gradient(180deg, #5a3d82, #45305f);
+  color: #e6d0ff; border-color: #8a5ec4;
+}
+.mastery { background: #e9dab6; border-color: #cdbb97; }
+.mastery.owned { background: #e3d0f2; border-color: #8a5ec4; }
+.mastery .m-name { color: #453623; }
+.mastery.owned .m-name { color: #6a3fa0; }
+.mastery button { color: #6a3fa0; }
+.ach { background: #e9dab6; border-color: #cdbb97; }
+.ach.owned { background: #f0e2a0; border-color: #8a5a2a; }
+.stat-v { color: #453623; }
+#tooltip {
+  background: #f7ecd7; border-color: #8a5a2a; color: #453623;
+}
+#tooltip .tt-name { color: #8a5a2a; }
+#tooltip .tt-sub { color: #8a7452; }
+#tooltip .tt-line b { color: #1a7a5e; }
+#tooltip .tt-cost { color: #8a5a2a; }
+.lvl-badge { color: #f2e6cd; background: #8a5a2a; box-shadow: 2px 2px 0 rgba(0,0,0,0.25); }
+
+/* upgrade icon tiles (CC style) */
+.upg-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
+.upg-tile {
+  width: 52px; height: 56px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  background: #e7d6ae; border: 2px solid #b5a184; cursor: pointer;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.4), 0 3px 0 rgba(0,0,0,0.2);
+  transition: transform .08s;
+}
+.upg-tile:hover { border-color: #8a5a2a; transform: translateY(-2px); }
+.upg-tile:active { transform: translateY(1px); }
+.upg-tile.grayed { opacity: 0.35; filter: grayscale(0.7); }
+.tile-lv { font-size: 13px; color: #8a5a2a; }
