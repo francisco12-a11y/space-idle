@@ -101,7 +101,7 @@ function buffMult() { return Date.now() < (S.buffs.rushUntil || 0) ? 7 : 1; }
 function frenzyMult() { return Date.now() < (S.buffs.frenzyUntil || 0) ? 777 : 1; }
 
 function buildingRate(b) {
-  let m = achMult() * shardMult() * buffMult() * globalTreeMult();
+  let m = achMult() * shardMult() * buffMult() * globalTreeMult() * (1 + kittenBonus());
   m *= Math.pow(2, msOwnedCount(b.id));
   return b.rate * m;
 }
@@ -165,6 +165,23 @@ function allUpgrades() {
         bought: S.upgrades.includes(`ms:${b.id}:${n}`),
         kind: "ms", ref: b,
       });
+    });
+  }
+  // kitten upgrades (bonus scales with achievements, CC kittens style)
+  const kitDefs = [
+    { id: "kit:1", name: "Adopt a Space Kitten",  desc: "A kitten joins the colony. +0.5% production per achievement.", cost: 10000,   need: 5 },
+    { id: "kit:2", name: "Kitten Treats",         desc: "The kitten purrs harder. +1% production per achievement.",     cost: 200000,  need: 10 },
+    { id: "kit:3", name: "Kitten Academy",        desc: "A very educated kitten. +1.5% per achievement.",               cost: 5000000, need: 15 },
+    { id: "kit:4", name: "Kitten Astronaut",      desc: "Helmet on. +2% production per achievement.",                   cost: 100000000, need: 20 },
+  ];
+  for (const k of kitDefs) {
+    const lvl = kittenLevel();
+    const isNext = parseInt(k.id.split(":")[1]) === lvl + 1;
+    list.push({
+      id: k.id, name: k.name, desc: k.desc, cost: k.cost, icon: "colonist",
+      unlocked: isNext && S.ach.length >= k.need,
+      bought: S.upgrades.includes(k.id),
+      kind: "kit", ref: null,
     });
   }
   // click upgrades
@@ -439,6 +456,81 @@ function iconFor(bid) {
   return ICON_CACHE[key];
 }
 
+/* the space kitten, hand-pixelled */
+let _kitCache = {};
+function pixelKittenURL(level, frame) {
+  const key = level + ":" + frame;
+  if (_kitCache[key]) return _kitCache[key];
+  const n = 16;
+  const cv = document.createElement("canvas");
+  cv.width = n; cv.height = n;
+  const x = cv.getContext("2d");
+  const px = (a2, b2, w, h, c) => { x.fillStyle = c; x.fillRect(a2, b2, w, h); };
+  const O = "#e8963c", D = "#b8681f", W = "#ffe8c4", K = "#20263f", P = "#ff9db8";
+  // ears
+  px(4, 1, 2, 2, O); px(10, 1, 2, 2, O);
+  px(4, 2, 1, 1, P); px(11, 2, 1, 1, P);
+  // head
+  px(4, 3, 8, 5, O);
+  px(3, 4, 1, 3, O); px(12, 4, 1, 3, O);
+  // eyes (blink on frame B)
+  if (frame === 1) { px(5, 4, 2, 1, K); px(9, 4, 2, 1, K); }
+  else { px(5, 4, 1, 1, K); px(6, 4, 1, 1, W); px(9, 4, 1, 1, K); px(10, 4, 1, 1, W); }
+  // nose + muzzle
+  px(7, 5, 2, 1, P);
+  px(5, 6, 6, 2, W);
+  px(6, 7, 4, 1, W);
+  // whiskers
+  px(1, 5, 2, 1, W); px(13, 5, 2, 1, W);
+  // body
+  px(4, 8, 8, 6, O);
+  px(6, 8, 4, 5, W);          // chest
+  px(3, 9, 1, 4, O); px(12, 9, 1, 4, O);   // sides
+  // stripes
+  px(4, 9, 1, 1, D); px(11, 9, 1, 1, D); px(4, 11, 1, 1, D); px(11, 11, 1, 1, D);
+  // paws
+  px(4, 14, 2, 1, W); px(10, 14, 2, 1, W);
+  // tail: frame A curled low, frame B raised
+  if (frame === 0) { px(13, 11, 2, 1, D); px(14, 12, 1, 2, D); }
+  else { px(13, 8, 1, 3, D); px(14, 6, 1, 3, D); }
+  // accessories per level
+  if (level >= 1) px(5, 8, 6, 1, "#ffd166");                       // collar
+  if (level >= 2) { px(4, 9, 1, 2, "#5ee6d0"); px(11, 9, 1, 2, "#5ee6d0"); }  // space harness
+  if (level >= 3) { px(4, 0, 8, 1, "#20263f"); px(5, 1, 6, 1, "#39315a"); px(11, 0, 2, 1, "#ffd166"); }  // grad cap
+  if (level >= 4) { // space helmet dome
+    px(3, 1, 1, 6, "#9fdcff"); px(12, 1, 1, 6, "#9fdcff"); px(4, 0, 8, 1, "#9fdcff"); px(4, 7, 8, 1, "#9fdcff");
+    px(5, 1, 1, 1, "#e8f8ff");
+  }
+  _kitCache[key] = cv.toDataURL();
+  return _kitCache[key];
+}
+/* kitten mechanic: bonus per achievement, scales with kitten upgrade level */
+const KIT_PCT = [0, 0.005, 0.01, 0.015, 0.02];
+function kittenLevel() { return ["kit:1", "kit:2", "kit:3", "kit:4"].filter(u => S.upgrades.includes(u)).length; }
+function kittenBonus() { return KIT_PCT[kittenLevel()] * S.ach.length; }
+let _kitFrame = 0;
+function renderKitten() {
+  const lvl = kittenLevel();
+  const spot = $("kitten-spot");
+  if (!spot) return;
+  if (lvl === 0) { spot.innerHTML = ""; return; }
+  _kitFrame = 1 - _kitFrame;
+  const size = 60 + lvl * 16;
+  spot.innerHTML = `<img id="kitten-img" src="${pixelKittenURL(lvl, _kitFrame)}" style="width:${size}px;height:${size}px;image-rendering:pixelated" title="your space kitten">`;
+  const img = $("kitten-img");
+  img.onclick = e => {
+    initAudio();
+    tone(700, 0.12, "triangle", 0.09, 0, 420); tone(420, 0.1, "triangle", 0.07, 0.1);
+    const heart = document.createElement("div");
+    heart.className = "spark";
+    heart.style.left = (e.clientX - 140) + "px"; heart.style.top = (e.clientY - 20) + "px";
+    heart.style.background = "#ff9db8"; heart.style.width = "8px"; heart.style.height = "8px";
+    heart.style.setProperty("--dx", "0px"); heart.style.setProperty("--dy", "-40px");
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 500);
+  };
+}
+
 /* pixel UI glyphs */
 const PXI = {};
 function pxIcon(name) {
@@ -560,6 +652,7 @@ function renderAch() {
 
 /* ============ RENDER: STORE ============ */
 function renderStore() {
+  renderKitten();
   // upgrades shelf
   const ul = $("upgrades");
   ul.innerHTML = "";

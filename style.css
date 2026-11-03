@@ -462,3 +462,7 @@ main.game-grid { max-width: 1150px; }
 header button .hicon { margin-right: 4px; }
 #ach-count { color: var(--accent2); font-family: "VT323", monospace; font-size: 15px; margin-left: 2px; }
 .store-panel-wide #store-panel { max-width: 100%; }
+
+#kitten-spot { text-align: center; margin-top: 6px; min-height: 76px; }
+#kitten-img { cursor: pointer; transition: transform .1s; }
+#kitten-img:hover { transform: scale(1.08); }
