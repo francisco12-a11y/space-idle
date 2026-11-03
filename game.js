@@ -179,6 +179,7 @@ function newState() {
   return {
     res: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
     lifetime: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
+    spent: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
     buildings: {},     // "planetId:buildingId" -> count
     labs: 0,
     upgrades: {},      // upgrade id -> level (repeatable)
@@ -379,7 +380,10 @@ function canPay(cost) {
 }
 
 function pay(cost) {
-  for (const k in cost) S.res[k] -= cost[k];
+  for (const k in cost) {
+    S.res[k] -= cost[k];
+    S.spent[k] = (S.spent[k] || 0) + cost[k];
+  }
 }
 
 function costStr(cost) {
@@ -538,6 +542,9 @@ function renderStats() {
   ];
   for (const p of PLANETS) {
     if (S.unlocked.includes(p.id)) rows.push([`Lifetime ${p.res}`, fmt(S.lifetime[p.res] || 0)]);
+  }
+  for (const p of PLANETS) {
+    if (S.unlocked.includes(p.id) && (S.spent[p.res] || 0) > 0) rows.push([`Spent ${p.res}`, fmt(S.spent[p.res])]);
   }
   el.innerHTML = rows.map(([k, v]) =>
     `<div class="stat-row"><span class="stat-k">${k}</span><span class="stat-v">${v}</span></div>`).join("");
@@ -977,6 +984,12 @@ function renderPlanet(forced) {
     return;
   }
   lockedNote.style.display = "none";
+
+  const curIcons = costCurrencies(pid).map(r => {
+    const p2 = PLANETS.find(pp => pp.res === r);
+    return p2 ? p2.resIcon + " " + r : r;
+  }).join(" · ");
+  $("planet-costs").innerHTML = `<span style="color:var(--dim)">buildings here cost:</span> ${curIcons}`;
 
   const rate = planetRate(pid);
   resLine.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;

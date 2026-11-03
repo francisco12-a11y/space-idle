@@ -19,7 +19,7 @@ body {
     radial-gradient(70vw 60vh at 80% 0%, #221a3f, var(--bg) 65%);
   color: var(--text);
   font-family: "VT323", monospace;
-  font-size: 20px;
+  font-size: 22px;
   line-height: 1.35;
   image-rendering: pixelated;
 }
@@ -55,7 +55,7 @@ header {
   padding: 3px 11px;
   background: var(--p1);
   border: 2px solid var(--border);
-  font-size: 19px;
+  font-size: 20px;
 }
 .chip .val { min-width: 40px; }
 .chip .rate { color: var(--dim); font-size: 15px; }
@@ -131,7 +131,7 @@ main.game-grid {
 .planet-text p { margin: 0; color: var(--dim); font-size: 17px; }
 .resource-line { margin-top: 10px; font-size: 36px; font-weight: 700; }
 .resource-line .rate { color: var(--dim); font-size: 16px; margin-left: 8px; font-weight: 400; }
-#mine-info { margin-top: 6px; font-size: 19px; }
+#mine-info { margin-top: 6px; font-size: 20px; }
 
 .lvl-badge {
   font-size: 15px; color: #0b3a34; background: var(--accent);
@@ -141,7 +141,7 @@ main.game-grid {
 
 /* ---- rows ---- */
 .buy-mode { display: flex; gap: 4px; }
-.buy { padding: 2px 9px; font-size: 16px; }
+.buy { padding: 2px 9px; font-size: 17px; }
 .buy.active { border-color: var(--accent2); color: var(--accent2); filter: brightness(1.2); }
 
 .row {
@@ -175,15 +175,15 @@ main.game-grid {
 /* news ticker */
 #news-ticker { cursor: pointer; border-style: dashed; }
 #news-ticker:hover { border-style: solid; border-color: var(--border-hi); }
-#news-text { color: var(--dim); font-style: italic; font-size: 17px; }
+#news-text { color: var(--dim); font-style: italic; font-size: 18px; }
 .news-fade { animation: newsFade .5s ease-out; }
 @keyframes newsFade { from { opacity: 0; transform: translateY(4px); } }
 
 /* stats panel */
 .stat-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(120,140,200,0.08); }
 .stat-row:last-child { border-bottom: none; }
-.stat-k { color: var(--dim); font-size: 16px; }
-.stat-v { font-size: 16px; }
+.stat-k { color: var(--dim); font-size: 17px; }
+.stat-v { font-size: 17px; }
 
 /* sidebar rows: narrower buttons so tech/mastery rows fit the column */
 #sidebar .row { flex-wrap: wrap; }
@@ -280,7 +280,7 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
   position: fixed; z-index: 60; max-width: 300px;
   background: #141226; border: 2px solid var(--border-hi);
   box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
-  padding: 10px 12px; font-size: 17px; pointer-events: none;
+  padding: 10px 12px; font-size: 18px; pointer-events: none;
 }
 #tooltip .tt-name { font-size: 19px; color: var(--accent2); }
 #tooltip .tt-sub { color: var(--dim); margin: 2px 0 6px; }
@@ -304,7 +304,7 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 /* upgrade icon tiles (dark pixel theme) */
 .upg-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
 .upg-tile {
-  width: 62px; height: 66px;
+  width: 66px; height: 70px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   background: var(--p2); border: 2px solid var(--border); cursor: pointer;
   box-shadow: inset 0 2px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.3), 0 3px 0 rgba(0,0,0,0.35);
@@ -317,7 +317,7 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 
 /* ===== v1.6: CC-style compact store strips + tabs ===== */
 .tab-bar { display: flex; gap: 6px; margin: 14px 0 10px; }
-.store-tab { flex: 1; font-size: 17px; padding: 7px 4px; letter-spacing: 1px; }
+.store-tab { flex: 1; font-size: 18px; padding: 7px 4px; letter-spacing: 1px; }
 .store-tab.active { border-color: var(--accent); color: var(--accent); filter: brightness(1.25); }
 .tab-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
 .toolbar-label { color: var(--dim); font-size: 16px; }
@@ -332,12 +332,14 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 .store-strip:hover { background: rgba(94, 230, 208, 0.07); }
 .store-strip.owned-b { border-left: 3px solid var(--border-hi); }
 .store-strip .strip-icon { image-rendering: pixelated; flex-shrink: 0; }
+.planet-costs { margin-top: 8px; font-size: 18px; }
+.planet-costs span { font-size: 15px; }
 .store-strip .strip-info { flex: 1; min-width: 0; }
-.store-strip .strip-name { font-size: 22px; font-weight: 700; }
-.store-strip .strip-sub { font-size: 16.5px; color: var(--dim); }
-.store-strip .own-count { font-size: 20px; margin-left: 4px; }
-.store-strip .strip-price { text-align: right; font-size: 16px; color: var(--dim); line-height: 1.25; }
-.store-strip .strip-price b { font-size: 20px; }
+.store-strip .strip-name { font-size: 24px; font-weight: 700; }
+.store-strip .strip-sub { font-size: 18px; color: var(--dim); }
+.store-strip .own-count { font-size: 22px; margin-left: 4px; }
+.store-strip .strip-price { text-align: right; font-size: 18px; color: var(--dim); line-height: 1.2; }
+.store-strip .strip-price b { font-size: 22px; }
 .store-strip.can .strip-price { color: var(--accent); }
 .store-strip.can .strip-price b { color: var(--accent); }
 .store-strip:not(.can) { opacity: 0.55; }
