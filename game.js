@@ -332,45 +332,25 @@ function bCost(planet, b, n) {
   return Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
 }
 
-/* tier index >= 2 (3rd building onward) costs every resource up to this planet's own:
-   Luna = Metal+He-3, Ceres = Metal+He-3+Crystal, Aurelia = all four. */
-function hasResCost(pid, ti) { return PLANETS.indexOf(PLANET(pid)) >= 1 && ti >= 2; }
-function costCurrencies(pid) {
-  const pi = PLANETS.indexOf(PLANET(pid));
-  return PLANETS.slice(0, pi + 1).map(p => p.res);
-}
-function resBase(pid, b, res) {
-  // secondary resources scale down the deeper the chain: each adds 0.28, Metal keeps 0.5
-  const cur = costCurrencies(pid);
-  const idx = cur.indexOf(res);
-  return Math.ceil(b.baseCost * (idx === 0 ? 1 : Math.max(0.18, 0.3 - (idx - 1) * 0.04)));
-}
+/* SIMPLE ECONOMY: tiers 1-2 cost Metal. Tiers 3+ cost ONLY the planet's own resource.
+   (Travel costs, labs and techs are the mixed-resource sinks.) */
+function hasResCost(pid, ti) { return PLANET(pid).res !== "Metal" && ti >= 2; }
 
 function bCostObj(pid, b, ti, n) {
   const have = S.buildings[pid + ":" + b.id] || 0;
   const r = b.mult;
   const growth = Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1);
-  const obj = {};
-  if (hasResCost(pid, ti)) {
-    for (const res of costCurrencies(pid)) obj[res] = Math.ceil(resBase(pid, b, res) * growth);
-  } else {
-    obj.Metal = Math.ceil(b.baseCost * growth);
-  }
-  return obj;
+  if (hasResCost(pid, ti)) return { [PLANET(pid).res]: Math.ceil(b.baseCost * growth) };
+  return { Metal: Math.ceil(b.baseCost * growth) };
 }
 
 function maxAffordable(planet, b) {
   const r = b.mult;
   const have = S.buildings[planet + ":" + b.id] || 0;
   const ti = PLANET(planet).buildings.indexOf(b);
-  let n = Math.floor(Math.log(S.res.Metal * (r - 1) / (b.baseCost * Math.pow(r, have)) + 1) / Math.log(r));
-  if (hasResCost(planet, ti)) {
-    for (const res of costCurrencies(planet)) {
-      if (res === "Metal") continue;
-      const n2 = Math.floor(Math.log((S.res[res] || 0) * (r - 1) / (resBase(planet, b, res) * Math.pow(r, have)) + 1) / Math.log(r));
-      n = Math.min(n, n2);
-    }
-  }
+  const cur = hasResCost(planet, ti) ? PLANET(planet).res : "Metal";
+  const base = hasResCost(planet, ti) ? b.baseCost : b.baseCost;
+  const n = Math.floor(Math.log((S.res[cur] || 0) * (r - 1) / (base * Math.pow(r, have)) + 1) / Math.log(r));
   return Math.max(0, Math.min(n, 5000));
 }
 
@@ -765,7 +745,8 @@ function tipBuilding(pid, b) {
     <div class="tt-sub">${b.desc}</div>
     <div class="tt-line">Each produces <b>${fmt(each)}/s</b></div>
     ${have ? `<div class="tt-line">You own <b>${have}</b>, producing <b>${fmt(total)}/s</b> (${share}% of this planet's output)</div>` : ""}
-    <div class="tt-cost">Buy 1: ${fmt(c1)} Metal · next 10: ${fmt(bCost(pid, b, 10))} Metal${hasResCost(pid, p.buildings.indexOf(b)) ? ` + ${fmt(Math.ceil(resBase(pid, b) * 10 * Math.pow(b.mult, have) * (Math.pow(b.mult, 10) - 1) / (b.mult - 1) / 10))} ${p.res} (avg)` : ""}</div>`;
+    const cur2 = hasResCost(pid, p.buildings.indexOf(b)) ? p.res : "Metal";
+    <div class="tt-cost">Buy 1: ${fmt(c1)} ${cur2} · next 10: ${fmt(bCostObj(pid, b, p.buildings.indexOf(b), 10)[cur2])} ${cur2}</div>`;
 }
 
 function tipUpgrade(u) {
@@ -985,11 +966,10 @@ function renderPlanet(forced) {
   }
   lockedNote.style.display = "none";
 
-  const curIcons = costCurrencies(pid).map(r => {
-    const p2 = PLANETS.find(pp => pp.res === r);
-    return p2 ? p2.resIcon + " " + r : r;
-  }).join(" · ");
-  $("planet-costs").innerHTML = `<span style="color:var(--dim)">buildings here cost:</span> ${curIcons}`;
+  const curIcons = PLANET(pid).res !== "Metal"
+    ? `<span style="color:var(--dim)">tiers 1-2 cost</span> ⚙ Metal · <span style="color:var(--dim)">tiers 3+ cost</span> ${p.resIcon} ${p.res}`
+    : `<span style="color:var(--dim)">buildings cost</span> ⚙ Metal`;
+  $("planet-costs").innerHTML = curIcons;
 
   const rate = planetRate(pid);
   resLine.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
@@ -1004,7 +984,10 @@ function renderPlanet(forced) {
     const cost = bCostObj(pid, b, ti, n);
     const can = canPay(cost);
     const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
-    const priceHtml = Object.entries(cost).map(([k, v]) => `<b>${fmt(v)}</b> ${k === "Metal" ? "\u2699" : PLANET(pid).resIcon}`).join("<br>");
+    const priceHtml = Object.entries(cost).map(([k, v]) => {
+      const p2 = PLANETS.find(pp => pp.res === k);
+      return `<b>${fmt(v)}</b> ${p2 ? p2.resIcon : "\u2699"}${k !== "Metal" ? ` <span style="font-size:14px">${k}</span>` : ""}`;
+    }).join(" ");
     const strip = document.createElement("div");
     strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
     strip.innerHTML = `
