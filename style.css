@@ -384,3 +384,25 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
   animation: sparkfly .5s ease-out forwards;
 }
 @keyframes sparkfly { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+
+/* ===== v4 rewrite ===== */
+.h-sub { color: var(--dim); font-family: "VT323", monospace; font-size: 15px; letter-spacing: 0; text-transform: none; }
+.dim-note { color: var(--dim); font-size: 16px; font-style: italic; padding: 6px 2px; }
+.buff-strip, #buff-strip { text-align: center; margin-top: 10px; min-height: 30px; }
+.buff-tag {
+  display: inline-block; padding: 3px 12px; margin: 0 4px;
+  background: var(--p2); border: 2px solid var(--accent2); color: var(--accent2);
+  font-size: 17px; animation: buffPulse 1s steps(2) infinite;
+}
+.buff-tag.click { border-color: var(--danger); color: var(--danger); }
+.mnode .ric { width: 20px; height: 20px; }
+#tree { min-height: 300px; }
+.shards { color: #d29bff; font-size: 22px; }
+#ascend-panel { border-color: #6e4a9c; }
+#ascend-btn {
+  width: 100%; font-family: "Press Start 2P", monospace; font-size: 11px;
+  padding: 12px; color: #d29bff; border-color: #8a5ec4;
+  background: linear-gradient(180deg, #3a2352, #291a3d); margin: 8px 0 4px;
+}
+#ascend-btn:disabled { filter: grayscale(0.6); }
+.shard-info, #shard-info { font-size: 16px; }

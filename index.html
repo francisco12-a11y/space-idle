@@ -3,53 +3,40 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stellar Ascent — Idle Space Colony</title>
+<title>Stellar Ascent — an idle space game</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=34">
+<link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 <canvas id="starfield"></canvas>
-<div id="world-glow"></div>
-<div id="nebula"></div>
 <div id="tooltip" style="display:none"></div>
 
 <header>
   <div class="brand">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2l2.4 6.2L21 9l-5 4.2L17.5 20 12 16.4 6.5 20 8 13.2 3 9l6.6-.8z" fill="#5ee6d0"/>
-    </svg>
+    <img class="hicon" data-px="shard">
     <h1>STELLAR ASCENT</h1>
   </div>
-  <div id="res-chips" class="chips"></div>
   <div class="topbar">
-    <button id="mute-btn" title="Toggle sound">Sound: ON</button><button id="save-btn" title="Save now">Save</button>
+    <button id="mute-btn" title="Toggle sound">Sound: ON</button>
+    <button id="save-btn" title="Save now">Save</button>
     <button id="reset-btn" class="danger" title="Wipe progress">Reset</button>
   </div>
 </header>
 
 <main class="game-grid">
-  <nav id="planet-nav"></nav>
-
   <section id="clicker-view">
     <div class="panel glow-panel planet-header">
-      
       <div class="res-count">
-        <div id="res-big"></div>
-        <div id="res-rate"></div>
+        <div id="res-big">0 stardust</div>
+        <div id="res-rate">per second: 0</div>
       </div>
-      <button id="big-planet" title="Click to mine!">
-        <img id="planet-art-img" width="190" height="190" alt="">
+      <button id="big-planet" title="Click to collect stardust!">
+        <img id="planet-art-img" width="220" height="220" alt="">
       </button>
-      <div class="planet-text">
-        <h2 id="planet-name"></h2>
-        <p id="planet-desc"></p>
-        <div id="planet-costs" class="planet-costs"></div>
-        <div id="mine-info"></div>
-      </div>
+      <div id="buff-strip"></div>
     </div>
-    <div id="locked-note" class="panel" style="display:none"></div>
   </section>
 
   <section id="store-view">
@@ -58,41 +45,27 @@
     </div>
 
     <div class="panel" id="store-panel">
-      <h3><img class="hicon" data-px="colonist"> Upgrades</h3>
+      <h3><img class="hicon" data-px="colonist"> Upgrades <span class="h-sub" id="upg-count"></span></h3>
       <div id="upgrades" class="upg-tiles"></div>
 
-      <div class="tab-bar">
-        <button class="store-tab active" data-tab="colonists"><img class="hicon" data-px="colonist"> COLONISTS</button>
-        <button class="store-tab" data-tab="research"><img class="hicon" data-px="science"> RESEARCH</button>
-        <button class="store-tab" data-tab="ascend"><img class="hicon" data-px="shard"> ASCEND</button>
-      </div>
-
-      <div id="tab-colonists" class="tab-content">
-        <div class="tab-toolbar">
-          <span class="toolbar-label">Buy:</span>
-          <span class="buy-mode">
-            <button data-buy="1" class="buy active">×1</button>
-            <button data-buy="10" class="buy">×10</button>
-            <button data-buy="max" class="buy">MAX</button>
-          </span>
-        </div>
-        <div id="buildings"></div>
-      </div>
-
-      <div id="tab-research" class="tab-content" style="display:none">
-        <div id="techs"></div>
-        <div id="next-planet" class="next-planet"></div>
-      </div>
-
-      <div id="tab-ascend" class="tab-content" style="display:none">
-        <div id="shard-info"></div>
-        <button id="ascend-btn">ASCEND</button>
-        <div id="masteries"></div>
-      </div>
+      <h3 style="margin-top:16px"><img class="hicon" data-px="metal"> Buildings <span class="buy-mode">
+        <button data-buy="1" class="buy active">×1</button>
+        <button data-buy="10" class="buy">×10</button>
+        <button data-buy="100" class="buy">×100</button>
+        <button data-buy="max" class="buy">MAX</button>
+      </span></h3>
+      <div id="buildings"></div>
     </div>
   </section>
 
   <aside id="sidebar">
+    <div class="panel" id="ascend-panel">
+      <h3><img class="hicon" data-px="shard"> Ascension</h3>
+      <div id="shard-info"></div>
+      <button id="ascend-btn">ASCEND</button>
+      <div id="tree"></div>
+    </div>
+
     <div class="panel" id="ach-view">
       <h3><img class="hicon" data-px="trophy"> Achievements <span id="ach-count"></span></h3>
       <div id="ach-grid"></div>
@@ -105,8 +78,8 @@
   </aside>
 </main>
 
-<footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
+<footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 60% RATE</small></footer>
 
-<script src="game.js?v=34"></script>
+<script src="game.js?v=40"></script>
 </body>
 </html>

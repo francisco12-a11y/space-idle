@@ -1,574 +1,240 @@
 "use strict";
 
-/* ============ DATA ============ */
+/* ============================================================
+   STELLAR ASCENT v4 — a Cookie Clicker-style idle game.
+   One currency (stardust), 14 escalating buildings, 100+
+   upgrades, golden comets, ascension constellation.
+   ============================================================ */
 
-const PLANETS = [
-  {
-    id: "terra", name: "Terra Nova", color: "#4ecdc4", ring: false, moons: 1,
-    desc: "The first colony. Rich iron deposits in the northern craters.",
-    res: "Metal", resIcon: "metal", resColor: "#9db4c0",
-    unlockCost: null,
-    buildings: [
-      { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.5,  desc: "A tireless robotic drill." },
-      { id: "rig",   name: "Mining Rig", baseCost: 110, mult: 1.15, rate: 2,   desc: "Industrial extraction array." },
-      { id: "quarry",name: "Strip Quarry", baseCost: 750, mult: 1.15, rate: 8, desc: "Moves mountains. Literally." },
-      { id: "cannon", name: "Rail Cannon", baseCost: 4500, mult: 1.15, rate: 30, desc: "Fires ingots into orbit." },
-      { id: "elevator", name: "Orbital Elevator", baseCost: 28000, mult: 1.15, rate: 95, desc: "A ribbon to the sky." },
-      { id: "forge", name: "Planetary Forge", baseCost: 180000, mult: 1.15, rate: 420, desc: "The crust is raw material." },
-    ],
-    upgrades: [
-      { id: "pick",  name: "Plasma Pickaxe", cost: 80,  type: "click",  val: 2, desc: "Mining power ×2." },
-      { id: "conveyor", name: "Conveyor Network", cost: 1200, type: "prod", val: 2, desc: "Metal production ×2." },
-      { id: "droids", name: "Excavation Droids", cost: 15000, type: "prod", val: 3, desc: "Metal production ×3." },
-    ],
-  },
-  {
-    id: "luna", name: "Luna", color: "#c0c0d8", ring: false, moons: 0,
-    desc: "Regolith fields of helium-3. Perfect fusion fuel.",
-    res: "Helium-3", resIcon: "helium", resColor: "#b8a9e8",
-    unlockCost: { Metal: 25000 },
-    buildings: [
-      { id: "probe", name: "Harvest Probe", baseCost: 800, mult: 1.15, rate: 4.5,   desc: "Skims He-3 from the dust." },
-      { id: "scoop", name: "Regolith Scoop", baseCost: 6000, mult: 1.15, rate: 22,  desc: "Eats the surface, spits fuel." },
-      { id: "ranch", name: "He-3 Refinery", baseCost: 42000, mult: 1.15, rate: 105, desc: "Bulk isotope processing." },
-      { id: "driver", name: "Mass Driver", baseCost: 300000, mult: 1.15, rate: 500, desc: "Throws regolith by the ton." },
-      { id: "fplant", name: "Fusion Plant", baseCost: 2100000, mult: 1.15, rate: 2400, desc: "Burns its own product." },
-      { id: "breeder", name: "Helium Breeders", baseCost: 15000000, mult: 1.15, rate: 6670, desc: "Isotopes begetting isotopes." },
-    ],
-    upgrades: [
-      { id: "lunadrill", name: "Lunar Drill Tips", cost: 6000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
-      { id: "compress", name: "Isotope Compressors", cost: 45000, type: "prod", val: 2, desc: "Helium-3 production ×2." },
-      { id: "fusion", name: "Fusion Feedloops", cost: 600000, type: "prod", val: 3, desc: "Helium-3 production ×3." },
-    ],
-  },
-  {
-    id: "ceres", name: "Ceres Belt", color: "#8d6e63", ring: true, moons: 0,
-    desc: "An asteroid swarm glittering with raw crystal.",
-    res: "Crystal", resIcon: "crystal", resColor: "#7fdbff",
-    unlockCost: { Metal: 1500000, "Helium-3": 150000 },
-    buildings: [
-      { id: "cutter", name: "Crystal Cutter", baseCost: 20000, mult: 1.15, rate: 37,  desc: "Lasers meet rock." },
-      { id: "sifter", name: "Belt Sifter", baseCost: 140000, mult: 1.15, rate: 200, desc: "Screens a thousand rocks an hour." },
-      { id: "crawn",   name: "Crystal Crawler", baseCost: 1000000, mult: 1.15, rate: 1000, desc: "Walks between asteroids, mining all of them." },
-      { id: "highway", name: "Belt Highway", baseCost: 7000000, mult: 1.15, rate: 5000, desc: "A road made of checkpoints." },
-      { id: "foundry", name: "Crystal Foundry", baseCost: 50000000, mult: 1.15, rate: 25000, desc: "Cutting houses the size of cities." },
-      { id: "lattice", name: "Zero-G Lattice", baseCost: 350000000, mult: 1.15, rate: 52000, desc: "Crystal grows in the void, untended." },
-    ],
-    upgrades: [
-      { id: "lens", name: "Focused Lens Array", cost: 150000, type: "click", val: 2, desc: "Crystal mining power ×2." },
-      { id: "sort", name: "Spectral Sorters", cost: 1200000, type: "prod", val: 2, desc: "Crystal production ×2." },
-      { id: "vein", name: "Vein Scanners", cost: 20000000, type: "prod", val: 3, desc: "Crystal production ×3." },
-    ],
-  },
-  {
-    id: "aurelia", name: "Aurelia", color: "#e8b04a", ring: true, moons: 2,
-    desc: "A ringed giant. Its upper clouds condense pure antimatter.",
-    res: "Antimatter", resIcon: "antimatter", resColor: "#ff6b9d",
-    unlockCost: { Metal: 300000000, "Helium-3": 40000000, Crystal: 20000000 },
-    buildings: [
-      { id: "skimmer", name: "Cloud Skimmer", baseCost: 1500000, mult: 1.15, rate: 926, desc: "Balloon-drifts through the storm layers." },
-      { id: "trap",   name: "Mag-Trap Station", baseCost: 11000000, mult: 1.15, rate: 4500, desc: "Catches the impossible in a bottle." },
-      { id: "carrier", name: "Antimatter Carrier", baseCost: 80000000, mult: 1.15, rate: 22000, desc: "One crash = no more colony." },
-      { id: "harvest", name: "Storm Harvester", baseCost: 560000000, mult: 1.15, rate: 105000, desc: "Drinks hurricanes." },
-      { id: "eye", name: "Eye of Aurelia", baseCost: 4000000000, mult: 1.15, rate: 600000, desc: "A station in the calm center of the storm." },
-      { id: "continuum", name: "Continuum Engine", baseCost: 30000000000, mult: 1.15, rate: 1500000, desc: "It shouldn't exist. It disagrees." },
-    ],
-    upgrades: [
-      { id: "penn", name: "Penning Fields", cost: 4000000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
-      { id: "loop", name: "Storage Loops", cost: 35000000, type: "prod", val: 2, desc: "Antimatter production ×2." },
-      { id: "sing", name: "Micro-Singularities", cost: 450000000, type: "prod", val: 3, desc: "Antimatter production ×3." },
-    ],
-  },
-];
-
-const TECHS = [
-  { id: "lab",   name: "Research Lab",     cost: { Metal: 400, Crystal: 120 },            desc: "Build labs that generate Science.", repeat: true, effect: "building" },
-  { id: "t_auto1", name: "Automation I",   cost: { Science: 160 },  desc: "All production +25%.", effect: "global", val: 0.25 },
-  { id: "t_auto2", name: "Automation II",  cost: { Science: 1300 }, desc: "All production +50%.", req: "t_auto1", effect: "global", val: 0.5 },
-  { id: "t_auto3", name: "Automation III", cost: { Science: 12000 }, desc: "All production +100%.", req: "t_auto2", effect: "global", val: 1.0 },
-  { id: "t_mine1", name: "Mining I",       cost: { Science: 240 },  desc: "All mining power ×2.", effect: "click", val: 2 },
-  { id: "t_mine2", name: "Mining II",      cost: { Science: 2000 }, desc: "All mining power ×3.", req: "t_mine1", effect: "click", val: 3 },
-  { id: "t_mine3", name: "Mining III",     cost: { Science: 12000 }, desc: "All mining power ×4.", req: "t_mine2", effect: "click", val: 4 },
-  { id: "t_sci1",  name: "Institutes",     cost: { Science: 640 },  desc: "Science output ×2.", req: "t_auto1", effect: "sci", val: 2 },
-  { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 4800 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
-  { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 400 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
-  { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 2400 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
-  { id: "t_comet1", name: "Comet Magnet",   cost: { Science: 1000 },  desc: "Golden Comets appear 2× more often.", req: "t_sci1", effect: "comet_freq", val: 2 },
-  { id: "t_comet2", name: "Golden Radar",   cost: { Science: 3000 }, desc: "Comets stay on screen much longer.", req: "t_comet1", effect: "comet_life", val: 2.2 },
-  { id: "t_comet3", name: "Comet Swarm",    cost: { Science: 9000 }, desc: "Comets appear 3× more often again.", req: "t_comet2", effect: "comet_freq", val: 3 },
-];
-
-const MASTERY = [
-  { id: "m_prod1",  pos: {x: 15, y: 30}, name: "Galactic Legacy I",   cost: 1,  desc: "+25% all production.", },
-  { id: "m_prod2",  pos: {x: 38, y: 16}, name: "Galactic Legacy II",  cost: 3,  req: "m_prod1", desc: "+50% all production." },
-  { id: "m_prod3",  pos: {x: 62, y: 8}, name: "Singularity Engine",  cost: 15, req: "m_prod2", desc: "×5 all production." },
-  { id: "m_start",  pos: {x: 15, y: 52}, name: "Head Start Protocol", cost: 2,  desc: "Every run starts with 2,500 Metal." },
-  { id: "m_click",  pos: {x: 38, y: 32}, name: "Gravity Gloves",      cost: 3,  req: "m_prod1", desc: "All mining power ×3." },
-  { id: "m_sci",    pos: {x: 38, y: 46}, name: "Cosmic Consciousness",cost: 3,  req: "m_prod1", desc: "Science output ×2." },
-  { id: "m_travel", pos: {x: 38, y: 58}, name: "Wormhole Charts",     cost: 4,  req: "m_start", desc: "Colonization costs −50%." },
-  { id: "m_off",    pos: {x: 62, y: 46}, name: "Ascended Rest",       cost: 5,  req: "m_sci",   desc: "Offline progress at 100%." },
-  { id: "m_shard",  pos: {x: 62, y: 22}, name: "Shard Resonance",     cost: 6,  req: "m_prod2", desc: "+50% Ascendancy Shards on ascend." },
-  { id: "m_auto",   pos: {x: 62, y: 34}, name: "Drone Overmind",      cost: 8,  req: "m_prod2", desc: "Runs start with 10 free tier-1 buildings per colonized planet." },
-  { id: "m_memory", pos: {x: 62, y: 58}, name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
-];
-
-const ACH = [
-  { id: "a_click1", name: "Hands Dirty",     desc: "Mine 100 times.",            cond: s => s.stats.clicks >= 100 },
-  { id: "a_click2", name: "Blistered",       desc: "Mine 1,000 times.",          cond: s => s.stats.clicks >= 1000 },
-  { id: "a_click3", name: "Carpal Ascension",desc: "Mine 10,000 times.",         cond: s => s.stats.clicks >= 10000 },
-  { id: "a_b1", name: "Foreman",        desc: "Own 10 colonists.",    cond: s => totalBuildings() >= 10 },
-  { id: "a_b2", name: "Governor",       desc: "Own 50 colonists.",    cond: s => totalBuildings() >= 50 },
-  { id: "a_b3", name: "Overlord",       desc: "Own 150 colonists.",   cond: s => totalBuildings() >= 150 },
-  { id: "a_b4", name: "Singularity Boss", desc: "Own 400 colonists.", cond: s => totalBuildings() >= 400 },
-  { id: "a_luna",   name: "One Small Step",  desc: "Colonize Luna.",      cond: s => s.unlocked.includes("luna") },
-  { id: "a_ceres",  name: "Belt Explorer",   desc: "Colonize Ceres.",     cond: s => s.unlocked.includes("ceres") },
-  { id: "a_aurelia",name: "Storm Rider",     desc: "Colonize Aurelia.",   cond: s => s.unlocked.includes("aurelia") },
-  { id: "a_lab1", name: "Peer Reviewed",  desc: "Own 1 Research Lab.",  cond: s => s.labs >= 1 },
-  { id: "a_lab2", name: "R&D Division",   desc: "Own 10 Research Labs.",cond: s => s.labs >= 10 },
-  { id: "a_lab3", name: "Science Empire", desc: "Own 25 Research Labs.",cond: s => s.labs >= 25 },
-  { id: "a_sci1", name: "Curious",   desc: "Earn 100 lifetime Science.",    cond: s => (s.lifetime.Science||0) >= 100 },
-  { id: "a_sci2", name: "Enlightened", desc: "Earn 1,000 lifetime Science.", cond: s => (s.lifetime.Science||0) >= 1000 },
-  { id: "a_sci3", name: "Omniscient", desc: "Earn 10,000 lifetime Science.", cond: s => (s.lifetime.Science||0) >= 10000 },
-  { id: "a_m1", name: "Industrialist", desc: "Earn 1M lifetime Metal.",   cond: s => (s.lifetime.Metal||0) >= 1e6 },
-  { id: "a_m2", name: "Metal Tycoon",  desc: "Earn 1B lifetime Metal.",   cond: s => (s.lifetime.Metal||0) >= 1e9 },
-  { id: "a_am1", name: "Antimatter Touch", desc: "Earn 10K lifetime Antimatter.", cond: s => (s.lifetime.Antimatter||0) >= 1e4 },
-  { id: "a_am2", name: "Annihilation Baron", desc: "Earn 1M lifetime Antimatter.", cond: s => (s.lifetime.Antimatter||0) >= 1e6 },
-  { id: "a_c1", name: "Comet Catcher", desc: "Catch 1 Golden Comet.",  cond: s => s.stats.comets >= 1 },
-  { id: "a_c2", name: "Comet Whisperer", desc: "Catch 10 Golden Comets.", cond: s => s.stats.comets >= 10 },
-  { id: "a_asc1", name: "Reborn",     desc: "Ascend once.",   cond: s => s.ascensions >= 1 },
-  { id: "a_asc2", name: "Eternal Cycle", desc: "Ascend 5 times.", cond: s => s.ascensions >= 5 },
-];
-
+/* ============ NEWS ============ */
 const NEWS = [
-  "Astronomers detect unusually rhythmic mining coming from Terra Nova.",
-  "Breaking: Luna confirmed still made of cheese. Experts disappointed.",
-  "The Ceres Belt files a complaint about strip mining. Complaint shredded into confetti.",
-  "Aurelia's storms go quiet for a moment. Everyone agrees not to talk about it.",
-  "The Galactic Union sends a form letter. You send back Metal.",
-  "Scientists baffled by pile of Metal that keeps growing anyway.",
-  "Helium-3 futures soar as your refineries cough politely.",
+  "Astronomers detect unusually rhythmic stardust collection.",
+  "Your drones have formed a union. Their demand: more drones.",
+  "The Moon wants its regolith back. Request denied.",
   "A comet passes by. It waves.",
-  "Anti-mining activists arrive on Terra Nova. They are handed shovels.",
-  "The Moon called. It wants its regolith back.",
-  "Your economy is now 94% you. Economists are nervous.",
-  "Local asteroids report feeling 'lightly quarryed'.",
-  "Your Planetary Forge is visible from orbit. Tourists love it.",
-  "A mysterious voice whispers 'buy more drills'. You feel it is right.",
-  "A shard-based religion is founded in your honor. Tithes accepted in Antimatter.",
-  "Space smells like burnt steak, according to your returning carriers.",
-  "The Continuum Engine hums a tune nobody else can hear.",
-  "Interstellar post: 'STOP MINING' scratched into a passing meteor.",
   "Number goes up. Citizens rejoice.",
-  "Your colonies have started a band. The genre is industrial.",
-  "Deep-space telescopes now mostly point back at your stuff.",
-  "Someone screenshotted your Metal count. It was outdated immediately.",
-  "The Union of Idle Miners requests shorter idles. Request ignored.",
-  "A wormhole opens, sneezes Metal, closes.",
-  "Critics call your empire 'aggressively incremental'. You take it as praise.",
+  "Scientists baffled by pile of stardust that keeps growing anyway.",
+  "Economists confirm: you are now 94% of the economy. They are nervous.",
+  "Local asteroids report feeling 'lightly quarried'.",
+  "The Galactic Union sends a form letter. You send back dust.",
   "Weather forecast: vacuum, with scattered debris.",
-  "Archaeologists find a drill older than recorded history. It still works.",
+  "Your Warp Relay hums a tune nobody else can hear.",
+  "Critics call your empire 'aggressively incremental'. You take it as praise.",
+  "Someone screenshotted your stardust count. It was outdated immediately.",
+  "Deep-space telescopes now mostly point back at your stuff.",
+  "A wormhole opens, sneezes stardust, closes.",
+  "The Continuum Engine denies being seen yesterday.",
+  "Archaeologists find a drone older than recorded history. It still works.",
+  "Fusion Plant overheats while trying to impress the Moon Base.",
   "Galactic news skips your empire for the third season running. Ratings dip.",
+  "Black Hole Tap reports nothing. Communication described as 'heavy'.",
+  "The Nebula Collector was caught stealing colors from a sunset.",
+  "Dyson Panel output up 12% after being polished by a passing comet.",
+  "Your rovers have started a band. The genre is industrial.",
+  "Stardust prices plummet. You are the market. Prices recover.",
+  "Anti-mining activists arrive. They are handed shovels.",
+  "Alien civilization sends decode of your news ticker: 'lol'.",
+  "The stars look closer today. Report if they get closer still.",
+  "Idle Miners Union requests shorter idles. Request ignored.",
 ];
+
+/* ============ DATA: 14 buildings, CC's exact cost/production ladder ============ */
+const BUILDINGS = [
+  { id: "drone",    name: "Scrap Drone",        base: 15,      rate: 0.1,     desc: "Picks stardust off the ground with tiny tweezers." },
+  { id: "rover",    name: "Mining Rover",       base: 100,     rate: 1,       desc: "Six wheels, zero brakes, one job." },
+  { id: "refinery", name: "Ore Refinery",       base: 1100,    rate: 8,       desc: "Turns boring rocks into shiny dust." },
+  { id: "probe",    name: "Survey Probe",       base: 12000,   rate: 47,      desc: "Finds dust where no dust has been found before." },
+  { id: "moonbase", name: "Moon Base",          base: 130000,  rate: 260,     desc: "Great views. Terrible gift shop." },
+  { id: "yard",     name: "Orbital Shipyard",   base: 1.4e6,   rate: 1400,    desc: "Builds the tools that build the tools." },
+  { id: "fusion",   name: "Fusion Plant",       base: 2e7,     rate: 7800,    desc: "A tiny star in a very sturdy box." },
+  { id: "rig",      name: "Asteroid Rig",       base: 3.3e8,   rate: 44000,   desc: "Mines rocks that mine other rocks." },
+  { id: "relay",    name: "Warp Relay",         base: 5.1e9,   rate: 260000,  desc: "Ships dust before you ordered it." },
+  { id: "nebula",   name: "Nebula Collector",   base: 7.5e10,  rate: 1.6e6,   desc: "Sweeps constellations with a very large net." },
+  { id: "dyson",    name: "Dyson Panel",        base: 1e12,    rate: 1e7,     desc: "A solar panel with ambitions." },
+  { id: "hole",     name: "Black Hole Tap",     base: 1.4e13,  rate: 6.5e7,   desc: "Dust goes in, nothing comes out. Profit somehow." },
+  { id: "lens",     name: "Galaxy Lens",        base: 1.7e14,  rate: 4.3e8,   desc: "Focuses an entire galaxy into a jar." },
+  { id: "continuum",name: "Continuum Engine",   base: 2.1e15,  rate: 2.9e9,   desc: "It shouldn't exist. It disagrees." },
+];
+const COST_MULT = 1.15;
+const MS_STEPS = [1, 10, 25, 50, 100, 200];
+const MS_MULT = [10, 60, 500, 5000, 60000, 1e6];
+const MS_NAMES = ["Tungsten", "Iridium", "Quantum", "Photonic", "Exotic", "Transcendent"];
 
 /* ============ STATE ============ */
-
-const SAVE_KEY = "stellar-ascent-save";
+const SAVE_KEY = "stellar-ascent-v4";
 let S = newState();
-
 function newState() {
   return {
-    res: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
-    lifetime: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
-    spent: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
-    buildings: {},     // "planetId:buildingId" -> count
-    labs: 0,
-    upgrades: {},      // upgrade id -> level (repeatable)
-    msUpg: [],         // milestone upgrade ids owned (one-shot)
-    techs: [],         // tech ids owned
-    masteries: [],     // mastery ids owned (persist through ascension)
-    shards: 0,
-    unlocked: ["terra"],
-    current: "terra",
-    buyMode: 1,
-    mute: false,
-    stats: { clicks: 0, comets: 0 },
-    ach: [],           // achievement ids owned
-    buffs: {},         // { rushUntil, frenzyUntil }
-    nextComet: 0,
-    lastTick: Date.now(),
-    started: Date.now(),
-    ascensions: 0,
+    dust: 0, lifetime: 0,
+    clickCount: 0, handMade: 0,
+    buildings: {}, upgrades: [], ach: [], tree: [],
+    comets: 0, shards: 0, shardsEarned: 0, ascensions: 0,
+    buffs: {}, nextComet: 0,
+    buyMode: 1, mute: false,
+    lastTick: Date.now(), started: Date.now(),
   };
 }
 
 /* ============ HELPERS ============ */
-
 const $ = id => document.getElementById(id);
-const PLANET = id => PLANETS.find(p => p.id === id);
+const B = id => BUILDINGS.find(b => b.id === id);
+const owned = id => S.buildings[id] || 0;
 
 function fmt(n) {
+  if (!isFinite(n)) return "∞";
   if (n < 1000) return (n < 10 && n % 1 !== 0) ? n.toFixed(1) : Math.floor(n).toString();
-  const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp"];
+  const units = ["K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "De"];
   let i = -1;
   while (n >= 1000 && i < units.length - 1) { n /= 1000; i++; }
   return n.toFixed(n < 10 ? 2 : n < 100 ? 1 : 0) + units[i];
 }
-
-function globalProdMult() {
-  let m = 1;
-  for (const t of S.techs) {
-    const def = TECHS.find(x => x.id === t);
-    if (def && def.effect === "global") m += def.val;
-  }
-  if (mOwned("m_prod1")) m += 0.25;
-  if (mOwned("m_prod2")) m += 0.5;
-  if (mOwned("m_prod3")) m *= 5;
-  m *= synergyMult();
-  return m;
-}
-
-/* Colony Synergy: every 25 colonists boosts the whole empire by 5%. */
-function synergyMult() { return 1 + 0.05 * Math.floor(totalBuildings() / 25); }
-function nextSynergyAt() { return (Math.floor(totalBuildings() / 25) + 1) * 25; }
-
-/* Building milestone upgrades: at 10/25/50/100/200 owned, a one-shot x2 production upgrade unlocks. */
-const MS_STEPS = [10, 25, 50, 100, 200];
-const ROMAN = ["I", "II", "III", "IV", "V"];
-function msOwned(id) { return S.msUpg.includes(id); }
-function msMult(pid, b) {
-  let m = 1;
-  MS_STEPS.forEach((n, i) => { if (msOwned(`ms:${pid}:${b.id}:${n}`)) m *= 2; });
-  return m;
-}
-function msUpgradesFor(pid, b) {
-  const have = S.buildings[pid + ":" + b.id] || 0;
-  return MS_STEPS.map((n, i) => ({
-    id: `ms:${pid}:${b.id}:${n}`,
-    n, have,
-    name: `${b.name} Overdrive ${ROMAN[i]}`,
-    desc: `${b.name} production \u00D72.`,
-    cost: Math.ceil(b.baseCost * n * 12),
-    owned: msOwned(`ms:${pid}:${b.id}:${n}`),
-    icon: iconFor(pid, b.id),
-    locked: have < n,
-  })).filter(u => u.locked ? false : true && !u.owned);
-}
-function techEffectVal(effect) {
-  let v = 1;
-  for (const t of S.techs) {
-    const def = TECHS.find(x => x.id === t);
-    if (def && def.effect === effect) v *= def.val;
-  }
-  return v;
-}
-
-function mOwned(id) { return S.masteries.includes(id); }
-
-function totalBuildings() {
-  let n = S.labs;
-  for (const k in S.buildings) n += S.buildings[k];
-  return n;
-}
-
-function achMult() { return 1 + 0.01 * S.ach.length; }
-function buffMult() { return Date.now() < (S.buffs.rushUntil || 0) ? 7 : 1; }
-function frenzyMult() { return Date.now() < (S.buffs.frenzyUntil || 0) ? 777 : 1; }
-
-function clickMult(planet) {
-  let m = 1;
-  for (const u of PLANET(planet).upgrades) if (u.type === "click") m *= Math.pow(u.val, upgLevel(u.id));
-  for (const t of S.techs) {
-    const def = TECHS.find(x => x.id === t);
-    if (def && def.effect === "click") m *= def.val;
-  }
-  if (mOwned("m_click")) m *= 3;
-  return m;
-}
-
-function upgLevel(id) { return S.upgrades[id] || 0; }
-function upgCost(u) { return Math.ceil(u.cost * Math.pow(4, upgLevel(u.id))); }
-
-function prodMult(planet) {
-  let m = globalProdMult();
-  for (const u of PLANET(planet).upgrades) if (u.type === "prod") m *= Math.pow(u.val, upgLevel(u.id));
-  return m;
-}
-
-function sciMult() {
-  let m = 1;
-  for (const t of S.techs) {
-    const def = TECHS.find(x => x.id === t);
-    if (def && def.effect === "sci") m *= def.val;
-  }
-  if (mOwned("m_sci")) m *= 2;
-  return m;
-}
-
-function clickPower(planet) {
-  // 1 + 2% of per-second production, times click multipliers
-  return (2 + 0.05 * planetRate(planet)) * clickMult(planet) * frenzyMult();
-}
-
-function planetRate(planet) {
-  let sum = 0;
-  for (const b of PLANET(planet).buildings) {
-    sum += (S.buildings[planet + ":" + b.id] || 0) * b.rate * msMult(planet, b);
-  }
-  return sum * prodMult(planet) * achMult() * buffMult();
-}
-
-function labRate() {
-  return S.labs * 0.5 * sciMult() * achMult();
-}
-
-function techOwned(id) { return S.techs.includes(id); }
-function techAvailable(t) {
-  return !techOwned(t.id) && (!t.req || techOwned(t.req));
-}
-
-function bCost(planet, b, n) {
-  // total cost for buying n (already-owned count = current)
-  const have = S.buildings[planet + ":" + b.id] || 0;
-  const r = b.mult;
-  return Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
-}
-
-/* SIMPLE ECONOMY: tiers 1-2 cost Metal. Tiers 3+ cost ONLY the planet's own resource.
-   (Travel costs, labs and techs are the mixed-resource sinks.) */
-function hasResCost(pid, ti) { return PLANET(pid).res !== "Metal" && ti >= 2; }
-
-function bCostObj(pid, b, ti, n) {
-  const have = S.buildings[pid + ":" + b.id] || 0;
-  const r = b.mult;
-  const growth = Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1);
-  if (hasResCost(pid, ti)) return { [PLANET(pid).res]: Math.ceil(b.baseCost * growth) };
-  return { Metal: Math.ceil(b.baseCost * growth) };
-}
-
-function maxAffordable(planet, b) {
-  const r = b.mult;
-  const have = S.buildings[planet + ":" + b.id] || 0;
-  const ti = PLANET(planet).buildings.indexOf(b);
-  const cur = hasResCost(planet, ti) ? PLANET(planet).res : "Metal";
-  const base = hasResCost(planet, ti) ? b.baseCost : b.baseCost;
-  const n = Math.floor(Math.log((S.res[cur] || 0) * (r - 1) / (base * Math.pow(r, have)) + 1) / Math.log(r));
-  return Math.max(0, Math.min(n, 5000));
-}
-
-function canPay(cost) {
-  for (const k in cost) if ((S.res[k] || 0) < cost[k]) return false;
-  return true;
-}
-
-function pay(cost) {
-  for (const k in cost) {
-    S.res[k] -= cost[k];
-    S.spent[k] = (S.spent[k] || 0) + cost[k];
-  }
-}
-
-function costStr(cost) {
-  return Object.entries(cost).map(([k, v]) => `${fmt(v)} ${k}`).join(", ");
-}
-
-function unlockCost(p) {
-  if (!p.unlockCost) return null;
-  if (!mOwned("m_travel")) return p.unlockCost;
-  const c = {};
-  for (const k in p.unlockCost) c[k] = Math.ceil(p.unlockCost[k] / 2);
-  return c;
-}
-
-/* ============ ACHIEVEMENTS & COMETS ============ */
-
-function toast(text) {
-  const el = document.createElement("div");
-  el.className = "toast";
-  el.textContent = text;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 4200);
-}
-
-function checkAchievements() {
-  let newly = 0;
-  for (const a of ACH) {
-    if (S.ach.includes(a.id)) continue;
-    if (a.cond(S)) { S.ach.push(a.id); newly++; }
-  }
-  if (newly) {
-    SFX.ach();
-    toast(`Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`);
-    renderAch();
-  }
-}
-
-function renderAch() {
-  const grid = $("ach-grid");
-  if (!grid) return;
-  $("ach-count").textContent = `${S.ach.length}/${ACH.length} (+${S.ach.length}%)`;
-  grid.innerHTML = "";
-  for (const a of ACH) {
-    const owned = S.ach.includes(a.id);
-    const d = document.createElement("div");
-    d.className = "ach" + (owned ? " owned" : "");
-    if (owned) d.innerHTML = ric("trophy"); else d.textContent = "?";
-    d.title = owned ? `${a.name} — ${a.desc}` : `??? — ${a.desc}`;
-    grid.appendChild(d);
-  }
-}
-
-function scheduleComet() {
-  S.nextComet = Date.now() + (2 + Math.random() * 4) * 60000 / techEffectVal("comet_freq");
-}
-
-function spawnComet() {
-  SFX.comet();
-  const el = document.createElement("img");
-  el.className = "comet";
-  el.src = pixelCometURL();
-  el.style.setProperty("--y0", 10 + Math.random() * 50 + "vh");
-  document.body.appendChild(el);
-  const done = setTimeout(() => el.remove(), 11000 * techEffectVal("comet_life"));
-  el.onclick = e => {
-    clearTimeout(done);
-    el.remove();
-    catchComet(e);
-  };
-}
-
-let _cometURL = null;
-function pixelCometURL() {
-  if (_cometURL) return _cometURL;
-  const cv = document.createElement("canvas");
-  cv.width = 16; cv.height = 16;
-  const x = cv.getContext("2d");
-  const px = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a, b, w, h); };
-  const T = "#5ee6d0", T2 = "#9ffbe8", H = "#ffd166", W = "#fff3c4";
-  px(2, 1, 1, 1, T); px(1, 2, 1, 1, T); px(3, 2, 1, 1, T2); px(2, 3, 1, 1, T);
-  px(4, 3, 1, 1, T); px(3, 4, 1, 1, T2); px(1, 4, 1, 1, T); px(4, 5, 1, 1, T);
-  px(3, 6, 1, 1, T2); px(5, 5, 1, 1, T); px(5, 7, 1, 1, T); px(6, 6, 1, 1, T2);
-  px(8, 6, 4, 1, H); px(7, 7, 6, 3, H); px(8, 10, 4, 1, H);
-  px(8, 7, 3, 2, W); px(9, 8, 2, 1, W); px(11, 7, 2, 3, "#e8a53a");
-  px(12, 6, 1, 1, "#e8a53a"); px(12, 10, 1, 1, "#e8a53a");
-  _cometURL = cv.toDataURL();
-  return _cometURL;
-}
-
-function catchComet(evt) {
-  S.stats.comets++;
-  const roll = Math.random();
-  SFX.rush();
-  if (roll < 0.45) {
-    S.buffs.rushUntil = Date.now() + 30000;
-    toast("COMET RUSH! All production ×7 for 30s");
-  } else if (roll < 0.8) {
-    let gained = [];
-    for (const pid of S.unlocked) {
-      const p = PLANET(pid);
-      const amt = Math.max(planetRate(pid) * 120, 25 * clickPower(pid) / frenzyMult());
-      S.res[p.res] += amt;
-      S.lifetime[p.res] += amt;
-      gained.push(`+${fmt(amt)} ${p.res}`);
-    }
-    toast("STARDUST SHOWER! " + gained.join(", "));
-  } else {
-    S.buffs.frenzyUntil = Date.now() + 15000;
-    toast("CLICK FRENZY! Mining power ×777 for 15s");
-  }
-  floatNum(evt, "COMET!");
-  renderChips();
-  checkAchievements();
-  save();
-}
-
-function tickBuffs() {
-  if (!S.nextComet) scheduleComet();
-  if (Date.now() >= S.nextComet && !document.querySelector(".comet")) {
-    spawnComet();
-    scheduleComet();
-  }
-}
-
-/* ============ NEWS TICKER & STATS ============ */
-
-let newsIdx = Math.floor(Math.random() * NEWS.length);
-
-function rotateNews(manual) {
-  const el = $("news-text");
-  if (!el) return;
-  newsIdx = manual ? (newsIdx + 1) % NEWS.length : (newsIdx + 1 + Math.floor(Math.random() * 3)) % NEWS.length;
-  el.classList.remove("news-fade");
-  void el.offsetWidth; // restart animation
-  el.classList.add("news-fade");
-  el.textContent = NEWS[newsIdx];
-}
-
 function fmtTime(ms) {
   const s = Math.floor(ms / 1000);
   const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
   return (d ? d + "d " : "") + (h ? h + "h " : "") + m + "m";
 }
+function totalBuildings() { return BUILDINGS.reduce((s, b) => s + owned(b.id), 0); }
+function achMult() { return 1 + 0.01 * S.ach.length; }
+function shardMult() { return 1 + 0.02 * S.shardsEarned * (treeOwned("h_amp") ? 1.5 : 1); }
+function treeOwned(id) { return S.tree.includes(id); }
+function buffMult() { return Date.now() < (S.buffs.rushUntil || 0) ? 7 : 1; }
+function frenzyMult() { return Date.now() < (S.buffs.frenzyUntil || 0) ? 777 : 1; }
 
-function renderStats() {
-  const el = $("stats-list");
-  if (!el) return;
-  const rows = [
-    ["Time played", fmtTime(Date.now() - S.started)],
-    ["Ascensions", S.ascensions],
-    ["Shards earned", S.shards],
-    ["Mine clicks", fmt(S.stats.clicks)],
-    ["Comets caught", S.stats.comets],
-    ["Colonists", totalBuildings()],
-    ["Colony synergy", `+${Math.round((synergyMult() - 1) * 100)}% (next at ${nextSynergyAt()})`],
-    ["Research Labs", S.labs],
-    ["Masteries", `${S.masteries.length}/${MASTERY.length}`],
-    ["Techs", `${S.techs.length}/${TECHS.length - 1}`],
-  ];
-  for (const p of PLANETS) {
-    if (S.unlocked.includes(p.id)) rows.push([`Lifetime ${p.res}`, fmt(S.lifetime[p.res] || 0)]);
+function buildingRate(b) {
+  let m = achMult() * shardMult() * buffMult() * globalTreeMult();
+  m *= Math.pow(2, msOwnedCount(b.id));
+  return b.rate * m;
+}
+function msOwnedCount(bid) {
+  let n = 0;
+  MS_STEPS.forEach((s, i) => { if (S.upgrades.includes(`ms:${bid}:${s}`)) n++; });
+  return n;
+}
+function globalTreeMult() {
+  let m = 1;
+  if (treeOwned("h1")) m += 0.05;
+  if (treeOwned("h2")) m += 0.10;
+  if (treeOwned("h8")) m += 0.25;
+  if (treeOwned("h11")) m += 0.50;
+  if (treeOwned("h12")) m *= 5;
+  return m;
+}
+function cps() {
+  return BUILDINGS.reduce((s, b) => s + owned(b.id) * buildingRate(b), 0);
+}
+function clickPower() {
+  let m = Math.pow(2, clickUpgLevel());
+  if (treeOwned("h3")) m *= 2;
+  let base = 1 + cps() * 0.03;
+  if (treeOwned("h9")) base += cps() * 0.01;
+  return base * m * frenzyMult();
+}
+function ric(name) { return `<img class="ric" src="${pxIcon(name)}" alt="">`; }
+function clickUpgLevel() {
+  let n = 0;
+  while (S.upgrades.includes("click:" + n)) n++;
+  return n;
+}
+
+/* building cost for n (total), CC formula */
+function bCost(b, n) {
+  const have = owned(b.id);
+  return Math.ceil(b.base * Math.pow(COST_MULT, have) * (Math.pow(COST_MULT, n) - 1) / (COST_MULT - 1));
+}
+function maxAffordable(b) {
+  const have = owned(b.id);
+  const n = Math.floor(Math.log(S.dust * (COST_MULT - 1) / (b.base * Math.pow(COST_MULT, have)) + 1) / Math.log(COST_MULT));
+  return Math.max(0, Math.min(n, 10000));
+}
+function canPay(cost) { return S.dust >= cost; }
+
+/* ============ UPGRADES ============ */
+const PRE = ["Tungsten", "Iridium", "Quantum", "Photonic", "Exotic", "Transcendent"];
+function allUpgrades() {
+  const list = [];
+  // per-building milestones
+  for (const b of BUILDINGS) {
+    MS_STEPS.forEach((n, i) => {
+      list.push({
+        id: `ms:${b.id}:${n}`,
+        name: `${PRE[i]} ${b.name}`,
+        desc: `${b.name}s are twice as efficient.`,
+        cost: Math.ceil(b.base * MS_MULT[i]),
+        icon: b.id,
+        unlocked: owned(b.id) >= n,
+        bought: S.upgrades.includes(`ms:${b.id}:${n}`),
+        kind: "ms", ref: b,
+      });
+    });
   }
-  for (const p of PLANETS) {
-    if (S.unlocked.includes(p.id) && (S.spent[p.res] || 0) > 0) rows.push([`Spent ${p.res}`, fmt(S.spent[p.res])]);
+  // click upgrades
+  for (let i = 0; i < 20; i++) {
+    list.push({
+      id: `click:${i}`,
+      name: `Reinforced Glove ${["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII","XIII","XIV","XV","XVI","XVII","XVIII","XIX","XX"][i]}`,
+      desc: "Clicking power ×2.",
+      cost: Math.ceil(100 * Math.pow(14, i)),
+      icon: "click",
+      unlocked: S.clickCount >= [0, 50, 200, 500, 1000, 2000, 3500, 5000, 7000, 9000, 11000, 13000, 15000, 17500, 20000, 23000, 26000, 30000, 35000, 40000][i],
+      bought: S.upgrades.includes(`click:${i}`),
+      kind: "click", ref: null,
+    });
   }
-  el.innerHTML = rows.map(([k, v]) =>
-    `<div class="stat-row"><span class="stat-k">${k}</span><span class="stat-v">${v}</span></div>`).join("");
+  return list.filter(u => u.unlocked && !u.bought);
 }
 
-function save() {
-  S.lastTick = Date.now();
-  localStorage.setItem(SAVE_KEY, JSON.stringify(S));
-}
+/* ============ ACHIEVEMENTS (30, +1% each) ============ */
+const ACH = [
+  { id: "c1",  name: "Calloused",        desc: "Click 100 times.",            cond: s => s.clickCount >= 100 },
+  { id: "c2",  name: "Blistered",        desc: "Click 1,000 times.",          cond: s => s.clickCount >= 1000 },
+  { id: "c3",  name: "Carpal Ascension", desc: "Click 10,000 times.",         cond: s => s.clickCount >= 10000 },
+  { id: "b1",  name: "Foreman",          desc: "Own 10 buildings.",           cond: s => totalBuildings() >= 10 },
+  { id: "b2",  name: "Governor",         desc: "Own 50 buildings.",           cond: s => totalBuildings() >= 50 },
+  { id: "b3",  name: "Overlord",         desc: "Own 100 buildings.",          cond: s => totalBuildings() >= 100 },
+  { id: "b4",  name: "Tycoon",           desc: "Own 250 buildings.",          cond: s => totalBuildings() >= 250 },
+  { id: "b5",  name: "Singularity Boss", desc: "Own 500 buildings.",          cond: s => totalBuildings() >= 500 },
+  { id: "d1",  name: "Dust Bunny",       desc: "Collect 1,000 lifetime stardust.",  cond: s => s.lifetime >= 1e3 },
+  { id: "d2",  name: "Dust Devil",       desc: "Collect 1M lifetime stardust.",     cond: s => s.lifetime >= 1e6 },
+  { id: "d3",  name: "Dust Storm",       desc: "Collect 1B lifetime stardust.",     cond: s => s.lifetime >= 1e9 },
+  { id: "d4",  name: "Dust Galaxy",      desc: "Collect 1T lifetime stardust.",     cond: s => s.lifetime >= 1e12 },
+  { id: "d5",  name: "Dust Universe",    desc: "Collect 1Qa lifetime stardust.",    cond: s => s.lifetime >= 1e15 },
+  { id: "u1", name: "First Spark",   desc: "Buy your first upgrade.",   cond: s => s.upgrades.length >= 1 },
+  { id: "u2", name: "Upgrade Lover", desc: "Buy 10 upgrades.",          cond: s => s.upgrades.length >= 10 },
+  { id: "u3", name: "Upgrade Addict", desc: "Buy 30 upgrades.",         cond: s => s.upgrades.length >= 30 },
+  { id: "m1", name: "Drone Army",   desc: "Own 100 Scrap Drones.",   cond: s => owned("drone") >= 100 },
+  { id: "m2", name: "Rover Rally",  desc: "Own 100 Mining Rovers.",  cond: s => owned("rover") >= 100 },
+  { id: "m3", name: "Refinery King",desc: "Own 100 Ore Refineries.", cond: s => owned("refinery") >= 100 },
+  { id: "m4", name: "Fleet Admiral",desc: "Own 50 Survey Probes.",   cond: s => owned("probe") >= 50 },
+  { id: "m5", name: "Lunatic",      desc: "Own 50 Moon Bases.",      cond: s => owned("moonbase") >= 50 },
+  { id: "m6", name: "Star Crossed", desc: "Own 25 Fusion Plants.",   cond: s => owned("fusion") >= 25 },
+  { id: "m7", name: "Rock Baron",   desc: "Own 25 Asteroid Rigs.",   cond: s => owned("rig") >= 25 },
+  { id: "k1", name: "Comet Catcher",   desc: "Catch 1 Golden Comet.",  cond: s => s.comets >= 1 },
+  { id: "k2", name: "Comet Whisperer", desc: "Catch 10 Golden Comets.", cond: s => s.comets >= 10 },
+  { id: "k3", name: "Comet Deity",     desc: "Catch 50 Golden Comets.", cond: s => s.comets >= 50 },
+  { id: "a1", name: "Reborn",        desc: "Ascend once.",       cond: s => s.ascensions >= 1 },
+  { id: "a2", name: "Eternal Cycle", desc: "Ascend 5 times.",    cond: s => s.ascensions >= 5 },
+  { id: "a3", name: "Shard Hoarder", desc: "Earn 10 shards total.",  cond: s => s.shardsEarned >= 10 },
+  { id: "a4", name: "Shard Titan",   desc: "Earn 100 shards total.", cond: s => s.shardsEarned >= 100 },
+];
 
-function load() {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (!raw) return;
-  try {
-    const data = JSON.parse(raw);
-    if (Array.isArray(data.upgrades)) data.upgrades = {}; // v0.5→v0.6 migration: repeatable upgrades restart
-    S = Object.assign(newState(), data);
-    const elapsed = Math.min((Date.now() - S.lastTick) / 1000, 86400);
-    if (elapsed > 10) {
-      const rate = mOwned("m_off") ? 1 : techOwned("t_off") ? 0.75 : 0.5;
-      const gained = {};
-      let total = 0;
-      for (const p of S.unlocked) {
-        const g = planetRate(p) * elapsed * rate;
-        if (g > 0) { gained[PLANET(p).res] = (gained[PLANET(p).res] || 0) + g; total += g; }
-      }
-      const sg = labRate() * elapsed * rate;
-      if (sg > 0) { gained.Science = sg; total += sg; }
-      for (const k in gained) S.res[k] += gained[k];
-      if (total > 1) {
-        const note = $("offline-note");
-        note.textContent = "Welcome back! Offline " +
-          Math.floor(elapsed / 3600) + "h " + Math.floor((elapsed % 3600) / 60) + "m → " +
-          Object.entries(gained).map(([k, v]) => "+" + fmt(v) + " " + k).join(", ");
-      }
-    }
-  } catch (e) { console.warn("bad save", e); }
-}
+/* ============ ASCENSION TREE ============ */
+const TREE = [
+  { id: "h1",  name: "Starter Dust",    cost: 1,   pos: {x: 50, y: 8},  req: null,      desc: "+5% all production." },
+  { id: "h3",  name: "Click Precision", cost: 3,   pos: {x: 25, y: 24}, req: "h1",      desc: "Clicking power ×2." },
+  { id: "h2",  name: "Legacy Dust",     cost: 3,   pos: {x: 75, y: 24}, req: "h1",      desc: "+10% all production." },
+  { id: "h4",  name: "Comet Charm",     cost: 5,   pos: {x: 12, y: 40}, req: "h3",      desc: "Comets appear 2× more often." },
+  { id: "h5",  name: "Shard Amplifier", cost: 10,  pos: {x: 88, y: 40}, req: "h2",      desc: "Each shard gives +3% production instead of +2%." },
+  { id: "h6",  name: "Head Start",      cost: 5,   pos: {x: 30, y: 52}, req: "h4",      desc: "Begin each run with 1M stardust." },
+  { id: "h7",  name: "Offline Mind",    cost: 5,   pos: {x: 70, y: 52}, req: "h5",      desc: "Offline progress at 100% instead of 60%." },
+  { id: "h8",  name: "Deep Economy",    cost: 20,  pos: {x: 50, y: 60}, req: "h6",      desc: "+25% all production." },
+  { id: "h9",  name: "Click Storm",     cost: 20,  pos: {x: 12, y: 72}, req: "h6",      desc: "Clicks also grant 1% of your per-second output." },
+  { id: "h10", name: "Golden Age",      cost: 40,  pos: {x: 88, y: 72}, req: "h7",      desc: "Buff durations +50%." },
+  { id: "h11", name: "Cosmic Legacy",   cost: 60,  pos: {x: 35, y: 86}, req: "h8",      desc: "+50% all production." },
+  { id: "h12", name: "Singularity",     cost: 150, pos: {x: 65, y: 86}, req: "h8",      desc: "×5 all production. The end of the road." },
+];
+function shardGain() { return Math.floor(Math.sqrt(S.lifetime / 1e12)); }
 
-/* ============ AUDIO (synthesized, no assets) ============ */
+/* ============ AUDIO (synth) ============ */
 let AC = null;
 function initAudio() {
   if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
@@ -594,28 +260,39 @@ const SFX = {
   comet() { tone(900, 0.5, "sawtooth", 0.05, 0, 200); },
   rush()  { tone(200, 0.3, "sawtooth", 0.09, 0, 800); tone(800, 0.25, "square", 0.07, 0.2, 1600); },
   ascend(){ tone(150, 0.6, "sawtooth", 0.1, 0, 1200); tone(600, 0.5, "triangle", 0.09, 0.4, 2400); },
-  travel(){ tone(250, 0.2, "triangle", 0.09, 0, 700); tone(700, 0.25, "triangle", 0.09, 0.15, 1400); },
 };
 
-/* ============ ACTIONS ============ */
+/* ============ SAVE / LOAD ============ */
+function save() { S.lastTick = Date.now(); localStorage.setItem(SAVE_KEY, JSON.stringify(S)); }
+function load() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return;
+  try {
+    S = Object.assign(newState(), JSON.parse(raw));
+    const elapsed = Math.min((Date.now() - S.lastTick) / 1000, 86400);
+    if (elapsed > 10) {
+      const rate = treeOwned("h7") ? 1 : 0.6;
+      const g = cps() * elapsed * rate;
+      if (g > 1) {
+        S.dust += g; S.lifetime += g;
+        setTimeout(() => toast("Welcome back! Offline " + fmtTime(elapsed) + " → +" + fmt(g) + " stardust"), 500);
+      }
+    }
+  } catch (e) { console.warn("bad save"); }
+}
 
-function mine(planet, evt, btn) {
-  if (!planet || !PLANET(planet)) planet = S.unlocked.includes(S.current) ? S.current : "terra";
-  const p = PLANET(planet);
-  const amt = clickPower(planet);
-  S.res[p.res] += amt;
-  S.lifetime[p.res] += amt;
-  S.stats.clicks++;
-  if (techOwned("t_click_yield")) S.res.Metal += amt;
+/* ============ ACTIONS ============ */
+function clickPlanet(evt) {
   initAudio();
+  const amt = clickPower();
+  S.dust += amt; S.lifetime += amt; S.clickCount++;
   SFX.click();
-  if (btn) {
-    btn.classList.add("pressed");
-    clearTimeout(btn._pt);
-    btn._pt = setTimeout(() => btn.classList.remove("pressed"), 110);
-  }
+  const bp = $("big-planet");
+  bp.classList.add("pressed");
+  clearTimeout(bp._pt);
+  bp._pt = setTimeout(() => bp.classList.remove("pressed"), 90);
   if (evt) {
-    floatNum(evt, "+" + fmt(amt) + " " + p.res);
+    floatNum(evt, "+" + fmt(amt));
     for (let i = 0; i < 4; i++) {
       const sp = document.createElement("div");
       sp.className = "spark";
@@ -623,174 +300,42 @@ function mine(planet, evt, btn) {
       sp.style.top = (evt.clientY + (Math.random() * 12 - 6)) + "px";
       sp.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
       sp.style.setProperty("--dy", (-30 - Math.random() * 40) + "px");
-      sp.style.background = p.color;
+      sp.style.background = "#ffd166";
       document.body.appendChild(sp);
       setTimeout(() => sp.remove(), 500);
     }
   }
 }
-
-function floatNum(evt, text) {
-  const el = document.createElement("div");
-  el.className = "float-num";
-  el.textContent = text;
-  el.style.left = (evt.clientX - 10 + (Math.random() * 24 - 12)) + "px";
-  el.style.top = (evt.clientY - 20) + "px";
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-function buyBuilding(planet, b) {
-  let n = S.buyMode === "max" ? maxAffordable(planet, b) : S.buyMode;
-  if (n <= 0) return;
-  const ti = PLANET(planet).buildings.indexOf(b);
-  const cost = bCostObj(planet, b, ti, n);
+function buyBuilding(b) {
+  let n = S.buyMode === "max" ? Math.max(1, maxAffordable(b)) : S.buyMode;
+  const cost = bCost(b, n);
   if (!canPay(cost)) return;
-  pay(cost);
-  S.buildings[planet + ":" + b.id] = (S.buildings[planet + ":" + b.id] || 0) + n;
+  initAudio(); SFX.buy();
+  S.dust -= cost;
+  S.buildings[b.id] = owned(b.id) + n;
+  renderStore();
 }
-
 function buyUpgrade(u) {
-  const lvl = upgLevel(u.id);
-  const cost = upgCost(u);
-  if (!canPay({ Metal: cost })) return;
-  pay({ Metal: cost });
-  S.upgrades[u.id] = lvl + 1;
+  if (!canPay(u.cost)) return;
+  initAudio(); SFX.upgrade();
+  S.dust -= u.cost;
+  S.upgrades.push(u.id);
+  renderStore();
 }
-
-function buyTech(t) {
-  if (!techAvailable(t)) return;
-  const cost = { ...t.cost };
-  if (!canPay(cost)) return;
-  pay(cost);
-  S.techs.push(t.id);
-  if (t.effect === "building") S.labs++;
-}
-
-function buyLab() {
-  const cost = labCost();
-  if (!canPay(cost)) return;
-  pay(cost);
-  S.labs++;
-}
-
-function labCost() {
-  return { Metal: Math.ceil(400 * Math.pow(1.7, S.labs)), Crystal: Math.ceil(120 * Math.pow(1.7, S.labs)) };
-}
-
-function travel(planet) {
-  const p = PLANET(planet);
-  const cost = unlockCost(p);
-  if (!cost || !canPay(cost) || S.unlocked.includes(planet)) return;
-  SFX.travel();
-  pay(cost);
-  S.unlocked.push(planet);
-  S.current = planet;
-  renderNav();
-  renderPlanet();
-}
-
-/* ============ ASCENDANCY ============ */
-
-function shardGain() {
-  const am = S.lifetime.Antimatter || 0;
-  let g = Math.floor(Math.sqrt(am / 250000));
-  if (mOwned("m_shard")) g = Math.floor(g * 1.5);
-  return g;
-}
-
 function ascend() {
   const g = shardGain();
-  if (g < 1 || !confirm(`Ascend now for ${g} Ascendancy Shard${g > 1 ? "s" : ""}?\n\nThis resets: resources, buildings, upgrades and techs.\nMasteries and shards are permanent.`)) return;
-  const kept = { shards: S.shards + g, masteries: S.masteries, lifetime: S.lifetime, ascensions: S.ascensions + 1 };
-  const keepPlanets = mOwned("m_memory");
-  const unlocked = keepPlanets ? S.unlocked : ["terra"];
-  const current = keepPlanets ? S.current : "terra";
+  if (g < 1 || !confirm(`Ascend for ${g} heavenly shard${g > 1 ? "s" : ""}?\n\nYou lose your buildings and stardust.\nShards, tree, achievements stay. Each shard earned gives +2% production forever.`)) return;
   SFX.ascend();
-  const autoStart = mOwned("m_auto");
-  const headStart = mOwned("m_start");
+  S.shards += g; S.shardsEarned += g; S.ascensions++;
+  const kept = { shards: S.shards, shardsEarned: S.shardsEarned, ascensions: S.ascensions, tree: S.tree, ach: S.ach, comets: S.comets, lifetime: S.lifetime, clickCount: S.clickCount, mute: S.mute, stats: S.stats };
   S = newState();
-  Object.assign(S, kept, { unlocked, current });
-  if (headStart) S.res.Metal = 2500;
-  if (autoStart) for (const pid of unlocked) S.buildings[pid + ":" + PLANET(pid).buildings[0].id] = 10;
-  renderNav(); renderPlanet(); renderResearch(); renderPrestige();
-  save();
-  alert(`Ascension #${S.ascensions} complete! +${g} shards.`);
+  Object.assign(S, kept);
+  if (treeOwned("h6")) S.dust = 1e6;
+  renderAll(); save();
+  toast(`Ascension #${S.ascensions}: +${g} shards`);
 }
 
-function renderPrestige() {
-  const g = shardGain();
-  $("shard-info").innerHTML =
-    `${ric("shard")} <span class="shards">${S.shards}</span> Ascendancy Shards` +
-    (S.ascensions ? ` · ${S.ascensions} ascension${S.ascensions > 1 ? "s" : ""}` : "") +
-    `<br><span style="color:var(--dim)">Ascending now: +${g} shards` +
-    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(250000)})` : "") +
-    `</span>`;
-  const btn = $("ascend-btn");
-  btn.disabled = g < 1;
-  btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} shards`;
-
-  // constellation tree (CC heavenly-style)
-  const ml = $("masteries");
-  const W = 100, H = 66;
-  let lines = "";
-  for (const m of MASTERY) {
-    if (!m.req) continue;
-    const from = MASTERY.find(x => x.id === m.req);
-    const on = mOwned(m.id) || mOwned(m.req);
-    lines += `<line x1="${from.pos.x}" y1="${from.pos.y}" x2="${m.pos.x}" y2="${m.pos.y}" stroke="${on ? "#8a5ec4" : "#39315a"}" stroke-width="0.5"/>`;
-  }
-  let nodes = "";
-  for (const m of MASTERY) {
-    const owned = mOwned(m.id);
-    const avail = !owned && (!m.req || mOwned(m.req));
-    const cls = owned ? "owned" : avail ? "avail" : "locked2";
-    nodes += `<div class="mnode ${cls}" style="left:calc(${m.pos.x}% - 24px);top:calc(${m.pos.y / H * 100}% - 24px)">
-      ${ric("shard")}</div>`;
-    const nodeEl = ml.querySelectorAll(".mnode");
-  }
-  ml.innerHTML = `<div class="tree-wrap">
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${lines}</svg>
-    ${nodes}
-  </div>`;
-  // wire nodes (separately so innerHTML order is settled)
-  const nodeEls = ml.querySelectorAll(".mnode");
-  MASTERY.forEach((m, i) => {
-    const owned = mOwned(m.id);
-    const avail = !owned && (!m.req || mOwned(m.req));
-    const el = nodeEls[i];
-    attachTip(el, () => {
-      const state = owned ? "OWNED" : avail ? (S.shards >= m.cost ? "CLICK TO BUY" : "NOT ENOUGH SHARDS") : "LOCKED - requires " + (MASTERY.find(x => x.id === m.req) || {}).name;
-      return `<div class="tt-name">${m.name}</div>
-        <div class="tt-sub">${m.desc}</div>
-        ${owned ? "" : `<div class="tt-cost">${m.cost} shards - ${state}</div>`}`;
-    });
-    if (avail) el.onclick = () => {
-      if (S.shards < m.cost) return;
-      SFX.upgrade();
-      S.shards -= m.cost;
-      S.masteries.push(m.id);
-      renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
-    };
-  });
-}
-
-/* ============ RENDER ============ */
-
-/* ============ TOOLTIPS ============ */
-
-function moveTip(e) {
-  const t = $("tooltip");
-  if (!t || t.style.display !== "block") return;
-  const pad = 14;
-  let left = e.clientX + pad, top = e.clientY + pad;
-  const r = t.getBoundingClientRect();
-  if (left + r.width > innerWidth - 8) left = e.clientX - r.width - pad;
-  if (top + r.height > innerHeight - 8) top = e.clientY - r.height - pad;
-  t.style.left = left + "px";
-  t.style.top = top + "px";
-}
-
+/* ============ TOOLTIP (anchored, CC-style) ============ */
 function attachTip(el, fn) {
   el.addEventListener("mouseenter", () => {
     const t = $("tooltip");
@@ -800,503 +345,376 @@ function attachTip(el, fn) {
   });
   el.addEventListener("mouseleave", () => { $("tooltip").style.display = "none"; });
 }
-
-/* CC-style: tooltip is a fixed panel anchored beside the store, not cursor-following */
-function anchorTip(el) {
+function anchorTip() {
   const t = $("tooltip");
-  const sp = document.getElementById("store-panel");
+  const sp = $("store-panel");
   if (!sp) return;
   const r = sp.getBoundingClientRect();
-  t.style.left = "-9999px"; t.style.top = "60px";
+  t.style.left = "-9999px";
   const tr = t.getBoundingClientRect();
-  let left = r.left - tr.width - 12;
-  let top = r.top + 60;
+  let left = r.left - tr.width - 12, top = r.top + 50;
   if (left < 8) left = r.right + 12;
   if (top + tr.height > innerHeight - 16) top = innerHeight - tr.height - 16;
   t.style.left = Math.max(8, left) + "px";
-  t.style.top = Math.max(60, top) + "px";
+  t.style.top = Math.max(56, top) + "px";
 }
 
-function tipBuilding(pid, b) {
-  const have = S.buildings[pid + ":" + b.id] || 0;
-  const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
-  const total = each * have;
-  const share = planetRate(pid) > 0 ? Math.round(100 * total / planetRate(pid)) : 0;
-  const c1 = bCost(pid, b, 1);
-  return `<div class="tt-name">${b.name} <span style="color:var(--dim)">×${have}</span></div>
-    <div class="tt-sub">${b.desc}</div>
-    <div class="tt-line">Each produces <b>${fmt(each)}/s</b></div>
-    ${have ? `<div class="tt-line">You own <b>${have}</b>, producing <b>${fmt(total)}/s</b> (${share}% of this planet's output)</div>` : ""}
-    const cur2 = hasResCost(pid, p.buildings.indexOf(b)) ? p.res : "Metal";
-    <div class="tt-cost">Buy 1: ${fmt(c1)} ${cur2} · next 10: ${fmt(bCostObj(pid, b, p.buildings.indexOf(b), 10)[cur2])} ${cur2}</div>`;
+/* ============ TOASTS / FLOATS ============ */
+function toast(text) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 4200);
+}
+function floatNum(evt, text) {
+  const el = document.createElement("div");
+  el.className = "float-num";
+  el.textContent = text;
+  el.style.left = (evt.clientX - 10 + (Math.random() * 30 - 15)) + "px";
+  el.style.top = (evt.clientY - 20) + "px";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
 }
 
-function tipUpgrade(u) {
-  const lvl = upgLevel(u.id);
-  return `<div class="tt-name">${u.name} ${lvl ? `<span style="color:var(--accent2)">Lv ${lvl}</span>` : ""}</div>
-    <div class="tt-sub">${u.desc}</div>
-    <div class="tt-line">Current effect: <b>×${fmt(Math.pow(u.val, lvl))}</b></div>
-    <div class="tt-line">Next level: <b>×${fmt(Math.pow(u.val, lvl + 1))}</b></div>
-    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×4 per level)</div>`;
-}
-
-/* pixel-art planet sprites, generated per planet */
+/* ============ PIXEL ART ============ */
 function shadeColor(hex, f) {
   const v = parseInt(hex.slice(1), 16);
   const ch = s => Math.min(255, Math.max(0, Math.round(((v >> s) & 255) * f)));
   return "#" + [16, 8, 0].map(s => ch(s).toString(16).padStart(2, "0")).join("");
 }
+let _homeURL = null;
+function homePlanetURL() {
+  if (_homeURL) return _homeURL;
+  const n = 26, cv = document.createElement("canvas");
+  cv.width = n; cv.height = n;
+  const x = cv.getContext("2d");
+  let seed = 99;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const c = "#4ecdc4";
+  const shade = f => shadeColor(c, f);
+  const cols = [shade(1.35), c, shade(0.72), shade(0.45)];
+  const R = 10.5, cx = n / 2 - 0.5, cy = n / 2 - 0.5;
+  for (let y = 0; y < n; y++) for (let xx = 0; xx < n; xx++) {
+    const dx = xx - cx, dy = y - cy, d = Math.sqrt(dx * dx + dy * dy);
+    if (d > R) continue;
+    const depth = (dx + dy) / (2 * R);
+    let ci = depth < -0.45 ? 0 : depth < 0.05 ? 1 : depth < 0.5 ? 2 : 3;
+    if (ci > 0 && ci < 3 && rnd() < 0.28) ci += depth > 0.1 ? -1 : 1;
+    if (rnd() < 0.05) ci = Math.min(3, ci + 1);
+    x.fillStyle = cols[ci]; x.fillRect(xx, y, 1, 1);
+  }
+  _homeURL = cv.toDataURL();
+  return _homeURL;
+}
 
-/* unique 12x12 pixel icon per building */
-/* pixel UI icons (no emojis) */
+const ICON_CACHE = {};
+function iconFor(bid) {
+  const key = bid;
+  if (ICON_CACHE[key]) return ICON_CACHE[key];
+  const b = BUILDINGS.find(x => x.id === bid);
+  const hi = "#e8fbff", A = "#5ee6d0", A2 = "#2f9cc4", G = "#9aa3c4", G2 = "#565e85", W = "#e8e3ff", D = "#20263f", Y = "#ffd166";
+  const cv = document.createElement("canvas");
+  cv.width = 12; cv.height = 12;
+  const x = cv.getContext("2d");
+  const px = (a, b2, w, h, c) => { x.fillStyle = c; x.fillRect(a, b2, w, h); };
+  switch (bid) {
+    case "drone": px(5,1,2,1,G); px(3,2,6,1,G); px(4,3,4,2,A); px(5,5,2,3,A2); px(4,8,4,1,G2); px(5,9,2,2,Y); break;
+    case "rover": px(1,9,3,2,D); px(8,9,3,2,D); px(3,6,6,3,A); px(2,4,8,2,G); px(4,2,4,2,Y); px(5,1,2,1,W); break;
+    case "refinery": px(1,3,10,2,G2); px(2,5,8,6,G); px(3,6,2,2,A); px(6,6,2,2,A2); px(4,9,4,1,Y); px(5,1,2,2,G2); break;
+    case "probe": px(5,0,2,2,G2); px(2,2,8,3,A); px(1,3,2,1,W); px(9,3,2,1,W); px(4,5,4,2,A2); px(5,7,2,4,G2); break;
+    case "moonbase": px(2,4,8,7,G); px(3,3,6,1,W); px(3,5,2,2,A); px(6,5,2,2,Y); px(2,11,8,1,G2); px(1,2,3,2,G2); break;
+    case "yard": px(1,8,10,3,G2); px(2,5,3,3,G); px(7,5,3,3,G); px(4,2,4,3,A); px(5,1,2,1,W); px(5,6,2,2,Y); break;
+    case "fusion": px(2,2,8,8,G2); px(3,3,6,6,G); px(4,4,4,4,A); px(5,5,2,2,W); px(5,0,2,2,Y); px(5,10,2,1,Y); break;
+    case "rig": px(2,2,1,9,G2); px(9,2,1,9,G2); px(1,1,10,1,G); px(4,3,4,3,A); px(4,7,4,2,Y); px(3,10,6,1,G2); break;
+    case "relay": px(5,0,2,3,A2); px(3,3,6,2,A); px(1,5,10,2,G); px(3,7,6,2,A2); px(5,9,2,2,Y); px(1,2,2,1,W); break;
+    case "nebula": px(3,1,2,2,"#b8a9e8"); px(7,2,2,2,"#7fdbff"); px(5,4,3,2,"#ff8fb8"); px(3,6,3,3,A2); px(7,7,2,3,"#b8a9e8"); px(2,10,8,1,G); break;
+    case "dyson": px(5,1,2,10,G2); px(2,2,8,2,A); px(2,5,8,2,A2); px(2,8,8,2,A); px(4,4,4,1,W); break;
+    case "hole": px(1,1,10,10,"#2d2440"); px(3,3,6,6,"#000000"); px(4,4,4,4,"#0a0a12"); px(5,2,2,1,Y); px(8,4,2,1,"#ff8fb8"); px(2,8,2,1,"#7fdbff"); break;
+    case "lens": px(5,0,2,2,W); px(3,2,6,1,G); px(2,3,8,6,G2); px(4,4,4,4,A); px(5,5,2,2,W); px(5,9,2,2,G); break;
+    case "continuum": px(5,0,2,3,Y); px(3,2,6,3,A); px(1,4,10,2,A2); px(3,6,6,3,A); px(5,9,2,2,Y); px(4,5,4,2,W); break;
+    default: px(3,3,6,6,A);
+  }
+  ICON_CACHE[key] = cv.toDataURL();
+  return ICON_CACHE[key];
+}
+
+/* pixel UI glyphs */
 const PXI = {};
 function pxIcon(name) {
   if (PXI[name]) return PXI[name];
   const cv = document.createElement("canvas");
   cv.width = 12; cv.height = 12;
   const x = cv.getContext("2d");
-  const px = (a2, b2, w, h, c) => { x.fillStyle = c; x.fillRect(a2, b2, w, h); };
+  const px = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a, b, w, h); };
   switch (name) {
-    case "metal":
-      px(5,0,2,1,"#9aa3c4"); px(4,1,4,1,"#9aa3c4"); px(2,2,1,1,"#9aa3c4"); px(9,2,1,1,"#9aa3c4");
-      px(2,3,8,7,"#565e85"); px(3,2,1,1,"#565e85"); px(8,2,1,1,"#565e85");
-      px(1,4,1,4,"#9aa3c4"); px(10,4,1,4,"#9aa3c4"); px(3,10,6,1,"#565e85"); px(4,11,4,1,"#9aa3c4");
-      px(3,3,6,6,"#9aa3c4"); px(4,4,4,4,"#565e85"); px(5,5,2,2,"#20263f");
-      break;
-    case "helium":
-      px(3,1,5,1,"#b8a9e8"); px(2,2,7,5,"#b8a9e8"); px(3,3,2,2,"#e6ddff"); px(3,7,2,1,"#8f7cc9");
-      px(6,6,5,1,"#9a86d8"); px(5,7,7,4,"#9a86d8"); px(6,8,2,1,"#d8ccff"); px(5,11,7,1,"#7a68b8");
-      break;
-    case "crystal":
-      px(5,0,2,1,"#e8fbff"); px(4,1,4,1,"#a5e8ff"); px(3,2,6,2,"#7fdbff"); px(2,4,8,3,"#4fc3e8");
-      px(3,7,6,2,"#2f9cc4"); px(4,9,4,2,"#1f7aa0"); px(5,11,2,1,"#1a6a8f");
-      px(4,2,1,7,"#a5e8ff"); px(5,2,1,7,"#d5f6ff");
-      break;
-    case "antimatter":
-      px(5,0,2,12,"#ff6b9d"); px(0,5,12,2,"#ff6b9d");
-      px(3,3,6,6,"#ff8fb8"); px(4,4,4,4,"#ffd166"); px(5,5,2,2,"#fff3c4");
-      px(2,2,2,2,"#ff8fb8"); px(8,2,2,2,"#ff8fb8"); px(2,8,2,2,"#ff8fb8"); px(8,8,2,2,"#ff8fb8");
-      break;
-    case "science":
-      px(4,0,4,1,"#c8d8e8"); px(5,1,2,3,"#c8d8e8"); px(3,4,6,1,"#c8d8e8");
-      px(2,5,8,6,"#3a4a68"); px(3,6,6,4,"#5ee6d0"); px(4,7,4,3,"#9ffbe8"); px(5,8,2,2,"#e8fff8");
-      break;
-    case "trophy":
-      px(3,1,6,1,"#ffd166"); px(2,2,8,3,"#ffd166"); px(1,3,1,2,"#e8a53a"); px(10,3,1,2,"#e8a53a");
-      px(3,5,6,1,"#e8a53a"); px(5,6,2,3,"#e8a53a"); px(3,9,6,2,"#a06a1f");
-      px(4,3,2,2,"#fff3c4");
-      break;
-    case "news":
-      px(1,1,10,10,"#e8e3ff"); px(2,2,6,1,"#565e85"); px(2,4,8,1,"#8a94b8"); px(2,6,8,1,"#8a94b8");
-      px(2,8,5,1,"#8a94b8"); px(8,3,2,4,"#5ee6d0");
-      break;
-    case "colonist":
-      px(1,1,2,1,"#8a94b8"); px(3,2,2,1,"#8a94b8"); px(5,3,2,1,"#8a94b8"); px(7,4,2,1,"#8a94b8"); px(9,5,2,1,"#8a94b8");
-      px(7,6,1,1,"#ffd166"); px(6,7,1,2,"#c8a048"); px(5,9,1,2,"#c8a048"); px(3,11,2,1,"#8a94b8");
-      break;
     case "shard":
       px(5,0,2,2,"#f0dcff"); px(3,2,6,2,"#d29bff"); px(2,4,8,4,"#8a5ec4"); px(3,8,6,2,"#6a3fa0"); px(5,10,2,2,"#5a3590");
-      px(4,3,4,4,"#b678ff"); px(5,4,2,2,"#f0dcff");
-      break;
+      px(4,3,4,4,"#b678ff"); px(5,4,2,2,"#f0dcff"); break;
+    case "trophy":
+      px(3,1,6,1,"#ffd166"); px(2,2,8,3,"#ffd166"); px(1,3,1,2,"#e8a53a"); px(10,3,1,2,"#e8a53a");
+      px(3,5,6,1,"#e8a53a"); px(5,6,2,3,"#e8a53a"); px(3,9,6,2,"#a06a1f"); px(4,3,2,2,"#fff3c4"); break;
+    case "news":
+      px(1,1,10,10,"#e8e3ff"); px(2,2,6,1,"#565e85"); px(2,4,8,1,"#8a94b8"); px(2,6,8,1,"#8a94b8");
+      px(2,8,5,1,"#8a94b8"); px(8,3,2,4,"#5ee6d0"); break;
+    case "colonist":
+      px(1,1,2,1,"#8a94b8"); px(3,2,2,1,"#8a94b8"); px(5,3,2,1,"#8a94b8"); px(7,4,2,1,"#8a94b8"); px(9,5,2,1,"#8a94b8");
+      px(7,6,1,1,"#ffd166"); px(6,7,1,2,"#c8a048"); px(5,9,1,2,"#c8a048"); px(3,11,2,1,"#8a94b8"); break;
     case "stats":
-      px(2,8,2,3,"#5ee6d0"); px(5,5,2,6,"#ffd166"); px(8,2,2,9,"#ef476f"); px(1,11,10,1,"#565e85");
-      break;
-    case "rocket":
-      px(5,0,2,2,"#e8e3ff"); px(4,2,4,4,"#c8d0e8"); px(3,4,1,4,"#ef476f"); px(8,4,1,4,"#ef476f");
-      px(5,6,2,3,"#5ee6d0"); px(3,10,2,1,"#ef476f"); px(7,10,2,1,"#ef476f"); px(5,10,2,1,"#565e85");
-      break;
+      px(2,8,2,3,"#5ee6d0"); px(5,5,2,6,"#ffd166"); px(8,2,2,9,"#ef476f"); px(1,11,10,1,"#565e85"); break;
+    case "metal":
+      px(3,2,6,7,"#9aa3c4"); px(4,3,4,5,"#565e85"); px(3,1,6,1,"#c8d0e8"); px(2,9,8,2,"#565e85"); break;
   }
   PXI[name] = cv.toDataURL();
   return PXI[name];
 }
-const RES_KEY = { Metal: "metal", "Helium-3": "helium", Crystal: "crystal", Antimatter: "antimatter", Science: "science" };
-function ric(name) { return `<img class="ric" src="${pxIcon(name)}" alt="">`; }
-const ICON_CACHE = {};
-function iconFor(pid, bid) {
-  const key = pid + ":" + bid;
-  if (ICON_CACHE[key]) return ICON_CACHE[key];
-  const p = PLANET(pid);
-  const c = p.color, hi = shadeColor(c, 1.45), lo = shadeColor(c, 0.5);
-  const gr = "#9aa3c4", gd = "#565e85", wl = "#e8e3ff", dk = "#20263f";
+
+/* ============ COMETS ============ */
+let _cometURL = null;
+function pixelCometURL() {
+  if (_cometURL) return _cometURL;
   const cv = document.createElement("canvas");
-  cv.width = 12; cv.height = 12;
+  cv.width = 16; cv.height = 16;
   const x = cv.getContext("2d");
-  const px = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
-  switch (bid) {
-    case "drill": px(5,0,2,1,gd); px(3,1,6,1,gr); px(3,2,6,2,c); px(4,4,4,1,lo); px(5,5,2,3,c); px(4,8,4,1,lo); px(5,9,2,2,hi); break;
-    case "rig": px(2,2,2,9,gd); px(8,2,2,9,gd); px(1,1,10,1,gr); px(4,3,4,2,c); px(4,6,4,2,lo); px(4,9,4,2,hi); break;
-    case "quarry": px(1,2,10,2,gr); px(2,4,8,2,c); px(3,6,6,2,lo); px(4,8,4,2,hi); px(5,10,2,1,dk); break;
-    case "cannon": px(1,7,3,4,gd); px(3,5,3,2,gr); px(5,4,6,2,c); px(5,6,4,1,lo); px(10,4,1,2,wl); break;
-    case "elevator": px(5,0,2,11,gd); px(4,1,4,1,gr); px(4,10,4,1,gr); px(5,3,2,3,c); px(5,6,2,2,hi); break;
-    case "forge": px(1,6,10,5,gd); px(2,4,8,2,gr); px(4,2,4,2,c); px(3,1,2,1,hi); px(7,1,2,1,hi); px(5,7,2,2,lo); break;
-    case "probe": px(5,0,2,2,gd); px(2,2,8,3,c); px(1,3,2,1,wl); px(9,3,2,1,wl); px(4,5,4,2,lo); px(5,7,2,4,gd); break;
-    case "scoop": px(1,1,10,2,gr); px(2,3,8,2,c); px(3,5,6,3,lo); px(4,8,4,1,hi); px(5,9,2,2,gd); break;
-    case "ranch": px(1,3,10,2,gd); px(2,5,8,6,gr); px(3,6,2,2,hi); px(6,6,2,2,c); px(9,6,1,3,wl); px(4,9,4,1,lo); break;
-    case "driver": px(1,9,10,2,gd); px(2,7,3,2,gr); px(4,5,3,2,c); px(6,3,3,2,lo); px(9,2,2,1,wl); break;
-    case "fplant": px(2,2,8,8,gd); px(3,3,6,6,gr); px(4,4,4,4,c); px(5,5,2,2,hi); px(5,0,2,2,gd); px(5,10,2,1,gd); break;
-    case "breeder": px(3,0,6,1,lo); px(1,1,10,2,c); px(0,3,12,2,lo); px(1,5,10,2,c); px(3,7,6,2,lo); px(5,9,2,2,hi); break;
-    case "cutter": px(1,10,3,1,gd); px(2,7,2,3,gr); px(4,1,1,8,wl); px(5,0,2,2,c); px(6,2,4,2,hi); px(7,4,3,1,lo); break;
-    case "sifter": px(1,1,10,2,gd); px(2,3,8,7,gr); px(3,4,2,1,c); px(6,4,2,1,c); px(9,4,1,1,c); px(3,6,2,1,lo); px(6,6,2,1,lo); px(3,8,2,1,hi); px(6,8,2,1,hi); break;
-    case "crawn": px(1,9,3,2,gd); px(8,9,3,2,gd); px(3,6,6,3,c); px(2,4,8,2,lo); px(4,2,4,2,hi); px(5,1,2,1,wl); break;
-    case "highway": px(1,8,10,3,gd); px(1,6,10,1,gr); px(2,4,2,1,c); px(6,4,2,1,c); px(9,3,2,2,wl); px(4,1,1,2,lo); break;
-    case "foundry": px(1,2,10,9,gd); px(2,3,8,2,gr); px(3,5,3,2,c); px(7,5,2,2,lo); px(3,8,6,2,hi); px(5,0,2,2,gd); break;
-    case "lattice": px(5,0,2,2,hi); px(2,2,2,2,c); px(8,2,2,2,c); px(5,3,2,2,lo); px(2,6,2,2,c); px(8,6,2,2,c); px(5,6,2,2,hi); px(5,9,2,2,lo); px(0,4,1,1,gd); px(11,7,1,1,gd); break;
-    case "skimmer": px(4,0,4,4,c); px(3,1,6,2,c); px(3,4,6,2,lo); px(5,6,2,3,gd); px(3,9,6,1,gr); px(5,10,2,1,gd); break;
-    case "trap": px(2,1,3,5,hi); px(7,1,3,5,hi); px(2,6,8,2,c); px(4,8,4,2,lo); px(5,10,2,1,wl); break;
-    case "carrier": px(3,1,6,2,gr); px(2,3,8,4,c); px(1,5,10,2,lo); px(3,7,6,1,hi); px(4,8,1,2,gd); px(7,8,1,2,gd); px(9,4,2,1,wl); break;
-    case "harvest": px(2,0,8,2,c); px(3,2,6,2,lo); px(4,4,4,2,hi); px(5,6,2,3,c); px(4,9,4,2,gd); break;
-    case "eye": px(3,2,6,6,c); px(2,3,8,4,c); px(4,4,4,2,wl); px(5,4,2,2,dk); px(5,8,2,2,gd); px(2,9,8,1,gd); break;
-    case "continuum": px(5,0,2,3,hi); px(3,2,6,3,c); px(1,4,10,2,lo); px(3,6,6,3,c); px(5,9,2,2,hi); px(4,5,4,2,wl); break;
-    default: px(3,3,6,6,c);
+  const px = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a, b, w, h); };
+  const T = "#5ee6d0", T2 = "#9ffbe8", H = "#ffd166", W = "#fff3c4";
+  px(2,1,1,1,T); px(1,2,1,1,T); px(3,2,1,1,T2); px(2,3,1,1,T);
+  px(4,3,1,1,T); px(3,4,1,1,T2); px(1,4,1,1,T); px(4,5,1,1,T);
+  px(3,6,1,1,T2); px(5,5,1,1,T); px(5,7,1,1,T); px(6,6,1,1,T2);
+  px(8,6,4,1,H); px(7,7,6,3,H); px(8,10,4,1,H);
+  px(8,7,3,2,W); px(9,8,2,1,W); px(11,7,2,3,"#e8a53a");
+  _cometURL = cv.toDataURL();
+  return _cometURL;
+}
+function scheduleComet() {
+  const freq = treeOwned("h4") ? 0.5 : 1;
+  S.nextComet = Date.now() + (3 + Math.random() * 4) * 60000 * freq;
+}
+function spawnComet() {
+  SFX.comet();
+  const el = document.createElement("img");
+  el.className = "comet";
+  el.src = pixelCometURL();
+  el.style.setProperty("--y0", 10 + Math.random() * 50 + "vh");
+  document.body.appendChild(el);
+  const life = 11000 * (treeOwned("h10") ? 1.5 : 1);
+  const done = setTimeout(() => el.remove(), life);
+  el.onclick = e => { clearTimeout(done); el.remove(); catchComet(e); };
+}
+function catchComet(evt) {
+  initAudio();
+  S.comets++;
+  const roll = Math.random();
+  const durMult = treeOwned("h10") ? 1.5 : 1;
+  if (roll < 0.45) {
+    S.buffs.rushUntil = Date.now() + 30000 * durMult;
+    toast("COMET RUSH! Production ×7 for 30s");
+  } else if (roll < 0.8) {
+    const gain = Math.max(cps() * 90, Math.min(S.dust * 0.15, cps() * 900), 20);
+    S.dust += gain; S.lifetime += gain;
+    toast("STARDUST SHOWER! +" + fmt(gain) + " stardust");
+  } else {
+    S.buffs.frenzyUntil = Date.now() + 15000 * durMult;
+    toast("CLICK FRENZY! Clicking ×777 for 15s");
   }
-  ICON_CACHE[key] = cv.toDataURL();
-  return ICON_CACHE[key];
+  SFX.rush();
+  floatNum(evt, "COMET!");
+  renderTick();
+  checkAch();
+  save();
+}
+function tickComets() {
+  if (!S.nextComet) scheduleComet();
+  if (Date.now() >= S.nextComet && !document.querySelector(".comet")) {
+    spawnComet();
+    scheduleComet();
+  }
 }
 
-function iconForUpg(type) {
-  const key = "upg:" + type;
-  if (ICON_CACHE[key]) return ICON_CACHE[key];
-  const cv = document.createElement("canvas");
-  cv.width = 12; cv.height = 12;
-  const x = cv.getContext("2d");
-  const px = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
-  const A = "#ffd166", B = "#b5892e", W = "#e8e3ff";
-  if (type === "click") { px(4,1,2,6,A); px(3,2,4,1,A); px(2,7,5,2,B); px(7,6,3,3,W); px(9,9,2,2,B); }
-  else { px(5,0,2,2,W); px(2,2,8,2,A); px(1,4,10,4,B); px(2,8,8,2,A); px(5,10,2,1,W); px(5,4,2,4,W); }
-  ICON_CACHE[key] = cv.toDataURL();
-  return ICON_CACHE[key];
+/* ============ ACHIEVEMENTS ============ */
+function checkAch() {
+  let newly = 0;
+  for (const a of ACH) {
+    if (S.ach.includes(a.id)) continue;
+    if (a.cond(S)) { S.ach.push(a.id); newly++; }
+  }
+  if (newly) { SFX.ach(); toast(`Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`); renderAch(); }
 }
-function pixelPlanetURL(p, size) {
-  const n = 26; // logical pixel grid
-  const cv = document.createElement("canvas");
-  cv.width = n; cv.height = n;
-  const ctx = cv.getContext("2d");
-  const idx = PLANETS.indexOf(p);
-  let seed = 1234 + idx * 777;
-  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
-  const c = p.color;
-  // shades: hi / base / mid / dark
-  const shade = (hex, f) => {
-    const v = parseInt(hex.slice(1), 16);
-    const ch = s => Math.min(255, Math.max(0, Math.round(((v >> s) & 255) * f)));
-    return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
-  };
-  const cols = [shade(c, 1.35), c, shade(c, 0.72), shade(c, 0.45)];
-  const R = 10.5, cx = n / 2 - 0.5, cy = n / 2 - 0.5;
-  for (let y = 0; y < n; y++) {
-    for (let x = 0; x < n; x++) {
-      const dx = x - cx, dy = y - cy;
-      const d = Math.sqrt(dx * dx + dy * dy);
-      if (d > R) continue;
-      // light from top-left: shade by depth + noise dithering
-      const depth = (dx + dy) / (2 * R);           // -1..1
-      let ci = depth < -0.45 ? 0 : depth < 0.05 ? 1 : depth < 0.5 ? 2 : 3;
-      if (ci > 0 && ci < 3 && rnd() < 0.28) ci += depth > 0.1 ? -1 : 1; // dither edges
-      // blotch terrain
-      if (rnd() < 0.05) ci = Math.min(3, ci + 1);
-      ctx.fillStyle = cols[ci];
-      ctx.fillRect(x, y, 1, 1);
-    }
+function renderAch() {
+  const grid = $("ach-grid");
+  $("ach-count").textContent = `${S.ach.length}/${ACH.length} (+${S.ach.length}%)`;
+  grid.innerHTML = "";
+  for (const a of ACH) {
+    const ownedA = S.ach.includes(a.id);
+    const d = document.createElement("div");
+    d.className = "ach" + (ownedA ? " owned" : "");
+    if (ownedA) d.innerHTML = pxIcon("trophy") ? `<img src="${pxIcon("trophy")}">` : "";
+    else d.textContent = "?";
+    d.title = ownedA ? `${a.name} — ${a.desc}` : `??? — ${a.desc}`;
+    grid.appendChild(d);
   }
-  // ring: diagonal band crossing the planet
-  if (p.ring) {
-    ctx.fillStyle = shade(c, 1.6);
-    for (let x = 1; x < n - 1; x++) {
-      const y = Math.round(0.5 * (x - cx) + cy + 3);
-      const dx = x - cx;
-      if (Math.abs(dx) > R + 3 || rnd() < 0.15) continue;
-      const behind = dx < -2; // hidden by planet on left side? draw anyway over dark side, classic look
-      ctx.fillRect(x, y, 1, 1);
-      if (rnd() < 0.5) ctx.fillRect(x, y + 1, 1, 1);
-    }
-  }
-  // moons: single bright pixels with orbit distance
-  for (let i = 0; i < p.moons; i++) {
-    const a = i * 2.3 + 0.7;
-    ctx.fillStyle = "#e8e3ff";
-    ctx.fillRect(Math.round(cx + Math.cos(a) * 12), Math.round(cy + Math.sin(a) * 12), 1, 1);
-  }
-  return cv.toDataURL();
 }
 
-function planetSVG(p, size) {
-  const uid = "g" + p.id + (size || "");
-  let s = `<defs>
-    <radialGradient id="${uid}" cx="0.35" cy="0.3" r="0.9">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
-      <stop offset="25%" stop-color="${p.color}"/>
-      <stop offset="100%" stop-color="${p.color}" stop-opacity="0.45"/>
-    </radialGradient>
-  </defs>`;
-  if (p.ring) s += `<ellipse cx="48" cy="48" rx="45" ry="11" fill="none" stroke="${p.color}" stroke-width="5" opacity="0.35" transform="rotate(-18 48 48)"/>`;
-  s += `<circle cx="48" cy="48" r="31" fill="url(#${uid})"/>`;
-  // surface details
-  s += `<circle cx="38" cy="38" r="9" fill="rgba(255,255,255,0.18)"/>`;
-  s += `<circle cx="57" cy="61" r="6" fill="rgba(0,0,0,0.18)"/>`;
-  s += `<circle cx="61" cy="36" r="4" fill="rgba(0,0,0,0.12)"/>`;
-  s += `<path d="M 25 55 Q 40 62 58 56" stroke="rgba(0,0,0,0.15)" stroke-width="3" fill="none"/>`;
-  if (p.ring) s += `<path d="M 8 58 A 45 11 0 0 0 88 40" stroke="${p.color}" stroke-width="5" fill="none" opacity="0.55" transform="rotate(-18 48 48)"/>`;
-  for (let i = 0; i < p.moons; i++) {
-    const a = i * 2.4 + 0.6;
-    s += `<circle cx="${48 + Math.cos(a) * 41}" cy="${48 + Math.sin(a) * 41}" r="4.5" fill="#cdd6f4"><circle cx="${47 + Math.cos(a) * 41}" cy="${46.5 + Math.sin(a) * 41}" r="2" fill="rgba(0,0,0,0.2)"/></circle>`;
-  }
-  return s;
-}
-
-function renderChips() {
-  const box = $("res-chips");
-  box.innerHTML = "";
-  for (const pid of S.unlocked) {
-    const p = PLANET(pid);
-    box.insertAdjacentHTML("beforeend",
-      `<div class="chip" style="color:${p.resColor}" title="${p.res} — from ${p.name}">
-        ${ric(p.resIcon)}<span class="val" id="chip-${p.res}">0</span><span class="rate" id="chiprate-${p.res}"></span>
-      </div>`);
-  }
-  box.insertAdjacentHTML("beforeend",
-    `<div class="chip" style="color:var(--accent2)" title="Science — from Research Labs">
-      ${ric("science")}<span class="val" id="chip-Science">0</span><span class="rate" id="chiprate-Science"></span>
-    </div>`);
-  box.insertAdjacentHTML("beforeend",
-    `<div class="chip buff-chip" id="chip-buff" style="display:none"></div>`);
-}
-
-function renderNav() {
-  const nav = $("planet-nav");
-  nav.innerHTML = "";
-  for (const p of PLANETS) {
-    const b = document.createElement("button");
-    const unlocked = S.unlocked.includes(p.id);
-    if (unlocked) {
-      b.innerHTML = `<span class="dot" style="background:${p.color};color:${p.color}"></span>${p.name}`;
-    } else {
-      const cost = unlockCost(p);
-      const ratios = Object.keys(cost).length
-        ? Object.entries(cost).map(([k, v]) => (S.res[k] || 0) / v)
-        : [0];
-      const pct = Math.min(100, Math.floor(Math.min(...ratios) * 100));
-      b.innerHTML = `· Unknown <span class="nav-progress">${pct}%</span>`;
-    }
-    b.className = (unlocked ? "" : "locked") + (S.current === p.id ? " active" : "");
-    b.onclick = () => {
-      if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); renderResearch(); }
-      else { renderNav(); renderPlanet(p.id); }
-    };
-    nav.appendChild(b);
-  }
-  renderChips();
-}
-
-function renderPlanet(forced) {
-  const pid = forced || S.current || "terra";
-  const p = PLANET(pid);
-  const unlocked = S.unlocked.includes(pid);
-
-  $("planet-art-img").src = pixelPlanetURL(p, 190);
-  $("planet-art-img").style.width = "190px";
-  $("planet-art-img").style.height = "190px";
-  const glow = $("world-glow");
-  if (glow) glow.style.background =
-    `radial-gradient(55vw 45vh at 15% 15%, ${p.color}26, transparent 60%),` +
-    `radial-gradient(50vw 40vh at 85% 75%, ${shadeColor(p.color, 0.6)}1f, transparent 60%)`;
-  $("planet-name").textContent = p.name;
-  $("planet-desc").textContent = p.desc;
-
-  const lockedNote = $("locked-note");
-  const bl = $("buildings");
+/* ============ RENDER: STORE ============ */
+function renderStore() {
+  // upgrades shelf
   const ul = $("upgrades");
-
-  if (!unlocked) {
-    $("res-big").innerHTML = "⛔";
-    $("res-rate").textContent = `colonization requires: ${costStr(unlockCost(p))}`;
-    lockedNote.style.display = "";
-    lockedNote.innerHTML = `<span style="color:var(--dim)">Colonists, upgrades and mining unlock on this planet once colonized.</span>`;
-    bl.innerHTML = "";
-    ul.innerHTML = "";
-    return;
+  ul.innerHTML = "";
+  const ups = allUpgrades();
+  $("upg-count").textContent = `${S.upgrades.length} bought`;
+  for (const u of ups.slice(0, 24)) {
+    const can = canPay(u.cost);
+    const tile = document.createElement("div");
+    tile.className = "upg-tile" + (can ? "" : " grayed");
+    const icon = u.icon === "click" ? "colonist" : u.icon;
+    tile.innerHTML = `<img src="${iconFor(icon)}" width="30" height="30" alt="">`;
+    tile.onclick = () => buyUpgrade(u);
+    attachTip(tile, () => `<div class="tt-name">${u.name}</div>
+      <div class="tt-sub">${u.desc}</div>
+      <div class="tt-cost">Cost: ${fmt(u.cost)} stardust</div>`);
+    ul.appendChild(tile);
   }
-  lockedNote.style.display = "none";
+  if (!ups.length) ul.innerHTML = `<div class="dim-note">No upgrades available. Buy more buildings to unlock them.</div>`;
 
-  const curIcons = PLANET(pid).res !== "Metal"
-    ? `<span style="color:var(--dim)">tiers 1-2 cost</span> ${ric("metal")} Metal · <span style="color:var(--dim)">tiers 3+ cost</span> ${ric(p.resIcon)} ${p.res}`
-    : `<span style="color:var(--dim)">buildings cost</span> ${ric("metal")} Metal`;
-  $("planet-costs").innerHTML = curIcons;
-
-  const rate = planetRate(pid);
-  $("res-big").innerHTML = `${ric(p.resIcon)} ${fmt(S.res[p.res])}`;
-  $("res-rate").textContent = `per second: ${fmt(rate)}`;
-  $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine \u00B7 </span>+${fmt(clickPower(pid))} ${p.res} per click`;
-
-  // buildings: compact CC strips - the whole row buys
+  // buildings
+  const bl = $("buildings");
   bl.innerHTML = "";
-  p.buildings.forEach((b) => {
-    const have = S.buildings[pid + ":" + b.id] || 0;
-    const n = S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : S.buyMode;
-    const ti = p.buildings.indexOf(b);
-    const cost = bCostObj(pid, b, ti, n);
+  for (const b of BUILDINGS) {
+    // reveal buildings progressively (CC-style): previous owned or lifetime past half cost
+    const prev = BUILDINGS[BUILDINGS.indexOf(b) - 1];
+    if (prev && owned(prev.id) < 1 && S.lifetime < b.base * 0.35) break;
+    const have = owned(b.id);
+    const n = S.buyMode === "max" ? Math.max(1, maxAffordable(b)) : S.buyMode;
+    const cost = bCost(b, n);
     const can = canPay(cost);
-    const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
-    const priceHtml = Object.entries(cost).map(([k, v]) => {
-      const p2 = PLANETS.find(pp => pp.res === k);
-      return `<b>${fmt(v)}</b> ${ric(p2 ? p2.resIcon : "metal")}${k !== "Metal" ? ` <span style="font-size:14px">${k}</span>` : ""}`;
-    }).join(" ");
+    const each = buildingRate(b);
     const strip = document.createElement("div");
     strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
     strip.innerHTML = `
-      <img class="strip-icon" src="${iconFor(pid, b.id)}" width="56" height="56" alt="">
+      <img class="strip-icon" src="${iconFor(b.id)}" width="52" height="52" alt="">
       <div class="strip-info">
-        <div class="strip-name">${b.name} <span class="own-count">\u00D7${have}</span></div>
-        <div class="strip-sub">+${fmt(each)}/s each${have < 10 ? ` · <span class="ms-hint">${have}/10 to Overdrive</span>` : ""}</div>
+        <div class="strip-name">${b.name} <span class="own-count">${have > 0 ? "×" + have : ""}</span></div>
+        <div class="strip-sub">${have > 0 ? fmt(each * have) + "/s (" + (cps() > 0 ? Math.round(100 * each * have / cps()) : 0) + "%) · " : ""}${fmt(each)}/s each</div>
       </div>
-      <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n}<br>${priceHtml}</div>`;
-    strip.onclick = () => {
-      initAudio();
-      if (canPay(bCostObj(pid, b, ti, n))) { SFX.buy(); buyBuilding(pid, b); renderPlanet(); }
-    };
-    attachTip(strip, () => tipBuilding(pid, b));
+      <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(b) : n}<br><b>${fmt(cost)}</b></div>`;
+    strip.onclick = () => buyBuilding(b);
+    attachTip(strip, () => tipBuilding(b));
     bl.appendChild(strip);
-  });
-
-  // upgrades as Cookie-Clicker style icon tiles
-  ul.innerHTML = "";
-  ul.className = "upg-tiles";
-  for (const u of p.upgrades) {
-    const lvl = upgLevel(u.id);
-    const cost = upgCost(u);
-    const can = canPay({ Metal: cost });
-    const tile = document.createElement("div");
-    tile.className = "upg-tile" + (can ? "" : " grayed");
-    tile.innerHTML = `<img src="${iconForUpg(u.type)}" width="26" height="26" alt="">${lvl > 0 ? `<span class="tile-lv">Lv${lvl}</span>` : ""}`;
-    tile.onclick = () => { initAudio(); if (canPay({ Metal: upgCost(u) })) { SFX.upgrade(); buyUpgrade(u); renderPlanet(); } };
-    attachTip(tile, () => tipUpgrade(u));
-    ul.appendChild(tile);
-  }
-  // milestone upgrades (unlocked at 10/25/50/100/200 of a building)
-  const msTiles = [];
-  for (const b of p.buildings) msTiles.push(...msUpgradesFor(pid, b));
-  for (const m of msTiles) {
-    const can = canPay({ Metal: m.cost });
-    const tile = document.createElement("div");
-    tile.className = "upg-tile ms-tile" + (can ? "" : " grayed");
-    tile.innerHTML = `<img src="${m.icon}" width="26" height="26" alt="">`;
-    tile.onclick = () => {
-      if (canPay({ Metal: m.cost })) { SFX.upgrade(); S.msUpg.push(m.id); renderPlanet(); }
-    };
-    attachTip(tile, () => `<div class="tt-name">${m.name}</div>
-      <div class="tt-sub">${m.desc} Unlocked at ${m.n} owned (you have ${m.have}).</div>
-      <div class="tt-cost">Cost: ${fmt(m.cost)} Metal</div>`);
-    ul.appendChild(tile);
   }
 }
+function tipBuilding(b) {
+  const have = owned(b.id);
+  const each = buildingRate(b);
+  const total = each * have;
+  const share = cps() > 0 ? Math.round(100 * total / cps()) : 0;
+  const ms = msOwnedCount(b.id);
+  const nextMs = MS_STEPS[ms] ? `Next upgrade at ${MS_STEPS[ms]} owned (you have ${have}).` : "Fully upgraded.";
+  return `<div class="tt-name">${b.name} ${have ? `<span style="color:var(--dim)">×${have}</span>` : ""}</div>
+    <div class="tt-sub">${b.desc}</div>
+    <div class="tt-line">Each produces <b>${fmt(each)}/s</b>${have ? ` — <b>${fmt(total)}/s</b> total (${share}% of output)` : ""}</div>
+    <div class="tt-sub">${nextMs}</div>
+    <div class="tt-cost">Buy 1: ${fmt(bCost(b, 1))} · Buy 10: ${fmt(bCost(b, 10))} · Buy 100: ${fmt(bCost(b, 100))}</div>`;
+}
 
-function renderResearch() {
-  const tl = $("techs");
-  tl.innerHTML = "";
+/* ============ RENDER: ASCENSION TREE ============ */
+function renderTree() {
+  const g = shardGain();
+  $("shard-info").innerHTML =
+    `${ric("shard")} <span class="shards">${S.shards}</span> heavenly shards` +
+    ` <span style="color:var(--dim)">(+${Math.round((shardMult() - 1) * 100)}% production from shards)</span><br>` +
+    `<span style="color:var(--dim)">Ascending now: +${g} shards` +
+    (g < 1 ? ` — need ${fmt(1e12)} lifetime stardust (have ${fmt(S.lifetime)})` : "") + `</span>`;
+  const btn = $("ascend-btn");
+  btn.disabled = g < 1;
+  btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} shards`;
 
-  // Lab building row
-  const lc = labCost();
-  const labRow = document.createElement("div");
-  labRow.className = "row";
-  labRow.innerHTML = `
-    <div class="info"><div class="name">Research Lab <span class="sub">×${S.labs}</span></div>
-    <div class="sub">+${fmt(labRate())}/s Science — Metal & Crystal cost</div></div>
-    <button class="${canPay(lc) ? "can" : ""}">Buy 1 — ${fmt(lc.Metal)} Metal, ${fmt(lc.Crystal)} Crystal</button>`;
-  const labBtn = labRow.querySelector("button");
-  labBtn.disabled = !canPay(lc);
-  labBtn.onclick = () => { buyLab(); renderResearch(); };
-  tl.appendChild(labRow);
-
-  for (const t of TECHS) {
-    if (t.effect === "building") continue;
-    const owned = techOwned(t.id);
-    const avail = techAvailable(t);
-    if (!owned && !avail) continue;
-    const row = document.createElement("div");
-    row.className = "row";
-    const cstr = costStr(t.cost);
-    row.innerHTML = owned
-      ? `<div class="info"><div class="name">${t.name} ✔</div><div class="sub">${t.desc}</div></div>`
-      : `<div class="info"><div class="name">${t.name}</div><div class="sub">${t.desc}</div></div>
-         <button class="${canPay(t.cost) ? "can" : ""}">${cstr}</button>`;
-    if (!owned) {
-      const tb = row.querySelector("button");
-      tb.disabled = !canPay(t.cost);
-      tb.onclick = () => { buyTech(t); renderResearch(); };
-    }
-    tl.appendChild(row);
+  const W = 100, H = 100;
+  let lines = "";
+  for (const m of TREE) {
+    if (!m.req) continue;
+    const from = TREE.find(x => x.id === m.req);
+    const on = treeOwned(m.id) || treeOwned(m.req);
+    lines += `<line x1="${from.pos.x}" y1="${from.pos.y}" x2="${m.pos.x}" y2="${m.pos.y}" stroke="${on ? "#8a5ec4" : "#39315a"}" stroke-width="0.5"/>`;
   }
+  let nodes = "";
+  TREE.forEach((m, i) => {
+    const ownedT = treeOwned(m.id);
+    const avail = !ownedT && (!m.req || treeOwned(m.req));
+    const cls = ownedT ? "owned" : avail ? "avail" : "locked2";
+    nodes += `<div class="mnode ${cls}" data-i="${i}" style="left:calc(${m.pos.x}% - 24px);top:calc(${m.pos.y}% - 24px)">${ric("shard")}</div>`;
+  });
+  $("tree").innerHTML = `<div class="tree-wrap"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${lines}</svg>${nodes}</div>`;
+  const els = $("tree").querySelectorAll(".mnode");
+  TREE.forEach((m, i) => {
+    const ownedT = treeOwned(m.id);
+    const avail = !ownedT && (!m.req || treeOwned(m.req));
+    const el = els[i];
+    attachTip(el, () => `<div class="tt-name">${m.name}</div><div class="tt-sub">${m.desc}</div>
+      ${ownedT ? "" : `<div class="tt-cost">${m.cost} shards — ${avail ? (S.shards >= m.cost ? "CLICK TO BUY" : "not enough shards") : "LOCKED (requires " + (TREE.find(x => x.id === m.req) || {}).name + ")"}</div>`}`);
+    if (avail) el.onclick = () => {
+      if (S.shards < m.cost) return;
+      SFX.upgrade();
+      S.shards -= m.cost;
+      S.tree.push(m.id);
+      renderTree(); save();
+    };
+  });
+}
 
-  // next planet
-  const np = $("next-planet");
-  np.innerHTML = "";
-  const next = PLANETS.find(p => !S.unlocked.includes(p.id));
-  if (!next) {
-    np.innerHTML = `<div class="name">🌌 All planets colonized. You have transcended the system.</div>`;
-    return;
-  }
-  const can = canPay(unlockCost(next));
-  np.innerHTML = `
-    <div style="display:flex;gap:14px;align-items:center">
-      <img src="${pixelPlanetURL(next, 48)}" width="48" height="48" style="image-rendering:pixelated">
-      <div class="info">
-        <div class="name">${ric("rocket")} Colonize: ${next.name}</div>
-        <div class="sub">${next.desc} — produces ${ric(next.resIcon)} ${next.res}</div>
-      </div>
-      <button class="${can ? "can" : ""}">Travel — ${costStr(unlockCost(next))}</button>
-    </div>`;
-  const travelBtn = np.querySelector("button");
-  travelBtn.disabled = !can;
-  travelBtn.onclick = () => { travel(next.id); renderNav(); renderPlanet(); renderResearch(); };
+/* ============ RENDER: STATS ============ */
+function renderStats() {
+  const rows = [
+    ["Time played", fmtTime(Date.now() - S.started)],
+    ["Stardust", fmt(S.dust)],
+    ["Lifetime stardust", fmt(S.lifetime)],
+    ["Per second", fmt(cps())],
+    ["Clicks", fmt(S.clickCount)],
+    ["Buildings", totalBuildings()],
+    ["Upgrades", S.upgrades.length],
+    ["Achievements", `${S.ach.length} (+${S.ach.length}%)`],
+    ["Comets caught", S.comets],
+    ["Ascensions", S.ascensions],
+    ["Heavenly shards", `${S.shards} (+${Math.round((shardMult()-1)*100)}%)`],
+  ];
+  $("stats-list").innerHTML = rows.map(([k, v]) =>
+    `<div class="stat-row"><span class="stat-k">${k}</span><span class="stat-v">${v}</span></div>`).join("");
 }
 
 /* ============ TICK ============ */
-
 function tick() {
   const now = Date.now();
-  const dt = Math.min((now - S.lastTick) / 1000, 60); // clamp long tab sleeps; offline handled on load
+  const dt = Math.min((now - S.lastTick) / 1000, 60);
   S.lastTick = now;
-  for (const pid of S.unlocked) {
-    const g = planetRate(pid) * dt;
-    S.res[PLANET(pid).res] += g;
-    S.lifetime[PLANET(pid).res] += g;
-  }
-  const sg = labRate() * dt;
-  S.res.Science += sg;
-  S.lifetime.Science += sg;
+  const g = cps() * dt;
+  S.dust += g; S.lifetime += g;
+}
+function renderTick() {
+  $("res-big").innerHTML = fmt(S.dust) + " stardust";
+  $("res-rate").textContent = "per second: " + fmt(cps());
+  const bs = $("buff-strip");
+  const now = Date.now();
+  const rush = Math.max(0, (S.buffs.rushUntil || 0) - now);
+  const frenzy = Math.max(0, (S.buffs.frenzyUntil || 0) - now);
+  let buffHtml = "";
+  if (rush > 0) buffHtml += `<span class="buff-tag">FRENZY ×7 ${Math.ceil(rush / 1000)}s</span>`;
+  if (frenzy > 0) buffHtml += `<span class="buff-tag click">CLICK ×777 ${Math.ceil(frenzy / 1000)}s</span>`;
+  bs.innerHTML = buffHtml;
 }
 
-function renderTick() {
-  for (const pid of S.unlocked) {
-    const p = PLANET(pid);
-    const v = $("chip-" + p.res), r = $("chiprate-" + p.res);
-    if (v) v.textContent = fmt(S.res[p.res]);
-    if (r) r.textContent = "+" + fmt(planetRate(pid)) + "/s";
-  }
-  const sv = $("chip-Science"), sr = $("chiprate-Science");
-  if (sv) sv.textContent = fmt(S.res.Science);
-  if (sr) sr.textContent = "+" + fmt(labRate()) + "/s";
-  const bc = $("chip-buff");
-  if (bc) {
-    const now = Date.now();
-    const rush = Math.max(0, (S.buffs.rushUntil || 0) - now);
-    const frenzy = Math.max(0, (S.buffs.frenzyUntil || 0) - now);
-    if (rush > 0) { bc.style.display = ""; bc.textContent = `COMET RUSH ×7 ${Math.ceil(rush / 1000)}s`; }
-    else if (frenzy > 0) { bc.style.display = ""; bc.textContent = `CLICK FRENZY ×777 ${Math.ceil(frenzy / 1000)}s`; }
-    else bc.style.display = "none";
-  }
-  const cur = S.current && S.unlocked.includes(S.current) ? S.current : null;
-  if (cur) {
-    const p = PLANET(cur);
-    if ($("res-big")) {
-      $("res-big").innerHTML = `${ric(p.resIcon)} ${fmt(S.res[p.res])}`;
-      $("res-rate").textContent = `per second: ${fmt(planetRate(cur))}`;
-    }
-    $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(cur))} ${p.res} per click`;
-  }
+/* ============ NEWS ============ */
+let newsIdx = Math.floor(Math.random() * NEWS.length);
+function rotateNews(manual) {
+  const el = $("news-text");
+  if (!el) return;
+  newsIdx = manual ? (newsIdx + 1) % NEWS.length : (newsIdx + 1 + Math.floor(Math.random() * 3)) % NEWS.length;
+  el.classList.remove("news-fade");
+  void el.offsetWidth;
+  el.classList.add("news-fade");
+  el.textContent = NEWS[newsIdx];
 }
 
 /* ============ INIT ============ */
-
+function renderAll() { renderStore(); renderTree(); renderAch(); renderStats(); renderTick(); }
 function init() {
   // starfield
   const cv = $("starfield"), ctx = cv.getContext("2d");
@@ -1309,7 +727,7 @@ function init() {
     }));
   }
   resize(); addEventListener("resize", resize);
-  (function drawStars() {
+  (function draw() {
     ctx.clearRect(0, 0, cv.width, cv.height);
     for (const s of stars) {
       s.tw += 0.02;
@@ -1317,37 +735,18 @@ function init() {
       ctx.fillStyle = "#dfe6ff";
       ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 7); ctx.fill();
     }
-    requestAnimationFrame(drawStars);
+    requestAnimationFrame(draw);
   })();
+  document.querySelectorAll(".hicon[data-px]").forEach(img => img.src = pxIcon(img.dataset.px));
+  $("planet-art-img").src = homePlanetURL();
 
   load();
-  renderNav(); renderPlanet(); renderResearch(); renderPrestige(); renderAch(); renderStats();
-  rotateNews();
+  renderAll(); rotateNews();
 
-  $("big-planet").onclick = e => mine(S.current, e, $("big-planet"));
+  $("big-planet").onclick = clickPlanet;
   $("ascend-btn").onclick = ascend;
-  document.querySelectorAll(".buy").forEach(b => {
-    b.onclick = () => {
-      S.buyMode = b.dataset.buy === "max" ? "max" : parseInt(b.dataset.buy);
-      document.querySelectorAll(".buy").forEach(x => x.classList.remove("active"));
-      b.classList.add("active");
-      renderPlanet();
-    };
-  });
-  $("save-btn").onclick = () => { save(); $("save-btn").textContent = "Saved ✓"; setTimeout(() => $("save-btn").textContent = "Save", 800); };
-  $("reset-btn").onclick = () => {
-    if (confirm("Wipe ALL progress? This cannot be undone.")) {
-      localStorage.removeItem(SAVE_KEY);
-      S = newState(); renderNav(); renderPlanet(); renderResearch();
-    }
-  };
-
-  setInterval(tick, 100);
-  setInterval(tickBuffs, 1000);
-  setInterval(checkAchievements, 2000);
-  setInterval(rotateNews, 9000);
-  setInterval(renderStats, 3000);
-  $("news-ticker").onclick = () => rotateNews(true);
+  $("save-btn").onclick = () => { save(); $("save-btn").textContent = "Saved!"; setTimeout(() => $("save-btn").textContent = "Save", 800); };
+  $("reset-btn").onclick = () => { if (confirm("Wipe ALL progress?")) { localStorage.removeItem(SAVE_KEY); S = newState(); renderAll(); } };
   $("mute-btn").onclick = () => {
     S.mute = !S.mute;
     $("mute-btn").textContent = S.mute ? "Sound: OFF" : "Sound: ON";
@@ -1355,19 +754,23 @@ function init() {
   };
   if (S.mute) $("mute-btn").textContent = "Sound: OFF";
   addEventListener("pointerdown", initAudio, { once: true });
-  document.querySelectorAll(".hicon[data-px]").forEach(img => img.src = pxIcon(img.dataset.px));
-  document.querySelectorAll(".store-tab").forEach(t => {
-    t.onclick = () => {
-      document.querySelectorAll(".store-tab").forEach(x => x.classList.remove("active"));
-      t.classList.add("active");
-      document.querySelectorAll(".tab-content").forEach(c => c.style.display = "none");
-      $("tab-" + t.dataset.tab).style.display = "";
+  document.querySelectorAll(".buy").forEach(b => {
+    b.onclick = () => {
+      S.buyMode = b.dataset.buy === "max" ? "max" : parseInt(b.dataset.buy);
+      document.querySelectorAll(".buy").forEach(x => x.classList.remove("active"));
+      b.classList.add("active");
+      renderStore();
     };
   });
+
+  setInterval(tick, 100);
   setInterval(renderTick, 200);
-  setInterval(() => { renderPlanet(); renderResearch(); renderPrestige(); }, 1500); // refresh affordability
+  setInterval(renderStore, 1000);
+  setInterval(renderStats, 3000);
+  setInterval(checkAch, 2000);
+  setInterval(tickComets, 1000);
+  setInterval(rotateNews, 9000);
   setInterval(save, 10000);
   addEventListener("beforeunload", save);
 }
-
 init();
