@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stellar Ascent — Idle Space Colony</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="starfield"></canvas>
+
+<header>
+  <h1>STELLAR ASCENT</h1>
+  <div class="topbar">
+    <div class="stat">🧪 Science: <span id="sci-val">0</span> <span class="rate" id="sci-rate"></span></div>
+    <div class="stat" id="offline-note"></div>
+    <button id="save-btn">Save</button>
+    <button id="reset-btn" class="danger">Reset</button>
+  </div>
+</header>
+
+<main>
+  <nav id="planet-nav"><!-- planet tabs injected --></nav>
+
+  <section id="planet-view">
+    <div class="planet-header">
+      <svg id="planet-art" width="96" height="96" viewBox="0 0 96 96"></svg>
+      <div>
+        <h2 id="planet-name"></h2>
+        <p id="planet-desc"></p>
+        <div id="planet-resource" class="resource-line"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <button id="mine-btn">MINE</button>
+      <span id="mine-info"></span>
+    </div>
+
+    <div class="panel">
+      <h3>Colonists <span class="buy-mode">
+        <button data-buy="1" class="buy active">x1</button>
+        <button data-buy="10" class="buy">x10</button>
+        <button data-buy="max" class="buy">MAX</button>
+      </span></h3>
+      <div id="buildings"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Upgrades</h3>
+      <div id="upgrades"></div>
+    </div>
+  </section>
+
+  <section id="research-view" class="panel">
+    <h3>Research Lab</h3>
+    <p>Spend Science on permanent upgrades across your empire.</p>
+    <div id="techs"></div>
+    <div id="next-planet" class="panel inner"></div>
+  </section>
+</main>
+
+<footer><small>v0.1 — autosaves every 10s · progress continues offline (at 50% rate)</small></footer>
+
+<script src="game.js"></script>
+</body>
+</html>
