@@ -1049,8 +1049,8 @@ function renderPlanet(forced) {
   const ul = $("upgrades");
 
   if (!unlocked) {
-    resLine.innerHTML = `<span style="color:var(--danger)">\u26D4 LOCKED \u2014 colonization requires: ${costStr(unlockCost(p))}</span>`;
-    $("mine-info").textContent = "";
+    $("res-big").innerHTML = "⛔";
+    $("res-rate").textContent = `colonization requires: ${costStr(unlockCost(p))}`;
     lockedNote.style.display = "";
     lockedNote.innerHTML = `<span style="color:var(--dim)">Colonists, upgrades and mining unlock on this planet once colonized.</span>`;
     bl.innerHTML = "";
