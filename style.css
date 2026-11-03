@@ -185,6 +185,10 @@ main.game-grid {
 .stat-k { color: var(--dim); font-size: 17px; }
 .stat-v { font-size: 17px; }
 
+/* sidebar rows: narrower buttons so tech/mastery rows fit the column */
+#sidebar .row { flex-wrap: wrap; }
+#sidebar .row button { min-width: 120px; flex: 1; }
+
 /* ---- prestige ---- */
 #prestige-view { border-color: #6e4a9c; }
 #shard-info { margin-bottom: 10px; font-size: 19px; }
