@@ -1044,7 +1044,6 @@ function renderPlanet(forced) {
   $("planet-name").textContent = p.name;
   $("planet-desc").textContent = p.desc;
 
-  const resLine = $("planet-resource");
   const lockedNote = $("locked-note");
   const bl = $("buildings");
   const ul = $("upgrades");
@@ -1227,7 +1226,6 @@ function renderTick() {
   const cur = S.current && S.unlocked.includes(S.current) ? S.current : null;
   if (cur) {
     const p = PLANET(cur);
-    const rl = $("planet-resource");
     if ($("res-big")) {
       $("res-big").innerHTML = `${ric(p.resIcon)} ${fmt(S.res[p.res])}`;
       $("res-rate").textContent = `per second: ${fmt(planetRate(cur))}`;
