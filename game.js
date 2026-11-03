@@ -83,19 +83,19 @@ const PLANETS = [
 
 const TECHS = [
   { id: "lab",   name: "Research Lab",     cost: { Metal: 400, Crystal: 120 },            desc: "Build labs that generate Science.", repeat: true, effect: "building" },
-  { id: "t_auto1", name: "Automation I",   cost: { Science: 100 },  desc: "All production +25%.", effect: "global", val: 0.25 },
-  { id: "t_auto2", name: "Automation II",  cost: { Science: 800 }, desc: "All production +50%.", req: "t_auto1", effect: "global", val: 0.5 },
-  { id: "t_auto3", name: "Automation III", cost: { Science: 5000 }, desc: "All production +100%.", req: "t_auto2", effect: "global", val: 1.0 },
-  { id: "t_mine1", name: "Mining I",       cost: { Science: 150 },  desc: "All mining power ×2.", effect: "click", val: 2 },
-  { id: "t_mine2", name: "Mining II",      cost: { Science: 1200 }, desc: "All mining power ×3.", req: "t_mine1", effect: "click", val: 3 },
-  { id: "t_mine3", name: "Mining III",     cost: { Science: 8000 }, desc: "All mining power ×4.", req: "t_mine2", effect: "click", val: 4 },
-  { id: "t_sci1",  name: "Institutes",     cost: { Science: 400 },  desc: "Science output ×2.", req: "t_auto1", effect: "sci", val: 2 },
-  { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 3000 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
-  { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 250 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
-  { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 1500 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
-  { id: "t_comet1", name: "Comet Magnet",   cost: { Science: 600 },  desc: "Golden Comets appear 2× more often.", req: "t_sci1", effect: "comet_freq", val: 2 },
-  { id: "t_comet2", name: "Golden Radar",   cost: { Science: 1800 }, desc: "Comets stay on screen much longer.", req: "t_comet1", effect: "comet_life", val: 2.2 },
-  { id: "t_comet3", name: "Comet Swarm",    cost: { Science: 6000 }, desc: "Comets appear 3× more often again.", req: "t_comet2", effect: "comet_freq", val: 3 },
+  { id: "t_auto1", name: "Automation I",   cost: { Science: 160 },  desc: "All production +25%.", effect: "global", val: 0.25 },
+  { id: "t_auto2", name: "Automation II",  cost: { Science: 1300 }, desc: "All production +50%.", req: "t_auto1", effect: "global", val: 0.5 },
+  { id: "t_auto3", name: "Automation III", cost: { Science: 12000 }, desc: "All production +100%.", req: "t_auto2", effect: "global", val: 1.0 },
+  { id: "t_mine1", name: "Mining I",       cost: { Science: 240 },  desc: "All mining power ×2.", effect: "click", val: 2 },
+  { id: "t_mine2", name: "Mining II",      cost: { Science: 2000 }, desc: "All mining power ×3.", req: "t_mine1", effect: "click", val: 3 },
+  { id: "t_mine3", name: "Mining III",     cost: { Science: 12000 }, desc: "All mining power ×4.", req: "t_mine2", effect: "click", val: 4 },
+  { id: "t_sci1",  name: "Institutes",     cost: { Science: 640 },  desc: "Science output ×2.", req: "t_auto1", effect: "sci", val: 2 },
+  { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 4800 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
+  { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 400 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
+  { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 2400 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
+  { id: "t_comet1", name: "Comet Magnet",   cost: { Science: 1000 },  desc: "Golden Comets appear 2× more often.", req: "t_sci1", effect: "comet_freq", val: 2 },
+  { id: "t_comet2", name: "Golden Radar",   cost: { Science: 3000 }, desc: "Comets stay on screen much longer.", req: "t_comet1", effect: "comet_life", val: 2.2 },
+  { id: "t_comet3", name: "Comet Swarm",    cost: { Science: 9000 }, desc: "Comets appear 3× more often again.", req: "t_comet2", effect: "comet_freq", val: 3 },
 ];
 
 const MASTERY = [
@@ -105,11 +105,11 @@ const MASTERY = [
   { id: "m_start",  name: "Head Start Protocol", cost: 2,  desc: "Every run starts with 2,500 Metal." },
   { id: "m_click",  name: "Gravity Gloves",      cost: 3,  req: "m_prod1", desc: "All mining power ×3." },
   { id: "m_sci",    name: "Cosmic Consciousness",cost: 3,  req: "m_prod1", desc: "Science output ×2." },
-  { id: "m_travel", name: "Wormhole Charts",     cost: 4,  req: "m_start", desc: "Colonization costs −50%." },
+  { id: "m_travel", pos: {x: 38, y: 58}, name: "Wormhole Charts",     cost: 4,  req: "m_start", desc: "Colonization costs −50%." },
   { id: "m_off",    name: "Ascended Rest",       cost: 5,  req: "m_sci",   desc: "Offline progress at 100%." },
   { id: "m_shard",  name: "Shard Resonance",     cost: 6,  req: "m_prod2", desc: "+50% Ascendancy Shards on ascend." },
   { id: "m_auto",   name: "Drone Overmind",      cost: 8,  req: "m_prod2", desc: "Runs start with 10 free tier-1 buildings per colonized planet." },
-  { id: "m_memory", name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
+  { id: "m_memory", pos: {x: 62, y: 58}, name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
 ];
 
 const ACH = [
@@ -285,7 +285,7 @@ function clickMult(planet) {
 }
 
 function upgLevel(id) { return S.upgrades[id] || 0; }
-function upgCost(u) { return Math.ceil(u.cost * Math.pow(3.5, upgLevel(u.id))); }
+function upgCost(u) { return Math.ceil(u.cost * Math.pow(4, upgLevel(u.id))); }
 
 function prodMult(planet) {
   let m = globalProdMult();
@@ -645,7 +645,7 @@ function travel(planet) {
 
 function shardGain() {
   const am = S.lifetime.Antimatter || 0;
-  let g = Math.floor(Math.sqrt(am / 100000));
+  let g = Math.floor(Math.sqrt(am / 250000));
   if (mOwned("m_shard")) g = Math.floor(g * 1.5);
   return g;
 }
@@ -674,38 +674,54 @@ function renderPrestige() {
     `${ric("shard")} <span class="shards">${S.shards}</span> Ascendancy Shards` +
     (S.ascensions ? ` · ${S.ascensions} ascension${S.ascensions > 1 ? "s" : ""}` : "") +
     `<br><span style="color:var(--dim)">Ascending now: +${g} shards` +
-    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(100000)})` : "") +
+    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(250000)})` : "") +
     `</span>`;
   const btn = $("ascend-btn");
   btn.disabled = g < 1;
   btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} shards`;
 
+  // constellation tree (CC heavenly-style)
   const ml = $("masteries");
-  ml.innerHTML = "";
+  const W = 100, H = 66;
+  let lines = "";
+  for (const m of MASTERY) {
+    if (!m.req) continue;
+    const from = MASTERY.find(x => x.id === m.req);
+    const on = mOwned(m.id) || mOwned(m.req);
+    lines += `<line x1="${from.pos.x}" y1="${from.pos.y}" x2="${m.pos.x}" y2="${m.pos.y}" stroke="${on ? "#8a5ec4" : "#39315a"}" stroke-width="0.5"/>`;
+  }
+  let nodes = "";
   for (const m of MASTERY) {
     const owned = mOwned(m.id);
     const avail = !owned && (!m.req || mOwned(m.req));
-    if (!owned && !avail) continue;
-    const div = document.createElement("div");
-    div.className = "mastery" + (owned ? " owned" : "");
-    div.innerHTML = `
-      <div class="m-info">
-        <div class="m-name">${owned ? ric("shard") + " " : ""}${m.name}</div>
-        <div class="m-sub">${m.desc}</div>
-      </div>
-      ${owned ? "" : `<button class="${S.shards >= m.cost ? "can" : ""}">${m.cost} ${ric("shard")}</button>`}`;
-    if (!owned) {
-      const mb = div.querySelector("button");
-      mb.disabled = S.shards < m.cost;
-      mb.onclick = () => {
-        if (S.shards < m.cost) return;
-        S.shards -= m.cost;
-        S.masteries.push(m.id);
-        renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
-      };
-    }
-    ml.appendChild(div);
+    const cls = owned ? "owned" : avail ? "avail" : "locked2";
+    nodes += `<div class="mnode ${cls}" style="left:calc(${m.pos.x}% - 24px);top:calc(${m.pos.y / H * 100}% - 24px)">
+      ${ric("shard")}</div>`;
+    const nodeEl = ml.querySelectorAll(".mnode");
   }
+  ml.innerHTML = `<div class="tree-wrap">
+    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${lines}</svg>
+    ${nodes}
+  </div>`;
+  // wire nodes (separately so innerHTML order is settled)
+  const nodeEls = ml.querySelectorAll(".mnode");
+  MASTERY.forEach((m, i) => {
+    const owned = mOwned(m.id);
+    const avail = !owned && (!m.req || mOwned(m.req));
+    const el = nodeEls[i];
+    attachTip(el, () => {
+      const state = owned ? "OWNED" : avail ? (S.shards >= m.cost ? "CLICK TO BUY" : "NOT ENOUGH SHARDS") : "LOCKED - requires " + (MASTERY.find(x => x.id === m.req) || {}).name;
+      return `<div class="tt-name">${m.name}</div>
+        <div class="tt-sub">${m.desc}</div>
+        ${owned ? "" : `<div class="tt-cost">${m.cost} shards - ${state}</div>`}`;
+    });
+    if (avail) el.onclick = () => {
+      if (S.shards < m.cost) return;
+      S.shards -= m.cost;
+      S.masteries.push(m.id);
+      renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
+    };
+  });
 }
 
 /* ============ RENDER ============ */
@@ -725,14 +741,29 @@ function moveTip(e) {
 }
 
 function attachTip(el, fn) {
-  el.addEventListener("mouseenter", e => {
+  el.addEventListener("mouseenter", () => {
     const t = $("tooltip");
     t.innerHTML = fn();
     t.style.display = "block";
-    moveTip(e);
+    anchorTip(el);
   });
-  el.addEventListener("mousemove", moveTip);
   el.addEventListener("mouseleave", () => { $("tooltip").style.display = "none"; });
+}
+
+/* CC-style: tooltip is a fixed panel anchored beside the store, not cursor-following */
+function anchorTip(el) {
+  const t = $("tooltip");
+  const sp = document.getElementById("store-panel");
+  if (!sp) return;
+  const r = sp.getBoundingClientRect();
+  t.style.left = "-9999px"; t.style.top = "60px";
+  const tr = t.getBoundingClientRect();
+  let left = r.left - tr.width - 12;
+  let top = r.top + 60;
+  if (left < 8) left = r.right + 12;
+  if (top + tr.height > innerHeight - 16) top = innerHeight - tr.height - 16;
+  t.style.left = Math.max(8, left) + "px";
+  t.style.top = Math.max(60, top) + "px";
 }
 
 function tipBuilding(pid, b) {
@@ -755,7 +786,7 @@ function tipUpgrade(u) {
     <div class="tt-sub">${u.desc}</div>
     <div class="tt-line">Current effect: <b>×${fmt(Math.pow(u.val, lvl))}</b></div>
     <div class="tt-line">Next level: <b>×${fmt(Math.pow(u.val, lvl + 1))}</b></div>
-    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×3.5 per level)</div>`;
+    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×4 per level)</div>`;
 }
 
 /* pixel-art planet sprites, generated per planet */
@@ -1035,7 +1066,8 @@ function renderPlanet(forced) {
   $("planet-costs").innerHTML = curIcons;
 
   const rate = planetRate(pid);
-  resLine.innerHTML = `${ric(p.resIcon)} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
+  $("res-big").innerHTML = `${ric(p.resIcon)} ${fmt(S.res[p.res])}`;
+  $("res-rate").textContent = `per second: ${fmt(rate)}`;
   $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine \u00B7 </span>+${fmt(clickPower(pid))} ${p.res} per click`;
 
   // buildings: compact CC strips - the whole row buys
@@ -1196,7 +1228,10 @@ function renderTick() {
   if (cur) {
     const p = PLANET(cur);
     const rl = $("planet-resource");
-    if (rl) rl.innerHTML = `${ric(p.resIcon)} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(planetRate(cur))}/s</span>`;
+    if ($("res-big")) {
+      $("res-big").innerHTML = `${ric(p.resIcon)} ${fmt(S.res[p.res])}`;
+      $("res-rate").textContent = `per second: ${fmt(planetRate(cur))}`;
+    }
     $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(cur))} ${p.res} per click`;
   }
 }

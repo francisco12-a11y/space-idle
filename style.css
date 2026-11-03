@@ -354,3 +354,25 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 .hicon { width: 16px; height: 16px; image-rendering: pixelated; vertical-align: -3px; margin-right: 5px; }
 .strip-price .ric { width: 17px; height: 17px; vertical-align: -3px; }
 .ach img { width: 20px; height: 20px; image-rendering: pixelated; }
+
+/* ===== v2.8: CC-faithful counter + constellation tree ===== */
+.res-count { text-align: center; margin-bottom: 12px; }
+#res-big { font-size: 40px; font-weight: 700; }
+#res-big .ric { width: 26px; height: 26px; vertical-align: -4px; }
+#res-rate { color: var(--dim); font-size: 18px; margin-top: 2px; }
+.resource-line { display: none; }
+
+.tree-wrap { position: relative; width: 100%; height: 300px; margin-top: 12px; }
+.tree-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.mnode {
+  position: absolute; width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  background: #1a1430; border: 2px solid #39315a; border-radius: 50%;
+  cursor: pointer; z-index: 2; transition: box-shadow .15s, border-color .15s;
+}
+.mnode .ric { width: 20px; height: 20px; }
+.mnode.locked2 { opacity: 0.25; cursor: default; filter: grayscale(1); }
+.mnode.avail { border-color: #b678ff; animation: nodePulse 2s ease-in-out infinite; }
+.mnode.owned { border-color: #d29bff; background: #2a1f42; box-shadow: 0 0 14px rgba(210, 155, 255, 0.5); }
+.mnode.avail:hover { background: #2a1f42; }
+@keyframes nodePulse { 50% { box-shadow: 0 0 12px rgba(182, 120, 255, 0.45); } }
