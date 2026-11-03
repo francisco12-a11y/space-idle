@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=06">
+<link rel="stylesheet" href="style.css?v=07">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -45,7 +45,11 @@
     <div id="locked-note" class="panel" style="display:none"></div>
   </section>
 
-  <aside id="sidebar">
+  <section id="store-view">
+    <div class="panel" id="news-ticker" title="Click for more news">
+      📰 <span id="news-text">...</span>
+    </div>
+
     <div class="panel" id="upgrades-panel">
       <h3>⬆ Upgrades</h3>
       <div id="upgrades"></div>
@@ -61,7 +65,9 @@
       </h3>
       <div id="buildings"></div>
     </div>
+  </section>
 
+  <aside id="sidebar">
     <div class="panel" id="research-view">
       <h3>🧪 Research Lab</h3>
       <div id="techs"></div>
@@ -79,11 +85,16 @@
       <h3>🏆 Achievements <span id="ach-count"></span></h3>
       <div id="ach-grid"></div>
     </div>
+
+    <div class="panel" id="stats-view">
+      <h3>📊 Statistics</h3>
+      <div id="stats-list"></div>
+    </div>
   </aside>
 </main>
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
 
-<script src="game.js?v=06"></script>
+<script src="game.js?v=07"></script>
 </body>
 </html>

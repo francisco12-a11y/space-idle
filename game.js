@@ -136,6 +136,37 @@ const ACH = [
   { id: "a_asc2", name: "Eternal Cycle", desc: "Ascend 5 times.", cond: s => s.ascensions >= 5 },
 ];
 
+const NEWS = [
+  "Astronomers detect unusually rhythmic mining coming from Terra Nova.",
+  "Breaking: Luna confirmed still made of cheese. Experts disappointed.",
+  "The Ceres Belt files a complaint about strip mining. Complaint shredded into confetti.",
+  "Aurelia's storms go quiet for a moment. Everyone agrees not to talk about it.",
+  "The Galactic Union sends a form letter. You send back Metal.",
+  "Scientists baffled by pile of Metal that keeps growing anyway.",
+  "Helium-3 futures soar as your refineries cough politely.",
+  "A comet passes by. It waves.",
+  "Anti-mining activists arrive on Terra Nova. They are handed shovels.",
+  "The Moon called. It wants its regolith back.",
+  "Your economy is now 94% you. Economists are nervous.",
+  "Local asteroids report feeling 'lightly quarryed'.",
+  "Your Planetary Forge is visible from orbit. Tourists love it.",
+  "A mysterious voice whispers 'buy more drills'. You feel it is right.",
+  "A shard-based religion is founded in your honor. Tithes accepted in Antimatter.",
+  "Space smells like burnt steak, according to your returning carriers.",
+  "The Continuum Engine hums a tune nobody else can hear.",
+  "Interstellar post: 'STOP MINING' scratched into a passing meteor.",
+  "Number goes up. Citizens rejoice.",
+  "Your colonies have started a band. The genre is industrial.",
+  "Deep-space telescopes now mostly point back at your stuff.",
+  "Someone screenshotted your Metal count. It was outdated immediately.",
+  "The Union of Idle Miners requests shorter idles. Request ignored.",
+  "A wormhole opens, sneezes Metal, closes.",
+  "Critics call your empire 'aggressively incremental'. You take it as praise.",
+  "Weather forecast: vacuum, with scattered debris.",
+  "Archaeologists find a drill older than recorded history. It still works.",
+  "Galactic news skips your empire for the third season running. Ratings dip.",
+];
+
 /* ============ STATE ============ */
 
 const SAVE_KEY = "stellar-ascent-save";
@@ -376,6 +407,47 @@ function tickBuffs() {
     spawnComet();
     scheduleComet();
   }
+}
+
+/* ============ NEWS TICKER & STATS ============ */
+
+let newsIdx = Math.floor(Math.random() * NEWS.length);
+
+function rotateNews(manual) {
+  const el = $("news-text");
+  if (!el) return;
+  newsIdx = manual ? (newsIdx + 1) % NEWS.length : (newsIdx + 1 + Math.floor(Math.random() * 3)) % NEWS.length;
+  el.classList.remove("news-fade");
+  void el.offsetWidth; // restart animation
+  el.classList.add("news-fade");
+  el.textContent = NEWS[newsIdx];
+}
+
+function fmtTime(ms) {
+  const s = Math.floor(ms / 1000);
+  const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+  return (d ? d + "d " : "") + (h ? h + "h " : "") + m + "m";
+}
+
+function renderStats() {
+  const el = $("stats-list");
+  if (!el) return;
+  const rows = [
+    ["Time played", fmtTime(Date.now() - S.started)],
+    ["Ascensions", S.ascensions],
+    ["Shards earned", `✦ ${S.shards}`],
+    ["Mine clicks", fmt(S.stats.clicks)],
+    ["Comets caught", S.stats.comets],
+    ["Colonists", totalBuildings()],
+    ["Research Labs", S.labs],
+    ["Masteries", `${S.masteries.length}/${MASTERY.length}`],
+    ["Techs", `${S.techs.length}/${TECHS.length - 1}`],
+  ];
+  for (const p of PLANETS) {
+    if (S.unlocked.includes(p.id)) rows.push([`Lifetime ${p.res}`, fmt(S.lifetime[p.res] || 0)]);
+  }
+  el.innerHTML = rows.map(([k, v]) =>
+    `<div class="stat-row"><span class="stat-k">${k}</span><span class="stat-v">${v}</span></div>`).join("");
 }
 
 function save() {
@@ -707,27 +779,28 @@ function renderPlanet(forced) {
   // buildings
   const bl = $("buildings");
   bl.innerHTML = "";
-  for (const b of p.buildings) {
+  p.buildings.forEach((b, ti) => {
     const have = S.buildings[pid + ":" + b.id] || 0;
     const n = S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : S.buyMode;
     const cost = bCost(pid, b, n);
     const can = canPay({ Metal: cost });
     const row = document.createElement("div");
-    row.className = "row";
+    row.className = "row building-row" + (have > 0 ? " owned-b" : "");
     row.innerHTML = `
+      <div class="tier-chip" style="background:${p.color}" title="Tier ${ti + 1}">${ti + 1}</div>
       <div class="info">
-        <div class="name">${b.name} <span class="sub">×${have}</span></div>
-        <div class="sub">${b.desc} — +${fmt(b.rate * prodMult(pid))}/s each</div>
+        <div class="name">${b.name} <span class="own-count">×${have}</span></div>
+        <div class="sub">${b.desc} — +${fmt(b.rate * prodMult(pid) * achMult() * buffMult())}/s each</div>
       </div>
       <button class="${can ? "can" : ""}">
         Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n} — ${fmt(cost)} Metal
-        <span class="cost">produces ${fmt(b.rate * prodMult(pid) * (S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : n))}/s total</span>
+        <span class="cost">produces ${fmt(b.rate * prodMult(pid) * achMult() * buffMult() * (S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : n))}/s total</span>
       </button>`;
     const btn = row.querySelector("button");
     btn.disabled = !can;
     btn.onclick = () => { buyBuilding(pid, b); renderPlanet(); };
     bl.appendChild(row);
-  }
+  });
 
   // repeatable upgrades
   const ul = $("upgrades");
@@ -883,7 +956,8 @@ function init() {
   })();
 
   load();
-  renderNav(); renderPlanet(); renderResearch(); renderPrestige(); renderAch();
+  renderNav(); renderPlanet(); renderResearch(); renderPrestige(); renderAch(); renderStats();
+  rotateNews();
 
   $("big-planet").onclick = e => mine(S.current, e, $("big-planet"));
   $("ascend-btn").onclick = ascend;
@@ -906,6 +980,9 @@ function init() {
   setInterval(tick, 100);
   setInterval(tickBuffs, 1000);
   setInterval(checkAchievements, 2000);
+  setInterval(rotateNews, 9000);
+  setInterval(renderStats, 3000);
+  $("news-ticker").onclick = () => rotateNews(true);
   setInterval(renderTick, 200);
   setInterval(() => { renderPlanet(); renderResearch(); renderPrestige(); }, 1500); // refresh affordability
   setInterval(save, 10000);

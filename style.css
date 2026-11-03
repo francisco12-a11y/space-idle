@@ -82,13 +82,14 @@ button.danger:hover { border-color: var(--danger); color: var(--danger); }
 
 /* ---- layout ---- */
 main.game-grid {
-  max-width: 1200px; margin: 0 auto; padding: 18px 20px;
-  display: grid; grid-template-columns: 1fr 420px; gap: 0 18px;
-  align-items: start;
-  grid-template-areas: "nav nav" "clicker sidebar";
+  max-width: 1440px; margin: 0 auto; padding: 18px 20px;
+  display: grid; gap: 0 16px; align-items: start;
+  grid-template-columns: minmax(360px, 1.1fr) minmax(380px, 1.3fr) minmax(320px, 0.9fr);
+  grid-template-areas: "nav nav nav" "clicker store sidebar";
 }
 #planet-nav { grid-area: nav; }
 #clicker-view { grid-area: clicker; }
+#store-view { grid-area: store; }
 #sidebar { grid-area: sidebar; }
 #planet-nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 #planet-nav button { display: flex; align-items: center; gap: 8px; font-size: 20px; }
@@ -152,8 +153,37 @@ main.game-grid {
 .row .name { font-size: 21px; }
 .row .sub { font-size: 17px; color: var(--dim); }
 .row button { min-width: 175px; text-align: left; font-size: 17px; }
-.row button.can { border-color: var(--accent); color: var(--accent); filter: brightness(1.1); }
+.row button.can { border-color: var(--accent); color: var(--accent); filter: brightness(1.1); animation: canPulse 1.6s steps(2) infinite; }
+@keyframes canPulse { 50% { box-shadow: 0 0 10px rgba(94, 230, 208, 0.25); } }
 .row .cost { font-size: 15px; color: var(--dim); display: block; }
+
+/* building rows: tier chip + owned count */
+.building-row { align-items: center; }
+.tier-chip {
+  width: 26px; height: 26px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: "Press Start 2P", monospace; font-size: 11px; color: #0b0e1a;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,0.35), 2px 2px 0 rgba(0,0,0,0.4);
+  filter: saturate(0.85);
+}
+.own-count {
+  font-size: 22px; color: var(--text); margin-left: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.building-row.owned-b { border-left: 4px solid var(--border-hi); }
+
+/* news ticker */
+#news-ticker { cursor: pointer; border-style: dashed; }
+#news-ticker:hover { border-style: solid; border-color: var(--border-hi); }
+#news-text { color: var(--dim); font-style: italic; }
+.news-fade { animation: newsFade .5s ease-out; }
+@keyframes newsFade { from { opacity: 0; transform: translateY(4px); } }
+
+/* stats panel */
+.stat-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(120,140,200,0.08); }
+.stat-row:last-child { border-bottom: none; }
+.stat-k { color: var(--dim); font-size: 17px; }
+.stat-v { font-size: 17px; }
 
 /* ---- prestige ---- */
 #prestige-view { border-color: #6e4a9c; }
@@ -240,8 +270,14 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   to { transform: translate(calc(100vw + 120px), 30vh) rotate(360deg); }
 }
 
-@media (max-width: 980px) {
-  main.game-grid { grid-template-columns: 1fr; grid-template-areas: "nav" "clicker" "sidebar"; }
+@media (max-width: 1180px) {
+  main.game-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "nav nav" "clicker clicker" "store sidebar";
+  }
+}
+@media (max-width: 760px) {
+  main.game-grid { grid-template-columns: 1fr; grid-template-areas: "nav" "clicker" "store" "sidebar"; }
   header { flex-wrap: wrap; }
   .chips { order: 3; width: 100%; }
 }
