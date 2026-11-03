@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=41">
+<link rel="stylesheet" href="style.css?v=42">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -60,19 +60,38 @@
   </section>
 
   <aside id="sidebar">
-    <div class="panel" id="ach-view">
-      <h3><img class="hicon" data-px="trophy"> Achievements <span id="ach-count"></span></h3>
-      <div id="ach-grid"></div>
-    </div>
-
-    <div class="panel" id="stats-view">
-      <h3><img class="hicon" data-px="stats"> Statistics</h3>
-      <div id="stats-list"></div>
+    <div class="panel side-menu">
+      <h3><img class="hicon" data-px="colonist"> More</h3>
+      <button class="menu-btn" id="ach-open">
+        <img class="hicon" data-px="trophy"> Achievements
+        <span class="menu-sub" id="ach-count">0/30</span>
+      </button>
+      <button class="menu-btn" id="stats-open">
+        <img class="hicon" data-px="stats"> Statistics
+        <span class="menu-sub" id="stats-sub">view</span>
+      </button>
     </div>
   </aside>
 </main>
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 60% RATE</small></footer>
+
+<div id="ach-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-page">
+    <button id="ach-close">CLOSE</button>
+    <h1><img class="hicon" data-px="trophy"> ACHIEVEMENTS</h1>
+    <p class="ascend-sub">Each achievement grants +1% production, forever. <span id="ach-count2"></span></p>
+    <div id="ach-grid"></div>
+  </div>
+</div>
+
+<div id="stats-overlay" class="modal-overlay" style="display:none">
+  <div class="modal-page">
+    <button id="stats-close">CLOSE</button>
+    <h1><img class="hicon" data-px="stats"> STATISTICS</h1>
+    <div id="stats-list"></div>
+  </div>
+</div>
 
 <div id="ascend-overlay" style="display:none">
   <div class="ascend-page">
@@ -85,6 +104,6 @@
   </div>
 </div>
 
-<script src="game.js?v=41"></script>
+<script src="game.js?v=42"></script>
 </body>
 </html>

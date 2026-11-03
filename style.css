@@ -435,3 +435,24 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
   display: block; margin: 20px auto; width: 320px; padding: 14px;
   font-size: 14px;
 }
+
+/* ===== v4.2: popup pages ===== */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 90;
+  background: rgba(5, 8, 18, 0.96);
+  display: none; overflow-y: auto;
+}
+.modal-page { max-width: 700px; margin: 0 auto; padding: 40px 30px; text-align: center; position: relative; }
+.modal-page h1 {
+  font-family: "Press Start 2P", monospace; font-size: 18px; color: var(--accent2);
+  margin: 10px 0 16px;
+}
+.modal-page .hicon { width: 22px; height: 22px; vertical-align: -4px; }
+.modal-page button#ach-close, .modal-page button#stats-close { position: absolute; top: 30px; right: 20px; }
+.side-menu .menu-btn {
+  display: block; width: 100%; text-align: left; margin-bottom: 8px;
+  padding: 12px 14px; font-size: 20px;
+}
+.menu-sub { float: right; color: var(--dim); font-size: 16px; }
+#ach-grid { display: grid; grid-template-columns: repeat(auto-fill, 40px); gap: 8px; justify-content: center; }
+#ach-view .ach, #ach-grid .ach { width: 40px; height: 40px; font-size: 18px; }

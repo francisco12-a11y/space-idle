@@ -542,7 +542,10 @@ function checkAch() {
 }
 function renderAch() {
   const grid = $("ach-grid");
-  $("ach-count").textContent = `${S.ach.length}/${ACH.length} (+${S.ach.length}%)`;
+  const c = `${S.ach.length}/${ACH.length} (+${S.ach.length}%)`;
+  $("ach-count").textContent = c;
+  const c2 = $("ach-count2");
+  if (c2) c2.textContent = `You have ${c}.`;
   grid.innerHTML = "";
   for (const a of ACH) {
     const ownedA = S.ach.includes(a.id);
@@ -751,6 +754,10 @@ function init() {
     renderTree();
   };
   $("ascend-close").onclick = () => { $("ascend-overlay").style.display = "none"; };
+  $("ach-open").onclick = () => { renderAch(); $("ach-overlay").style.display = "flex"; };
+  $("ach-close").onclick = () => { $("ach-overlay").style.display = "none"; };
+  $("stats-open").onclick = () => { renderStats(); $("stats-overlay").style.display = "flex"; };
+  $("stats-close").onclick = () => { $("stats-overlay").style.display = "none"; };
   $("save-btn").onclick = () => { save(); $("save-btn").textContent = "Saved!"; setTimeout(() => $("save-btn").textContent = "Save", 800); };
   $("reset-btn").onclick = () => { if (confirm("Wipe ALL progress?")) { localStorage.removeItem(SAVE_KEY); S = newState(); renderAll(); } };
   $("mute-btn").onclick = () => {
