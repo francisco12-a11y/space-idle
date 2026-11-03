@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stellar Ascent — Idle Space Colony</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -33,7 +31,7 @@
   <section id="planet-view">
     <div class="planet-header panel glow-panel">
       <div class="planet-orbit">
-        <svg id="planet-art" width="120" height="120" viewBox="0 0 96 96"></svg>
+        <img id="planet-art-img" width="120" height="120" alt="">
       </div>
       <div class="planet-text">
         <h2 id="planet-name"></h2>
@@ -68,6 +66,13 @@
         <div class="panel" id="upgrades-panel">
           <h3>Upgrades</h3>
           <div id="upgrades"></div>
+        </div>
+
+        <div class="panel" id="prestige-view">
+          <h3>✦ Ascendancy</h3>
+          <div id="shard-info"></div>
+          <button id="ascend-btn">ASCEND</button>
+          <div id="masteries"></div>
         </div>
 
         <div class="panel" id="research-view">

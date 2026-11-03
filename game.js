@@ -83,6 +83,20 @@ const TECHS = [
   { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 400 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
 ];
 
+const MASTERY = [
+  { id: "m_prod1",  name: "Galactic Legacy I",   cost: 1,  desc: "+25% all production.", },
+  { id: "m_prod2",  name: "Galactic Legacy II",  cost: 3,  req: "m_prod1", desc: "+50% all production." },
+  { id: "m_prod3",  name: "Singularity Engine",  cost: 15, req: "m_prod2", desc: "×5 all production." },
+  { id: "m_start",  name: "Head Start Protocol", cost: 2,  desc: "Every run starts with 2,500 Metal." },
+  { id: "m_click",  name: "Gravity Gloves",      cost: 3,  req: "m_prod1", desc: "All mining power ×3." },
+  { id: "m_sci",    name: "Cosmic Consciousness",cost: 3,  req: "m_prod1", desc: "Science output ×2." },
+  { id: "m_travel", name: "Wormhole Charts",     cost: 4,  req: "m_start", desc: "Colonization costs −50%." },
+  { id: "m_off",    name: "Ascended Rest",       cost: 5,  req: "m_sci",   desc: "Offline progress at 100%." },
+  { id: "m_shard",  name: "Shard Resonance",     cost: 6,  req: "m_prod2", desc: "+50% Ascendancy Shards on ascend." },
+  { id: "m_auto",   name: "Drone Overmind",      cost: 8,  req: "m_prod2", desc: "Runs start with 10 free tier-1 buildings per colonized planet." },
+  { id: "m_memory", name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
+];
+
 /* ============ STATE ============ */
 
 const SAVE_KEY = "stellar-ascent-save";
@@ -91,15 +105,19 @@ let S = newState();
 function newState() {
   return {
     res: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
+    lifetime: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
     buildings: {},     // "planetId:buildingId" -> count
     labs: 0,
     upgrades: [],      // upgrade ids owned
     techs: [],         // tech ids owned
+    masteries: [],     // mastery ids owned (persist through ascension)
+    shards: 0,
     unlocked: ["terra"],
     current: "terra",
     buyMode: 1,
     lastTick: Date.now(),
     started: Date.now(),
+    ascensions: 0,
   };
 }
 
@@ -122,8 +140,13 @@ function globalProdMult() {
     const def = TECHS.find(x => x.id === t);
     if (def && def.effect === "global") m += def.val;
   }
+  if (mOwned("m_prod1")) m += 0.25;
+  if (mOwned("m_prod2")) m += 0.5;
+  if (mOwned("m_prod3")) m *= 5;
   return m;
 }
+
+function mOwned(id) { return S.masteries.includes(id); }
 
 function clickMult(planet) {
   let m = 1;
@@ -132,6 +155,7 @@ function clickMult(planet) {
     const def = TECHS.find(x => x.id === t);
     if (def && def.effect === "click") m *= def.val;
   }
+  if (mOwned("m_click")) m *= 3;
   return m;
 }
 
@@ -147,6 +171,7 @@ function sciMult() {
     const def = TECHS.find(x => x.id === t);
     if (def && def.effect === "sci") m *= def.val;
   }
+  if (mOwned("m_sci")) m *= 2;
   return m;
 }
 
@@ -200,6 +225,14 @@ function costStr(cost) {
   return Object.entries(cost).map(([k, v]) => `${fmt(v)} ${k}`).join(", ");
 }
 
+function unlockCost(p) {
+  if (!p.unlockCost) return null;
+  if (!mOwned("m_travel")) return p.unlockCost;
+  const c = {};
+  for (const k in p.unlockCost) c[k] = Math.ceil(p.unlockCost[k] / 2);
+  return c;
+}
+
 /* ============ SAVE / LOAD ============ */
 
 function save() {
@@ -215,7 +248,7 @@ function load() {
     S = Object.assign(newState(), data);
     const elapsed = Math.min((Date.now() - S.lastTick) / 1000, 86400);
     if (elapsed > 10) {
-      const rate = techOwned("t_off") ? 0.75 : 0.5;
+      const rate = mOwned("m_off") ? 1 : techOwned("t_off") ? 0.75 : 0.5;
       const gained = {};
       let total = 0;
       for (const p of S.unlocked) {
@@ -242,6 +275,7 @@ function mine(planet, evt) {
   const p = PLANET(planet);
   const amt = clickPower(planet);
   S.res[p.res] += amt;
+  S.lifetime[p.res] += amt;
   if (techOwned("t_click_yield")) S.res.Metal += amt;
   if (evt) floatNum(evt, "+" + fmt(amt) + " " + p.resIcon);
 }
@@ -293,15 +327,133 @@ function labCost() {
 
 function travel(planet) {
   const p = PLANET(planet);
-  if (!p.unlockCost || !canPay(p.unlockCost) || S.unlocked.includes(planet)) return;
-  pay(p.unlockCost);
+  const cost = unlockCost(p);
+  if (!cost || !canPay(cost) || S.unlocked.includes(planet)) return;
+  pay(cost);
   S.unlocked.push(planet);
   S.current = planet;
   renderNav();
   renderPlanet();
 }
 
+/* ============ ASCENDANCY ============ */
+
+function shardGain() {
+  const am = S.lifetime.Antimatter || 0;
+  let g = Math.floor(Math.sqrt(am / 1000));
+  if (mOwned("m_shard")) g = Math.floor(g * 1.5);
+  return g;
+}
+
+function ascend() {
+  const g = shardGain();
+  if (g < 1 || !confirm(`Ascend now for ${g} Ascendancy Shard${g > 1 ? "s" : ""}?\n\nThis resets: resources, buildings, upgrades and techs.\nMasteries and shards are permanent.`)) return;
+  const kept = { shards: S.shards + g, masteries: S.masteries, lifetime: S.lifetime, ascensions: S.ascensions + 1 };
+  const keepPlanets = mOwned("m_memory");
+  const unlocked = keepPlanets ? S.unlocked : ["terra"];
+  const current = keepPlanets ? S.current : "terra";
+  const autoStart = mOwned("m_auto");
+  const headStart = mOwned("m_start");
+  S = newState();
+  Object.assign(S, kept, { unlocked, current });
+  if (headStart) S.res.Metal = 2500;
+  if (autoStart) for (const pid of unlocked) S.buildings[pid + ":" + PLANET(pid).buildings[0].id] = 10;
+  renderNav(); renderPlanet(); renderResearch(); renderPrestige();
+  save();
+  alert(`Ascension #${S.ascensions} complete! +${g} shards.`);
+}
+
+function renderPrestige() {
+  const g = shardGain();
+  $("shard-info").innerHTML =
+    `<span class="shards">✦ ${S.shards}</span> Ascendancy Shards` +
+    (S.ascensions ? ` · ${S.ascensions} ascension${S.ascensions > 1 ? "s" : ""}` : "") +
+    `<br><span style="color:var(--dim)">Ascending now: +${g} shards` +
+    (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(1000)})` : "") +
+    `</span>`;
+  const btn = $("ascend-btn");
+  btn.disabled = g < 1;
+  btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} ✦`;
+
+  const ml = $("masteries");
+  ml.innerHTML = "";
+  for (const m of MASTERY) {
+    const owned = mOwned(m.id);
+    const avail = !owned && (!m.req || mOwned(m.req));
+    if (!owned && !avail) continue;
+    const div = document.createElement("div");
+    div.className = "mastery" + (owned ? " owned" : "");
+    div.innerHTML = `
+      <div class="m-info">
+        <div class="m-name">${owned ? "✦ " : ""}${m.name}</div>
+        <div class="m-sub">${m.desc}</div>
+      </div>
+      ${owned ? "" : `<button class="${S.shards >= m.cost ? "can" : ""}">${m.cost} ✦</button>`}`;
+    if (!owned) div.querySelector("button").onclick = () => {
+      if (S.shards < m.cost) return;
+      S.shards -= m.cost;
+      S.masteries.push(m.id);
+      renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
+    };
+    ml.appendChild(div);
+  }
+}
+
 /* ============ RENDER ============ */
+
+/* pixel-art planet sprites, generated per planet */
+function pixelPlanetURL(p, size) {
+  const n = 26; // logical pixel grid
+  const cv = document.createElement("canvas");
+  cv.width = n; cv.height = n;
+  const ctx = cv.getContext("2d");
+  const idx = PLANETS.indexOf(p);
+  let seed = 1234 + idx * 777;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const c = p.color;
+  // shades: hi / base / mid / dark
+  const shade = (hex, f) => {
+    const v = parseInt(hex.slice(1), 16);
+    const ch = s => Math.min(255, Math.max(0, Math.round(((v >> s) & 255) * f)));
+    return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+  };
+  const cols = [shade(c, 1.35), c, shade(c, 0.72), shade(c, 0.45)];
+  const R = 10.5, cx = n / 2 - 0.5, cy = n / 2 - 0.5;
+  for (let y = 0; y < n; y++) {
+    for (let x = 0; x < n; x++) {
+      const dx = x - cx, dy = y - cy;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      if (d > R) continue;
+      // light from top-left: shade by depth + noise dithering
+      const depth = (dx + dy) / (2 * R);           // -1..1
+      let ci = depth < -0.45 ? 0 : depth < 0.05 ? 1 : depth < 0.5 ? 2 : 3;
+      if (ci > 0 && ci < 3 && rnd() < 0.28) ci += depth > 0.1 ? -1 : 1; // dither edges
+      // blotch terrain
+      if (rnd() < 0.05) ci = Math.min(3, ci + 1);
+      ctx.fillStyle = cols[ci];
+      ctx.fillRect(x, y, 1, 1);
+    }
+  }
+  // ring: diagonal band crossing the planet
+  if (p.ring) {
+    ctx.fillStyle = shade(c, 1.6);
+    for (let x = 1; x < n - 1; x++) {
+      const y = Math.round(0.5 * (x - cx) + cy + 3);
+      const dx = x - cx;
+      if (Math.abs(dx) > R + 3 || rnd() < 0.15) continue;
+      const behind = dx < -2; // hidden by planet on left side? draw anyway over dark side, classic look
+      ctx.fillRect(x, y, 1, 1);
+      if (rnd() < 0.5) ctx.fillRect(x, y + 1, 1, 1);
+    }
+  }
+  // moons: single bright pixels with orbit distance
+  for (let i = 0; i < p.moons; i++) {
+    const a = i * 2.3 + 0.7;
+    ctx.fillStyle = "#e8e3ff";
+    ctx.fillRect(Math.round(cx + Math.cos(a) * 12), Math.round(cy + Math.sin(a) * 12), 1, 1);
+  }
+  return cv.toDataURL();
+}
 
 function planetSVG(p, size) {
   const uid = "g" + p.id + (size || "");
@@ -367,7 +519,9 @@ function renderPlanet(forced) {
   const p = PLANET(pid);
   const unlocked = S.unlocked.includes(pid);
 
-  $("planet-art").innerHTML = planetSVG(p);
+  $("planet-art-img").src = pixelPlanetURL(p, 120);
+  $("planet-art-img").style.width = "120px";
+  $("planet-art-img").style.height = "120px";
   $("planet-name").textContent = p.name;
   $("planet-desc").textContent = p.desc;
 
@@ -378,7 +532,7 @@ function renderPlanet(forced) {
   const uPanel = $("upgrades-panel");
 
   if (!unlocked) {
-    resLine.innerHTML = `<span style="color:var(--danger)">LOCKED — travel requires: ${costStr(p.unlockCost)}</span>`;
+    resLine.innerHTML = `<span style="color:var(--danger)">LOCKED — travel requires: ${costStr(unlockCost(p))}</span>`;
     minePanel.style.display = "none";
     bPanel.style.display = "none";
     uPanel.style.display = "none";
@@ -483,15 +637,15 @@ function renderResearch() {
     np.innerHTML = `<div class="name">🌌 All planets colonized. You have transcended the system.</div>`;
     return;
   }
-  const can = canPay(next.unlockCost);
+  const can = canPay(unlockCost(next));
   np.innerHTML = `
     <div style="display:flex;gap:14px;align-items:center">
-      <svg width="64" height="64" viewBox="0 0 96 96">${planetSVG(next)}</svg>
+      <img src="${pixelPlanetURL(next, 48)}" width="48" height="48" style="image-rendering:pixelated">
       <div class="info">
         <div class="name">🚀 Colonize: ${next.name}</div>
         <div class="sub">${next.desc} — produces ${next.resIcon} ${next.res}</div>
       </div>
-      <button class="${can ? "can" : ""}">Travel — ${costStr(next.unlockCost)}</button>
+      <button class="${can ? "can" : ""}">Travel — ${costStr(unlockCost(next))}</button>
     </div>`;
   np.querySelector("button").onclick = () => { travel(next.id); renderNav(); renderPlanet(); renderResearch(); };
 }
@@ -502,8 +656,14 @@ function tick() {
   const now = Date.now();
   const dt = Math.min((now - S.lastTick) / 1000, 60); // clamp long tab sleeps; offline handled on load
   S.lastTick = now;
-  for (const pid of S.unlocked) S.res[PLANET(pid).res] += planetRate(pid) * dt;
-  S.res.Science += labRate() * dt;
+  for (const pid of S.unlocked) {
+    const g = planetRate(pid) * dt;
+    S.res[PLANET(pid).res] += g;
+    S.lifetime[PLANET(pid).res] += g;
+  }
+  const sg = labRate() * dt;
+  S.res.Science += sg;
+  S.lifetime.Science += sg;
 }
 
 function renderTick() {
@@ -551,9 +711,10 @@ function init() {
   })();
 
   load();
-  renderNav(); renderPlanet(); renderResearch();
+  renderNav(); renderPlanet(); renderResearch(); renderPrestige();
 
   $("mine-btn").onclick = e => mine(S.current, e);
+  $("ascend-btn").onclick = ascend;
   document.querySelectorAll(".buy").forEach(b => {
     b.onclick = () => {
       S.buyMode = b.dataset.buy === "max" ? "max" : parseInt(b.dataset.buy);
@@ -572,7 +733,7 @@ function init() {
 
   setInterval(tick, 100);
   setInterval(renderTick, 200);
-  setInterval(() => { renderPlanet(); renderResearch(); }, 1500); // refresh affordability
+  setInterval(() => { renderPlanet(); renderResearch(); renderPrestige(); }, 1500); // refresh affordability
   setInterval(save, 10000);
   addEventListener("beforeunload", save);
 }
