@@ -99,16 +99,16 @@ const TECHS = [
 ];
 
 const MASTERY = [
-  { id: "m_prod1",  name: "Galactic Legacy I",   cost: 1,  desc: "+25% all production.", },
-  { id: "m_prod2",  name: "Galactic Legacy II",  cost: 3,  req: "m_prod1", desc: "+50% all production." },
-  { id: "m_prod3",  name: "Singularity Engine",  cost: 15, req: "m_prod2", desc: "×5 all production." },
-  { id: "m_start",  name: "Head Start Protocol", cost: 2,  desc: "Every run starts with 2,500 Metal." },
-  { id: "m_click",  name: "Gravity Gloves",      cost: 3,  req: "m_prod1", desc: "All mining power ×3." },
-  { id: "m_sci",    name: "Cosmic Consciousness",cost: 3,  req: "m_prod1", desc: "Science output ×2." },
+  { id: "m_prod1",  pos: {x: 15, y: 30}, name: "Galactic Legacy I",   cost: 1,  desc: "+25% all production.", },
+  { id: "m_prod2",  pos: {x: 38, y: 16}, name: "Galactic Legacy II",  cost: 3,  req: "m_prod1", desc: "+50% all production." },
+  { id: "m_prod3",  pos: {x: 62, y: 8}, name: "Singularity Engine",  cost: 15, req: "m_prod2", desc: "×5 all production." },
+  { id: "m_start",  pos: {x: 15, y: 52}, name: "Head Start Protocol", cost: 2,  desc: "Every run starts with 2,500 Metal." },
+  { id: "m_click",  pos: {x: 38, y: 32}, name: "Gravity Gloves",      cost: 3,  req: "m_prod1", desc: "All mining power ×3." },
+  { id: "m_sci",    pos: {x: 38, y: 46}, name: "Cosmic Consciousness",cost: 3,  req: "m_prod1", desc: "Science output ×2." },
   { id: "m_travel", pos: {x: 38, y: 58}, name: "Wormhole Charts",     cost: 4,  req: "m_start", desc: "Colonization costs −50%." },
-  { id: "m_off",    name: "Ascended Rest",       cost: 5,  req: "m_sci",   desc: "Offline progress at 100%." },
-  { id: "m_shard",  name: "Shard Resonance",     cost: 6,  req: "m_prod2", desc: "+50% Ascendancy Shards on ascend." },
-  { id: "m_auto",   name: "Drone Overmind",      cost: 8,  req: "m_prod2", desc: "Runs start with 10 free tier-1 buildings per colonized planet." },
+  { id: "m_off",    pos: {x: 62, y: 46}, name: "Ascended Rest",       cost: 5,  req: "m_sci",   desc: "Offline progress at 100%." },
+  { id: "m_shard",  pos: {x: 62, y: 22}, name: "Shard Resonance",     cost: 6,  req: "m_prod2", desc: "+50% Ascendancy Shards on ascend." },
+  { id: "m_auto",   pos: {x: 62, y: 34}, name: "Drone Overmind",      cost: 8,  req: "m_prod2", desc: "Runs start with 10 free tier-1 buildings per colonized planet." },
   { id: "m_memory", pos: {x: 62, y: 58}, name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
 ];
 
