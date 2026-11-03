@@ -192,6 +192,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 20px; }
 
 footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; letter-spacing: 2px; }
 
+
 .float-num {
   position: fixed; pointer-events: none; z-index: 30;
   font-family: "Press Start 2P", monospace; font-size: 11px;
@@ -199,6 +200,40 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   animation: floatup 0.9s ease-out forwards;
 }
 @keyframes floatup { to { transform: translateY(-46px); opacity: 0; } }
+
+.buff-chip {
+  animation: buffPulse 1s steps(2) infinite;
+  border-color: var(--accent2);
+}
+@keyframes buffPulse { 50% { filter: brightness(1.4); } }
+
+.ach-grid, #ach-grid { display: grid; grid-template-columns: repeat(auto-fill, 34px); gap: 6px; }
+.ach {
+  width: 34px; height: 34px; display: flex; align-items: center; justify-content: center;
+  background: var(--p1); border: 2px solid var(--border); font-size: 16px;
+  cursor: help;
+}
+.ach.owned { border-color: var(--accent2); background: #2a2338; }
+
+.toast {
+  position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
+  z-index: 40; padding: 8px 18px;
+  background: var(--p2); border: 2px solid var(--accent2); color: var(--accent2);
+  font-size: 20px; box-shadow: 0 4px 0 rgba(0,0,0,0.5);
+  animation: toastIn .3s ease-out;
+}
+@keyframes toastIn { from { transform: translate(-50%, -20px); opacity: 0; } }
+
+.comet {
+  position: fixed; left: -60px; top: var(--y0, 20vh); z-index: 50;
+  font-size: 44px; cursor: pointer; user-select: none;
+  animation: cometfly 10s linear forwards;
+  text-shadow: 0 0 18px #ffd166, 0 0 40px rgba(255, 209, 102, 0.6);
+}
+.comet:hover { filter: brightness(1.4); }
+@keyframes cometfly {
+  to { transform: translate(calc(100vw + 120px), 30vh) rotate(360deg); }
+}
 
 @media (max-width: 860px) {
   .cols { grid-template-columns: 1fr; }

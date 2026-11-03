@@ -12,6 +12,9 @@ const PLANETS = [
       { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.5,  desc: "A tireless robotic drill." },
       { id: "rig",   name: "Mining Rig", baseCost: 220, mult: 1.15, rate: 4,   desc: "Industrial extraction array." },
       { id: "quarry",name: "Strip Quarry", baseCost: 3200, mult: 1.15, rate: 28, desc: "Moves mountains. Literally." },
+      { id: "cannon", name: "Rail Cannon", baseCost: 45000, mult: 1.15, rate: 220, desc: "Fires ingots into orbit." },
+      { id: "elevator", name: "Orbital Elevator", baseCost: 650000, mult: 1.15, rate: 1800, desc: "A ribbon to the sky." },
+      { id: "forge", name: "Planetary Forge", baseCost: 9500000, mult: 1.15, rate: 15000, desc: "The crust is raw material." },
     ],
     upgrades: [
       { id: "pick",  name: "Plasma Pickaxe", cost: 100,  type: "click",  val: 2, desc: "Mining power ×2." },
@@ -28,6 +31,9 @@ const PLANETS = [
       { id: "probe", name: "Harvest Probe", baseCost: 500, mult: 1.15, rate: 1,   desc: "Skims He-3 from the dust." },
       { id: "scoop", name: "Regolith Scoop", baseCost: 4500, mult: 1.15, rate: 8,  desc: "Eats the surface, spits fuel." },
       { id: "ranch", name: "He-3 Refinery", baseCost: 60000, mult: 1.15, rate: 60, desc: "Bulk isotope processing." },
+      { id: "driver", name: "Mass Driver", baseCost: 500000, mult: 1.15, rate: 700, desc: "Throws regolith by the ton." },
+      { id: "fplant", name: "Fusion Plant", baseCost: 6500000, mult: 1.15, rate: 5500, desc: "Burns its own product." },
+      { id: "breeder", name: "Helium Breeders", baseCost: 85000000, mult: 1.15, rate: 45000, desc: "Isotopes begetting isotopes." },
     ],
     upgrades: [
       { id: "lunadrill", name: "Lunar Drill Tips", cost: 3000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
@@ -44,6 +50,9 @@ const PLANETS = [
       { id: "cutter", name: "Crystal Cutter", baseCost: 5000, mult: 1.15, rate: 1,  desc: "Lasers meet rock." },
       { id: "sifter", name: "Belt Sifter", baseCost: 48000, mult: 1.15, rate: 8, desc: "Screens a thousand rocks an hour." },
       { id: "crawn",   name: "Crystal Crawler", baseCost: 620000, mult: 1.15, rate: 60, desc: "Walks between asteroids, mining all of them." },
+      { id: "highway", name: "Belt Highway", baseCost: 6000000, mult: 1.15, rate: 700, desc: "A road made of checkpoints." },
+      { id: "foundry", name: "Crystal Foundry", baseCost: 75000000, mult: 1.15, rate: 5500, desc: "Cutting houses the size of cities." },
+      { id: "lattice", name: "Zero-G Lattice", baseCost: 900000000, mult: 1.15, rate: 45000, desc: "Crystal grows in the void, untended." },
     ],
     upgrades: [
       { id: "lens", name: "Focused Lens Array", cost: 60000, type: "click", val: 2, desc: "Crystal mining power ×2." },
@@ -60,6 +69,9 @@ const PLANETS = [
       { id: "skimmer", name: "Cloud Skimmer", baseCost: 80000, mult: 1.15, rate: 2, desc: "Balloon-drifts through the storm layers." },
       { id: "trap",   name: "Mag-Trap Station", baseCost: 900000, mult: 1.15, rate: 18, desc: "Catches the impossible in a bottle." },
       { id: "carrier", name: "Antimatter Carrier", baseCost: 12000000, mult: 1.15, rate: 150, desc: "One crash = no more colony." },
+      { id: "harvest", name: "Storm Harvester", baseCost: 80000000, mult: 1.15, rate: 1200, desc: "Drinks hurricanes." },
+      { id: "eye", name: "Eye of Aurelia", baseCost: 1100000000, mult: 1.15, rate: 9500, desc: "A station in the calm center of the storm." },
+      { id: "continuum", name: "Continuum Engine", baseCost: 15000000000, mult: 1.15, rate: 78000, desc: "It shouldn't exist. It disagrees." },
     ],
     upgrades: [
       { id: "penn", name: "Penning Fields", cost: 900000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
@@ -97,6 +109,33 @@ const MASTERY = [
   { id: "m_memory", name: "Stellar Memory",      cost: 10, req: "m_travel", desc: "Keep discovered planets when ascending." },
 ];
 
+const ACH = [
+  { id: "a_click1", name: "Hands Dirty",     desc: "Mine 100 times.",            cond: s => s.stats.clicks >= 100 },
+  { id: "a_click2", name: "Blistered",       desc: "Mine 1,000 times.",          cond: s => s.stats.clicks >= 1000 },
+  { id: "a_click3", name: "Carpal Ascension",desc: "Mine 10,000 times.",         cond: s => s.stats.clicks >= 10000 },
+  { id: "a_b1", name: "Foreman",        desc: "Own 10 colonists.",    cond: s => totalBuildings() >= 10 },
+  { id: "a_b2", name: "Governor",       desc: "Own 50 colonists.",    cond: s => totalBuildings() >= 50 },
+  { id: "a_b3", name: "Overlord",       desc: "Own 150 colonists.",   cond: s => totalBuildings() >= 150 },
+  { id: "a_b4", name: "Singularity Boss", desc: "Own 400 colonists.", cond: s => totalBuildings() >= 400 },
+  { id: "a_luna",   name: "One Small Step",  desc: "Colonize Luna.",      cond: s => s.unlocked.includes("luna") },
+  { id: "a_ceres",  name: "Belt Explorer",   desc: "Colonize Ceres.",     cond: s => s.unlocked.includes("ceres") },
+  { id: "a_aurelia",name: "Storm Rider",     desc: "Colonize Aurelia.",   cond: s => s.unlocked.includes("aurelia") },
+  { id: "a_lab1", name: "Peer Reviewed",  desc: "Own 1 Research Lab.",  cond: s => s.labs >= 1 },
+  { id: "a_lab2", name: "R&D Division",   desc: "Own 10 Research Labs.",cond: s => s.labs >= 10 },
+  { id: "a_lab3", name: "Science Empire", desc: "Own 25 Research Labs.",cond: s => s.labs >= 25 },
+  { id: "a_sci1", name: "Curious",   desc: "Earn 100 lifetime Science.",    cond: s => (s.lifetime.Science||0) >= 100 },
+  { id: "a_sci2", name: "Enlightened", desc: "Earn 1,000 lifetime Science.", cond: s => (s.lifetime.Science||0) >= 1000 },
+  { id: "a_sci3", name: "Omniscient", desc: "Earn 10,000 lifetime Science.", cond: s => (s.lifetime.Science||0) >= 10000 },
+  { id: "a_m1", name: "Industrialist", desc: "Earn 1M lifetime Metal.",   cond: s => (s.lifetime.Metal||0) >= 1e6 },
+  { id: "a_m2", name: "Metal Tycoon",  desc: "Earn 1B lifetime Metal.",   cond: s => (s.lifetime.Metal||0) >= 1e9 },
+  { id: "a_am1", name: "Antimatter Touch", desc: "Earn 10K lifetime Antimatter.", cond: s => (s.lifetime.Antimatter||0) >= 1e4 },
+  { id: "a_am2", name: "Annihilation Baron", desc: "Earn 1M lifetime Antimatter.", cond: s => (s.lifetime.Antimatter||0) >= 1e6 },
+  { id: "a_c1", name: "Comet Catcher", desc: "Catch 1 Golden Comet.",  cond: s => s.stats.comets >= 1 },
+  { id: "a_c2", name: "Comet Whisperer", desc: "Catch 10 Golden Comets.", cond: s => s.stats.comets >= 10 },
+  { id: "a_asc1", name: "Reborn",     desc: "Ascend once.",   cond: s => s.ascensions >= 1 },
+  { id: "a_asc2", name: "Eternal Cycle", desc: "Ascend 5 times.", cond: s => s.ascensions >= 5 },
+];
+
 /* ============ STATE ============ */
 
 const SAVE_KEY = "stellar-ascent-save";
@@ -115,6 +154,10 @@ function newState() {
     unlocked: ["terra"],
     current: "terra",
     buyMode: 1,
+    stats: { clicks: 0, comets: 0 },
+    ach: [],           // achievement ids owned
+    buffs: {},         // { rushUntil, frenzyUntil }
+    nextComet: 0,
     lastTick: Date.now(),
     started: Date.now(),
     ascensions: 0,
@@ -148,6 +191,16 @@ function globalProdMult() {
 
 function mOwned(id) { return S.masteries.includes(id); }
 
+function totalBuildings() {
+  let n = S.labs;
+  for (const k in S.buildings) n += S.buildings[k];
+  return n;
+}
+
+function achMult() { return 1 + 0.01 * S.ach.length; }
+function buffMult() { return Date.now() < (S.buffs.rushUntil || 0) ? 7 : 1; }
+function frenzyMult() { return Date.now() < (S.buffs.frenzyUntil || 0) ? 777 : 1; }
+
 function clickMult(planet) {
   let m = 1;
   for (const u of PLANET(planet).upgrades) if (S.upgrades.includes(u.id) && u.type === "click") m *= u.val;
@@ -177,7 +230,7 @@ function sciMult() {
 
 function clickPower(planet) {
   // 1 + 2% of per-second production, times click multipliers
-  return (1 + 0.02 * planetRate(planet)) * clickMult(planet);
+  return (1 + 0.02 * planetRate(planet)) * clickMult(planet) * frenzyMult();
 }
 
 function planetRate(planet) {
@@ -185,11 +238,11 @@ function planetRate(planet) {
   for (const b of PLANET(planet).buildings) {
     sum += (S.buildings[planet + ":" + b.id] || 0) * b.rate;
   }
-  return sum * prodMult(planet);
+  return sum * prodMult(planet) * achMult() * buffMult();
 }
 
 function labRate() {
-  return S.labs * 0.5 * sciMult();
+  return S.labs * 0.5 * sciMult() * achMult();
 }
 
 function techOwned(id) { return S.techs.includes(id); }
@@ -233,7 +286,94 @@ function unlockCost(p) {
   return c;
 }
 
-/* ============ SAVE / LOAD ============ */
+/* ============ ACHIEVEMENTS & COMETS ============ */
+
+function toast(text) {
+  const el = document.createElement("div");
+  el.className = "toast";
+  el.textContent = text;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 4200);
+}
+
+function checkAchievements() {
+  let newly = 0;
+  for (const a of ACH) {
+    if (S.ach.includes(a.id)) continue;
+    if (a.cond(S)) { S.ach.push(a.id); newly++; }
+  }
+  if (newly) {
+    toast(`🏆 Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`);
+    renderAch();
+  }
+}
+
+function renderAch() {
+  const grid = $("ach-grid");
+  if (!grid) return;
+  $("ach-count").textContent = `${S.ach.length}/${ACH.length} (+${S.ach.length}%)`;
+  grid.innerHTML = "";
+  for (const a of ACH) {
+    const owned = S.ach.includes(a.id);
+    const d = document.createElement("div");
+    d.className = "ach" + (owned ? " owned" : "");
+    d.textContent = owned ? "🏆" : "?";
+    d.title = owned ? `${a.name} — ${a.desc}` : `??? — ${a.desc}`;
+    grid.appendChild(d);
+  }
+}
+
+function scheduleComet() {
+  S.nextComet = Date.now() + (2 + Math.random() * 4) * 60000; // every 2–6 min
+}
+
+function spawnComet() {
+  const el = document.createElement("div");
+  el.className = "comet";
+  el.textContent = "☄";
+  el.style.setProperty("--y0", 10 + Math.random() * 50 + "vh");
+  document.body.appendChild(el);
+  const done = setTimeout(() => el.remove(), 11000);
+  el.onclick = e => {
+    clearTimeout(done);
+    el.remove();
+    catchComet(e);
+  };
+}
+
+function catchComet(evt) {
+  S.stats.comets++;
+  const roll = Math.random();
+  if (roll < 0.45) {
+    S.buffs.rushUntil = Date.now() + 30000;
+    toast("☄ COMET RUSH! All production ×7 for 30s");
+  } else if (roll < 0.8) {
+    let gained = [];
+    for (const pid of S.unlocked) {
+      const p = PLANET(pid);
+      const amt = Math.max(planetRate(pid) * 120, 25 * clickPower(pid) / frenzyMult());
+      S.res[p.res] += amt;
+      S.lifetime[p.res] += amt;
+      gained.push(`+${fmt(amt)} ${p.res}`);
+    }
+    toast("☄ STARDUST SHOWER! " + gained.join(", "));
+  } else {
+    S.buffs.frenzyUntil = Date.now() + 15000;
+    toast("✦ CLICK FRENZY! Mining power ×777 for 15s");
+  }
+  floatNum(evt, "☄!");
+  renderChips();
+  checkAchievements();
+  save();
+}
+
+function tickBuffs() {
+  if (!S.nextComet) scheduleComet();
+  if (Date.now() >= S.nextComet && !document.querySelector(".comet")) {
+    spawnComet();
+    scheduleComet();
+  }
+}
 
 function save() {
   S.lastTick = Date.now();
@@ -276,6 +416,7 @@ function mine(planet, evt, btn) {
   const amt = clickPower(planet);
   S.res[p.res] += amt;
   S.lifetime[p.res] += amt;
+  S.stats.clicks++;
   if (techOwned("t_click_yield")) S.res.Metal += amt;
   if (btn) {
     btn.classList.add("pressed");
@@ -502,6 +643,8 @@ function renderChips() {
     `<div class="chip" style="color:var(--accent2)" title="Science — from Research Labs">
       <span>🧪</span><span class="val" id="chip-Science">0</span><span class="rate" id="chiprate-Science"></span>
     </div>`);
+  box.insertAdjacentHTML("beforeend",
+    `<div class="chip buff-chip" id="chip-buff" style="display:none"></div>`);
 }
 
 function renderNav() {
@@ -697,6 +840,15 @@ function renderTick() {
   const sv = $("chip-Science"), sr = $("chiprate-Science");
   if (sv) sv.textContent = fmt(S.res.Science);
   if (sr) sr.textContent = "+" + fmt(labRate()) + "/s";
+  const bc = $("chip-buff");
+  if (bc) {
+    const now = Date.now();
+    const rush = Math.max(0, (S.buffs.rushUntil || 0) - now);
+    const frenzy = Math.max(0, (S.buffs.frenzyUntil || 0) - now);
+    if (rush > 0) { bc.style.display = ""; bc.textContent = `☄ RUSH ×7 ${Math.ceil(rush / 1000)}s`; }
+    else if (frenzy > 0) { bc.style.display = ""; bc.textContent = `✦ FRENZY ×777 ${Math.ceil(frenzy / 1000)}s`; }
+    else bc.style.display = "none";
+  }
   const cur = S.current && S.unlocked.includes(S.current) ? S.current : null;
   if (cur) {
     const p = PLANET(cur);
@@ -732,7 +884,7 @@ function init() {
   })();
 
   load();
-  renderNav(); renderPlanet(); renderResearch(); renderPrestige();
+  renderNav(); renderPlanet(); renderResearch(); renderPrestige(); renderAch();
 
   $("mine-btn").onclick = e => mine(S.current, e, $("mine-btn"));
   $("ascend-btn").onclick = ascend;
@@ -753,6 +905,8 @@ function init() {
   };
 
   setInterval(tick, 100);
+  setInterval(tickBuffs, 1000);
+  setInterval(checkAchievements, 2000);
   setInterval(renderTick, 200);
   setInterval(() => { renderPlanet(); renderResearch(); renderPrestige(); }, 1500); // refresh affordability
   setInterval(save, 10000);
