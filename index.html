@@ -4,63 +4,83 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stellar Ascent — Idle Space Colony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <canvas id="starfield"></canvas>
+<div id="nebula"></div>
 
 <header>
-  <h1>STELLAR ASCENT</h1>
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2l2.4 6.2L21 9l-5 4.2L17.5 20 12 16.4 6.5 20 8 13.2 3 9l6.6-.8z" fill="#5ee6d0"/>
+    </svg>
+    <h1>STELLAR ASCENT</h1>
+  </div>
+  <div id="res-chips" class="chips"></div>
   <div class="topbar">
-    <div class="stat">🧪 Science: <span id="sci-val">0</span> <span class="rate" id="sci-rate"></span></div>
-    <div class="stat" id="offline-note"></div>
-    <button id="save-btn">Save</button>
-    <button id="reset-btn" class="danger">Reset</button>
+    <button id="save-btn" title="Save now">💾 Save</button>
+    <button id="reset-btn" class="danger" title="Wipe progress">Reset</button>
   </div>
 </header>
 
 <main>
-  <nav id="planet-nav"><!-- planet tabs injected --></nav>
+  <nav id="planet-nav"></nav>
 
   <section id="planet-view">
-    <div class="planet-header">
-      <svg id="planet-art" width="96" height="96" viewBox="0 0 96 96"></svg>
-      <div>
+    <div class="planet-header panel glow-panel">
+      <div class="planet-orbit">
+        <svg id="planet-art" width="120" height="120" viewBox="0 0 96 96"></svg>
+      </div>
+      <div class="planet-text">
         <h2 id="planet-name"></h2>
         <p id="planet-desc"></p>
         <div id="planet-resource" class="resource-line"></div>
       </div>
     </div>
 
-    <div class="panel">
-      <button id="mine-btn">MINE</button>
-      <span id="mine-info"></span>
+    <div class="panel" id="mine-panel">
+      <div class="mine-wrap">
+        <button id="mine-btn">
+          <span class="mine-ring"></span>
+          <span class="mine-core">⛏<br>MINE</span>
+        </button>
+        <span id="mine-info"></span>
+      </div>
     </div>
 
-    <div class="panel">
-      <h3>Colonists <span class="buy-mode">
-        <button data-buy="1" class="buy active">x1</button>
-        <button data-buy="10" class="buy">x10</button>
-        <button data-buy="max" class="buy">MAX</button>
-      </span></h3>
-      <div id="buildings"></div>
-    </div>
+    <div class="cols">
+      <div class="panel" id="buildings-panel">
+        <h3>Colonists
+          <span class="buy-mode">
+            <button data-buy="1" class="buy active">×1</button>
+            <button data-buy="10" class="buy">×10</button>
+            <button data-buy="max" class="buy">MAX</button>
+          </span>
+        </h3>
+        <div id="buildings"></div>
+      </div>
 
-    <div class="panel">
-      <h3>Upgrades</h3>
-      <div id="upgrades"></div>
-    </div>
-  </section>
+      <div>
+        <div class="panel" id="upgrades-panel">
+          <h3>Upgrades</h3>
+          <div id="upgrades"></div>
+        </div>
 
-  <section id="research-view" class="panel">
-    <h3>Research Lab</h3>
-    <p>Spend Science on permanent upgrades across your empire.</p>
-    <div id="techs"></div>
-    <div id="next-planet" class="panel inner"></div>
+        <div class="panel" id="research-view">
+          <h3>🧪 Research Lab</h3>
+          <div id="techs"></div>
+          <div id="next-planet" class="next-planet"></div>
+        </div>
+      </div>
+    </div>
   </section>
 </main>
 
-<footer><small>v0.1 — autosaves every 10s · progress continues offline (at 50% rate)</small></footer>
+<footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
 
 <script src="game.js"></script>
 </body>

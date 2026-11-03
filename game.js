@@ -303,17 +303,44 @@ function travel(planet) {
 
 /* ============ RENDER ============ */
 
-function planetSVG(p) {
-  let s = `<circle cx="48" cy="48" r="30" fill="${p.color}" opacity="0.9"/>`;
-  s += `<circle cx="38" cy="38" r="8" fill="rgba(255,255,255,0.25)"/>`;
-  s += `<circle cx="56" cy="60" r="5" fill="rgba(0,0,0,0.2)"/>`;
-  s += `<circle cx="60" cy="35" r="4" fill="rgba(0,0,0,0.15)"/>`;
-  if (p.ring) s += `<ellipse cx="48" cy="48" rx="44" ry="10" fill="none" stroke="${p.color}" stroke-width="3" opacity="0.6" transform="rotate(-18 48 48)"/>`;
+function planetSVG(p, size) {
+  const uid = "g" + p.id + (size || "");
+  let s = `<defs>
+    <radialGradient id="${uid}" cx="0.35" cy="0.3" r="0.9">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.55"/>
+      <stop offset="25%" stop-color="${p.color}"/>
+      <stop offset="100%" stop-color="${p.color}" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>`;
+  if (p.ring) s += `<ellipse cx="48" cy="48" rx="45" ry="11" fill="none" stroke="${p.color}" stroke-width="5" opacity="0.35" transform="rotate(-18 48 48)"/>`;
+  s += `<circle cx="48" cy="48" r="31" fill="url(#${uid})"/>`;
+  // surface details
+  s += `<circle cx="38" cy="38" r="9" fill="rgba(255,255,255,0.18)"/>`;
+  s += `<circle cx="57" cy="61" r="6" fill="rgba(0,0,0,0.18)"/>`;
+  s += `<circle cx="61" cy="36" r="4" fill="rgba(0,0,0,0.12)"/>`;
+  s += `<path d="M 25 55 Q 40 62 58 56" stroke="rgba(0,0,0,0.15)" stroke-width="3" fill="none"/>`;
+  if (p.ring) s += `<path d="M 8 58 A 45 11 0 0 0 88 40" stroke="${p.color}" stroke-width="5" fill="none" opacity="0.55" transform="rotate(-18 48 48)"/>`;
   for (let i = 0; i < p.moons; i++) {
     const a = i * 2.4 + 0.6;
-    s += `<circle cx="${48 + Math.cos(a) * 40}" cy="${48 + Math.sin(a) * 40}" r="4" fill="#dfe6ff" opacity="0.8"/>`;
+    s += `<circle cx="${48 + Math.cos(a) * 41}" cy="${48 + Math.sin(a) * 41}" r="4.5" fill="#cdd6f4"><circle cx="${47 + Math.cos(a) * 41}" cy="${46.5 + Math.sin(a) * 41}" r="2" fill="rgba(0,0,0,0.2)"/></circle>`;
   }
   return s;
+}
+
+function renderChips() {
+  const box = $("res-chips");
+  box.innerHTML = "";
+  for (const pid of S.unlocked) {
+    const p = PLANET(pid);
+    box.insertAdjacentHTML("beforeend",
+      `<div class="chip" style="color:${p.resColor}" title="${p.res} — from ${p.name}">
+        <span>${p.resIcon}</span><span class="val" id="chip-${p.res}">0</span><span class="rate" id="chiprate-${p.res}"></span>
+      </div>`);
+  }
+  box.insertAdjacentHTML("beforeend",
+    `<div class="chip" style="color:var(--accent2)" title="Science — from Research Labs">
+      <span>🧪</span><span class="val" id="chip-Science">0</span><span class="rate" id="chiprate-Science"></span>
+    </div>`);
 }
 
 function renderNav() {
@@ -322,7 +349,9 @@ function renderNav() {
   for (const p of PLANETS) {
     const b = document.createElement("button");
     const unlocked = S.unlocked.includes(p.id);
-    b.textContent = unlocked ? p.name : "???";
+    b.innerHTML = unlocked
+      ? `<span class="dot" style="background:${p.color};color:${p.color}"></span>${p.name}`
+      : `❔ Unknown`;
     b.className = (unlocked ? "" : "locked") + (S.current === p.id ? " active" : "");
     b.onclick = () => {
       if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); renderResearch(); }
@@ -330,6 +359,7 @@ function renderNav() {
     };
     nav.appendChild(b);
   }
+  renderChips();
 }
 
 function renderPlanet(forced) {
@@ -343,9 +373,9 @@ function renderPlanet(forced) {
 
   const view = $("planet-view");
   const resLine = $("planet-resource");
-  const minePanel = view.querySelectorAll(".panel")[0];
-  const bPanel = view.querySelectorAll(".panel")[1];
-  const uPanel = view.querySelectorAll(".panel")[2];
+  const minePanel = $("mine-panel");
+  const bPanel = $("buildings-panel");
+  const uPanel = $("upgrades-panel");
 
   if (!unlocked) {
     resLine.innerHTML = `<span style="color:var(--danger)">LOCKED — travel requires: ${costStr(p.unlockCost)}</span>`;
@@ -477,25 +507,22 @@ function tick() {
 }
 
 function renderTick() {
-  for (const [k, v] of Object.entries(S.res)) {
-    const el = $("res-" + k);
-    if (el) el.textContent = fmt(v);
+  for (const pid of S.unlocked) {
+    const p = PLANET(pid);
+    const v = $("chip-" + p.res), r = $("chiprate-" + p.res);
+    if (v) v.textContent = fmt(S.res[p.res]);
+    if (r) r.textContent = "+" + fmt(planetRate(pid)) + "/s";
   }
-  const p = PLANET(S.current || "terra");
-  if (p && S.unlocked.includes(p.id)) {
-    const el = $("res-" + p.res);
-    if (el) el.textContent = fmt(S.res[p.res]);
-  }
+  const sv = $("chip-Science"), sr = $("chiprate-Science");
+  if (sv) sv.textContent = fmt(S.res.Science);
+  if (sr) sr.textContent = "+" + fmt(labRate()) + "/s";
   const cur = S.current && S.unlocked.includes(S.current) ? S.current : null;
   if (cur) {
-    const rate = planetRate(cur);
+    const p = PLANET(cur);
     const rl = $("planet-resource");
-    // light update: only numbers, not full re-render
-    rl.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
+    if (rl) rl.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(planetRate(cur))}/s</span>`;
     $("mine-info").textContent = `+${fmt(clickPower(cur))} ${p.res} per click`;
   }
-  $("sci-val").textContent = fmt(S.res.Science);
-  $("sci-rate").textContent = `(+${fmt(labRate())}/s)`;
 }
 
 /* ============ INIT ============ */
