@@ -9,24 +9,24 @@ const PLANETS = [
     res: "Metal", resIcon: "metal", resColor: "#9db4c0",
     unlockCost: null,
     buildings: [
-      { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.25,  desc: "A tireless robotic drill." },
-      { id: "rig",   name: "Mining Rig", baseCost: 130, mult: 1.15, rate: 1,   desc: "Industrial extraction array." },
-      { id: "quarry",name: "Strip Quarry", baseCost: 900, mult: 1.15, rate: 4.5, desc: "Moves mountains. Literally." },
-      { id: "cannon", name: "Rail Cannon", baseCost: 6000, mult: 1.15, rate: 18, desc: "Fires ingots into orbit." },
-      { id: "elevator", name: "Orbital Elevator", baseCost: 38000, mult: 1.15, rate: 70, desc: "A ribbon to the sky." },
-      { id: "forge", name: "Planetary Forge", baseCost: 240000, mult: 1.15, rate: 320, desc: "The crust is raw material." },
+      { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.5,  desc: "A tireless robotic drill." },
+      { id: "rig",   name: "Mining Rig", baseCost: 110, mult: 1.15, rate: 2,   desc: "Industrial extraction array." },
+      { id: "quarry",name: "Strip Quarry", baseCost: 750, mult: 1.15, rate: 8, desc: "Moves mountains. Literally." },
+      { id: "cannon", name: "Rail Cannon", baseCost: 4500, mult: 1.15, rate: 30, desc: "Fires ingots into orbit." },
+      { id: "elevator", name: "Orbital Elevator", baseCost: 28000, mult: 1.15, rate: 95, desc: "A ribbon to the sky." },
+      { id: "forge", name: "Planetary Forge", baseCost: 180000, mult: 1.15, rate: 420, desc: "The crust is raw material." },
     ],
     upgrades: [
-      { id: "pick",  name: "Plasma Pickaxe", cost: 150,  type: "click",  val: 2, desc: "Mining power ×2." },
-      { id: "conveyor", name: "Conveyor Network", cost: 2500, type: "prod", val: 2, desc: "Metal production ×2." },
-      { id: "droids", name: "Excavation Droids", cost: 40000, type: "prod", val: 3, desc: "Metal production ×3." },
+      { id: "pick",  name: "Plasma Pickaxe", cost: 80,  type: "click",  val: 2, desc: "Mining power ×2." },
+      { id: "conveyor", name: "Conveyor Network", cost: 1200, type: "prod", val: 2, desc: "Metal production ×2." },
+      { id: "droids", name: "Excavation Droids", cost: 15000, type: "prod", val: 3, desc: "Metal production ×3." },
     ],
   },
   {
     id: "luna", name: "Luna", color: "#c0c0d8", ring: false, moons: 0,
     desc: "Regolith fields of helium-3. Perfect fusion fuel.",
     res: "Helium-3", resIcon: "helium", resColor: "#b8a9e8",
-    unlockCost: { Metal: 50000 },
+    unlockCost: { Metal: 25000 },
     buildings: [
       { id: "probe", name: "Harvest Probe", baseCost: 800, mult: 1.15, rate: 4.5,   desc: "Skims He-3 from the dust." },
       { id: "scoop", name: "Regolith Scoop", baseCost: 6000, mult: 1.15, rate: 22,  desc: "Eats the surface, spits fuel." },
@@ -36,9 +36,9 @@ const PLANETS = [
       { id: "breeder", name: "Helium Breeders", baseCost: 15000000, mult: 1.15, rate: 6670, desc: "Isotopes begetting isotopes." },
     ],
     upgrades: [
-      { id: "lunadrill", name: "Lunar Drill Tips", cost: 12000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
-      { id: "compress", name: "Isotope Compressors", cost: 90000, type: "prod", val: 2, desc: "Helium-3 production ×2." },
-      { id: "fusion", name: "Fusion Feedloops", cost: 1200000, type: "prod", val: 3, desc: "Helium-3 production ×3." },
+      { id: "lunadrill", name: "Lunar Drill Tips", cost: 6000, type: "click", val: 2, desc: "Helium-3 mining power ×2." },
+      { id: "compress", name: "Isotope Compressors", cost: 45000, type: "prod", val: 2, desc: "Helium-3 production ×2." },
+      { id: "fusion", name: "Fusion Feedloops", cost: 600000, type: "prod", val: 3, desc: "Helium-3 production ×3." },
     ],
   },
   {
@@ -55,9 +55,9 @@ const PLANETS = [
       { id: "lattice", name: "Zero-G Lattice", baseCost: 350000000, mult: 1.15, rate: 52000, desc: "Crystal grows in the void, untended." },
     ],
     upgrades: [
-      { id: "lens", name: "Focused Lens Array", cost: 300000, type: "click", val: 2, desc: "Crystal mining power ×2." },
-      { id: "sort", name: "Spectral Sorters", cost: 2500000, type: "prod", val: 2, desc: "Crystal production ×2." },
-      { id: "vein", name: "Vein Scanners", cost: 40000000, type: "prod", val: 3, desc: "Crystal production ×3." },
+      { id: "lens", name: "Focused Lens Array", cost: 150000, type: "click", val: 2, desc: "Crystal mining power ×2." },
+      { id: "sort", name: "Spectral Sorters", cost: 1200000, type: "prod", val: 2, desc: "Crystal production ×2." },
+      { id: "vein", name: "Vein Scanners", cost: 20000000, type: "prod", val: 3, desc: "Crystal production ×3." },
     ],
   },
   {
@@ -74,9 +74,9 @@ const PLANETS = [
       { id: "continuum", name: "Continuum Engine", baseCost: 30000000000, mult: 1.15, rate: 1500000, desc: "It shouldn't exist. It disagrees." },
     ],
     upgrades: [
-      { id: "penn", name: "Penning Fields", cost: 8000000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
-      { id: "loop", name: "Storage Loops", cost: 70000000, type: "prod", val: 2, desc: "Antimatter production ×2." },
-      { id: "sing", name: "Micro-Singularities", cost: 900000000, type: "prod", val: 3, desc: "Antimatter production ×3." },
+      { id: "penn", name: "Penning Fields", cost: 4000000, type: "click", val: 2, desc: "Antimatter mining power ×2." },
+      { id: "loop", name: "Storage Loops", cost: 35000000, type: "prod", val: 2, desc: "Antimatter production ×2." },
+      { id: "sing", name: "Micro-Singularities", cost: 450000000, type: "prod", val: 3, desc: "Antimatter production ×3." },
     ],
   },
 ];
@@ -190,6 +190,7 @@ function newState() {
     unlocked: ["terra"],
     current: "terra",
     buyMode: 1,
+    mute: false,
     stats: { clicks: 0, comets: 0 },
     ach: [],           // achievement ids owned
     buffs: {},         // { rushUntil, frenzyUntil }
@@ -305,7 +306,7 @@ function sciMult() {
 
 function clickPower(planet) {
   // 1 + 2% of per-second production, times click multipliers
-  return (1 + 0.02 * planetRate(planet)) * clickMult(planet) * frenzyMult();
+  return (2 + 0.05 * planetRate(planet)) * clickMult(planet) * frenzyMult();
 }
 
 function planetRate(planet) {
@@ -395,6 +396,7 @@ function checkAchievements() {
     if (a.cond(S)) { S.ach.push(a.id); newly++; }
   }
   if (newly) {
+    SFX.ach();
     toast(`Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`);
     renderAch();
   }
@@ -420,6 +422,7 @@ function scheduleComet() {
 }
 
 function spawnComet() {
+  SFX.comet();
   const el = document.createElement("img");
   el.className = "comet";
   el.src = pixelCometURL();
@@ -454,6 +457,7 @@ function pixelCometURL() {
 function catchComet(evt) {
   S.stats.comets++;
   const roll = Math.random();
+  SFX.rush();
   if (roll < 0.45) {
     S.buffs.rushUntil = Date.now() + 30000;
     toast("COMET RUSH! All production ×7 for 30s");
@@ -564,6 +568,35 @@ function load() {
   } catch (e) { console.warn("bad save", e); }
 }
 
+/* ============ AUDIO (synthesized, no assets) ============ */
+let AC = null;
+function initAudio() {
+  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  if (AC && AC.state === "suspended") AC.resume();
+}
+function tone(freq, dur, type, vol, when, slide) {
+  if (!AC || S.mute) return;
+  const t = AC.currentTime + (when || 0);
+  const o = AC.createOscillator(), g = AC.createGain();
+  o.type = type || "square";
+  o.frequency.setValueAtTime(freq, t);
+  if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
+  g.gain.setValueAtTime(vol || 0.08, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(AC.destination);
+  o.start(t); o.stop(t + dur + 0.02);
+}
+const SFX = {
+  click() { tone(420 + Math.random() * 80, 0.06, "square", 0.05, 0, 180); },
+  buy()   { tone(330, 0.07, "square", 0.07); tone(494, 0.09, "square", 0.07, 0.07); },
+  upgrade(){ tone(392, 0.08, "triangle", 0.09); tone(523, 0.08, "triangle", 0.09, 0.08); tone(659, 0.12, "triangle", 0.09, 0.16); },
+  ach()   { tone(523, 0.1, "triangle", 0.08); tone(659, 0.1, "triangle", 0.08, 0.1); tone(784, 0.1, "triangle", 0.08, 0.2); tone(1046, 0.18, "triangle", 0.08, 0.3); },
+  comet() { tone(900, 0.5, "sawtooth", 0.05, 0, 200); },
+  rush()  { tone(200, 0.3, "sawtooth", 0.09, 0, 800); tone(800, 0.25, "square", 0.07, 0.2, 1600); },
+  ascend(){ tone(150, 0.6, "sawtooth", 0.1, 0, 1200); tone(600, 0.5, "triangle", 0.09, 0.4, 2400); },
+  travel(){ tone(250, 0.2, "triangle", 0.09, 0, 700); tone(700, 0.25, "triangle", 0.09, 0.15, 1400); },
+};
+
 /* ============ ACTIONS ============ */
 
 function mine(planet, evt, btn) {
@@ -574,12 +607,27 @@ function mine(planet, evt, btn) {
   S.lifetime[p.res] += amt;
   S.stats.clicks++;
   if (techOwned("t_click_yield")) S.res.Metal += amt;
+  initAudio();
+  SFX.click();
   if (btn) {
     btn.classList.add("pressed");
     clearTimeout(btn._pt);
     btn._pt = setTimeout(() => btn.classList.remove("pressed"), 110);
   }
-  if (evt) floatNum(evt, "+" + fmt(amt) + " " + p.res);
+  if (evt) {
+    floatNum(evt, "+" + fmt(amt) + " " + p.res);
+    for (let i = 0; i < 4; i++) {
+      const sp = document.createElement("div");
+      sp.className = "spark";
+      sp.style.left = (evt.clientX + (Math.random() * 24 - 12)) + "px";
+      sp.style.top = (evt.clientY + (Math.random() * 12 - 6)) + "px";
+      sp.style.setProperty("--dx", (Math.random() * 60 - 30) + "px");
+      sp.style.setProperty("--dy", (-30 - Math.random() * 40) + "px");
+      sp.style.background = p.color;
+      document.body.appendChild(sp);
+      setTimeout(() => sp.remove(), 500);
+    }
+  }
 }
 
 function floatNum(evt, text) {
@@ -634,6 +682,7 @@ function travel(planet) {
   const p = PLANET(planet);
   const cost = unlockCost(p);
   if (!cost || !canPay(cost) || S.unlocked.includes(planet)) return;
+  SFX.travel();
   pay(cost);
   S.unlocked.push(planet);
   S.current = planet;
@@ -657,6 +706,7 @@ function ascend() {
   const keepPlanets = mOwned("m_memory");
   const unlocked = keepPlanets ? S.unlocked : ["terra"];
   const current = keepPlanets ? S.current : "terra";
+  SFX.ascend();
   const autoStart = mOwned("m_auto");
   const headStart = mOwned("m_start");
   S = newState();
@@ -717,6 +767,7 @@ function renderPrestige() {
     });
     if (avail) el.onclick = () => {
       if (S.shards < m.cost) return;
+      SFX.upgrade();
       S.shards -= m.cost;
       S.masteries.push(m.id);
       renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
@@ -1016,9 +1067,16 @@ function renderNav() {
   for (const p of PLANETS) {
     const b = document.createElement("button");
     const unlocked = S.unlocked.includes(p.id);
-    b.innerHTML = unlocked
-      ? `<span class="dot" style="background:${p.color};color:${p.color}"></span>${p.name}`
-      : `· Unknown`;
+    if (unlocked) {
+      b.innerHTML = `<span class="dot" style="background:${p.color};color:${p.color}"></span>${p.name}`;
+    } else {
+      const cost = unlockCost(p);
+      const ratios = Object.keys(cost).length
+        ? Object.entries(cost).map(([k, v]) => (S.res[k] || 0) / v)
+        : [0];
+      const pct = Math.min(100, Math.floor(Math.min(...ratios) * 100));
+      b.innerHTML = `· Unknown <span class="nav-progress">${pct}%</span>`;
+    }
     b.className = (unlocked ? "" : "locked") + (S.current === p.id ? " active" : "");
     b.onclick = () => {
       if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); renderResearch(); }
@@ -1088,10 +1146,13 @@ function renderPlanet(forced) {
       <img class="strip-icon" src="${iconFor(pid, b.id)}" width="56" height="56" alt="">
       <div class="strip-info">
         <div class="strip-name">${b.name} <span class="own-count">\u00D7${have}</span></div>
-        <div class="strip-sub">+${fmt(each)}/s each</div>
+        <div class="strip-sub">+${fmt(each)}/s each${have < 10 ? ` · <span class="ms-hint">${have}/10 to Overdrive</span>` : ""}</div>
       </div>
       <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n}<br>${priceHtml}</div>`;
-    strip.onclick = () => { if (canPay(bCostObj(pid, b, ti, n))) { buyBuilding(pid, b); renderPlanet(); } };
+    strip.onclick = () => {
+      initAudio();
+      if (canPay(bCostObj(pid, b, ti, n))) { SFX.buy(); buyBuilding(pid, b); renderPlanet(); }
+    };
     attachTip(strip, () => tipBuilding(pid, b));
     bl.appendChild(strip);
   });
@@ -1106,7 +1167,7 @@ function renderPlanet(forced) {
     const tile = document.createElement("div");
     tile.className = "upg-tile" + (can ? "" : " grayed");
     tile.innerHTML = `<img src="${iconForUpg(u.type)}" width="26" height="26" alt="">${lvl > 0 ? `<span class="tile-lv">Lv${lvl}</span>` : ""}`;
-    tile.onclick = () => { if (canPay({ Metal: upgCost(u) })) { buyUpgrade(u); renderPlanet(); } };
+    tile.onclick = () => { initAudio(); if (canPay({ Metal: upgCost(u) })) { SFX.upgrade(); buyUpgrade(u); renderPlanet(); } };
     attachTip(tile, () => tipUpgrade(u));
     ul.appendChild(tile);
   }
@@ -1119,7 +1180,7 @@ function renderPlanet(forced) {
     tile.className = "upg-tile ms-tile" + (can ? "" : " grayed");
     tile.innerHTML = `<img src="${m.icon}" width="26" height="26" alt="">`;
     tile.onclick = () => {
-      if (canPay({ Metal: m.cost })) { S.msUpg.push(m.id); renderPlanet(); }
+      if (canPay({ Metal: m.cost })) { SFX.upgrade(); S.msUpg.push(m.id); renderPlanet(); }
     };
     attachTip(tile, () => `<div class="tt-name">${m.name}</div>
       <div class="tt-sub">${m.desc} Unlocked at ${m.n} owned (you have ${m.have}).</div>
@@ -1287,6 +1348,13 @@ function init() {
   setInterval(rotateNews, 9000);
   setInterval(renderStats, 3000);
   $("news-ticker").onclick = () => rotateNews(true);
+  $("mute-btn").onclick = () => {
+    S.mute = !S.mute;
+    $("mute-btn").textContent = S.mute ? "Sound: OFF" : "Sound: ON";
+    save();
+  };
+  if (S.mute) $("mute-btn").textContent = "Sound: OFF";
+  addEventListener("pointerdown", initAudio, { once: true });
   document.querySelectorAll(".hicon[data-px]").forEach(img => img.src = pxIcon(img.dataset.px));
   document.querySelectorAll(".store-tab").forEach(t => {
     t.onclick = () => {
