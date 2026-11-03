@@ -217,8 +217,13 @@ function globalProdMult() {
   if (mOwned("m_prod1")) m += 0.25;
   if (mOwned("m_prod2")) m += 0.5;
   if (mOwned("m_prod3")) m *= 5;
+  m *= synergyMult();
   return m;
 }
+
+/* Colony Synergy: every 25 colonists boosts the whole empire by 5%. */
+function synergyMult() { return 1 + 0.05 * Math.floor(totalBuildings() / 25); }
+function nextSynergyAt() { return (Math.floor(totalBuildings() / 25) + 1) * 25; }
 
 function mOwned(id) { return S.masteries.includes(id); }
 
@@ -362,9 +367,9 @@ function scheduleComet() {
 }
 
 function spawnComet() {
-  const el = document.createElement("div");
+  const el = document.createElement("img");
   el.className = "comet";
-  el.textContent = "☄";
+  el.src = pixelCometURL();
   el.style.setProperty("--y0", 10 + Math.random() * 50 + "vh");
   document.body.appendChild(el);
   const done = setTimeout(() => el.remove(), 11000);
@@ -373,6 +378,24 @@ function spawnComet() {
     el.remove();
     catchComet(e);
   };
+}
+
+let _cometURL = null;
+function pixelCometURL() {
+  if (_cometURL) return _cometURL;
+  const cv = document.createElement("canvas");
+  cv.width = 16; cv.height = 16;
+  const x = cv.getContext("2d");
+  const px = (a, b, w, h, c) => { x.fillStyle = c; x.fillRect(a, b, w, h); };
+  const T = "#5ee6d0", T2 = "#9ffbe8", H = "#ffd166", W = "#fff3c4";
+  px(2, 1, 1, 1, T); px(1, 2, 1, 1, T); px(3, 2, 1, 1, T2); px(2, 3, 1, 1, T);
+  px(4, 3, 1, 1, T); px(3, 4, 1, 1, T2); px(1, 4, 1, 1, T); px(4, 5, 1, 1, T);
+  px(3, 6, 1, 1, T2); px(5, 5, 1, 1, T); px(5, 7, 1, 1, T); px(6, 6, 1, 1, T2);
+  px(8, 6, 4, 1, H); px(7, 7, 6, 3, H); px(8, 10, 4, 1, H);
+  px(8, 7, 3, 2, W); px(9, 8, 2, 1, W); px(11, 7, 2, 3, "#e8a53a");
+  px(12, 6, 1, 1, "#e8a53a"); px(12, 10, 1, 1, "#e8a53a");
+  _cometURL = cv.toDataURL();
+  return _cometURL;
 }
 
 function catchComet(evt) {
@@ -439,6 +462,7 @@ function renderStats() {
     ["Mine clicks", fmt(S.stats.clicks)],
     ["Comets caught", S.stats.comets],
     ["Colonists", totalBuildings()],
+    ["Colony synergy", `+${Math.round((synergyMult() - 1) * 100)}% (next at ${nextSynergyAt()})`],
     ["Research Labs", S.labs],
     ["Masteries", `${S.masteries.length}/${MASTERY.length}`],
     ["Techs", `${S.techs.length}/${TECHS.length - 1}`],
