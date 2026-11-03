@@ -331,11 +331,28 @@ function bCost(planet, b, n) {
   return Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
 }
 
-function maxAffordable(planet, b) {
-  const metal = S.res.Metal;
-  const have = S.buildings[planet + ":" + b.id] || 0;
+/* tier index >= 2 (i.e. 3rd building onward) also costs the planet's own resource */
+function hasResCost(pid, ti) { return PLANET(pid).res !== "Metal" && ti >= 2; }
+function resBase(pid, b) { return Math.ceil(b.baseCost * 0.35); }
+
+function bCostObj(pid, b, ti, n) {
+  const have = S.buildings[pid + ":" + b.id] || 0;
   const r = b.mult;
-  let n = Math.floor(Math.log(metal * (r - 1) / (b.baseCost * Math.pow(r, have)) + 1) / Math.log(r));
+  const obj = { Metal: Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1)) };
+  if (hasResCost(pid, ti)) obj[PLANET(pid).res] = Math.ceil(resBase(pid, b) * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
+  return obj;
+}
+
+function maxAffordable(planet, b) {
+  const r = b.mult;
+  const have = S.buildings[planet + ":" + b.id] || 0;
+  const ti = PLANET(planet).buildings.indexOf(b);
+  let n = Math.floor(Math.log(S.res.Metal * (r - 1) / (b.baseCost * Math.pow(r, have)) + 1) / Math.log(r));
+  if (hasResCost(planet, ti)) {
+    const res = PLANET(planet).res;
+    const n2 = Math.floor(Math.log((S.res[res] || 0) * (r - 1) / (resBase(planet, b) * Math.pow(r, have)) + 1) / Math.log(r));
+    n = Math.min(n, n2);
+  }
   return Math.max(0, Math.min(n, 5000));
 }
 
@@ -574,7 +591,8 @@ function floatNum(evt, text) {
 function buyBuilding(planet, b) {
   let n = S.buyMode === "max" ? maxAffordable(planet, b) : S.buyMode;
   if (n <= 0) return;
-  const cost = { Metal: bCost(planet, b, n) };
+  const ti = PLANET(planet).buildings.indexOf(b);
+  const cost = bCostObj(planet, b, ti, n);
   if (!canPay(cost)) return;
   pay(cost);
   S.buildings[planet + ":" + b.id] = (S.buildings[planet + ":" + b.id] || 0) + n;
@@ -723,7 +741,7 @@ function tipBuilding(pid, b) {
     <div class="tt-sub">${b.desc}</div>
     <div class="tt-line">Each produces <b>${fmt(each)}/s</b></div>
     ${have ? `<div class="tt-line">You own <b>${have}</b>, producing <b>${fmt(total)}/s</b> (${share}% of this planet's output)</div>` : ""}
-    <div class="tt-cost">Buy 1: ${fmt(c1)} Metal · next 10: ${fmt(bCost(pid, b, 10))} Metal</div>`;
+    <div class="tt-cost">Buy 1: ${fmt(c1)} Metal · next 10: ${fmt(bCost(pid, b, 10))} Metal${hasResCost(pid, p.buildings.indexOf(b)) ? ` + ${fmt(Math.ceil(resBase(pid, b) * 10 * Math.pow(b.mult, have) * (Math.pow(b.mult, 10) - 1) / (b.mult - 1) / 10))} ${p.res} (avg)` : ""}</div>`;
 }
 
 function tipUpgrade(u) {
@@ -952,19 +970,21 @@ function renderPlanet(forced) {
   p.buildings.forEach((b) => {
     const have = S.buildings[pid + ":" + b.id] || 0;
     const n = S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : S.buyMode;
-    const cost = bCost(pid, b, n);
-    const can = canPay({ Metal: cost });
+    const ti = p.buildings.indexOf(b);
+    const cost = bCostObj(pid, b, ti, n);
+    const can = canPay(cost);
     const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
+    const priceHtml = Object.entries(cost).map(([k, v]) => `<b>${fmt(v)}</b> ${k === "Metal" ? "\u2699" : PLANET(pid).resIcon}`).join("<br>");
     const strip = document.createElement("div");
     strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
     strip.innerHTML = `
-      <img class="strip-icon" src="${iconFor(pid, b.id)}" width="44" height="44" alt="">
+      <img class="strip-icon" src="${iconFor(pid, b.id)}" width="56" height="56" alt="">
       <div class="strip-info">
         <div class="strip-name">${b.name} <span class="own-count">\u00D7${have}</span></div>
         <div class="strip-sub">+${fmt(each)}/s each</div>
       </div>
-      <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n}<br><b>${fmt(cost)}</b> \u2699</div>`;
-    strip.onclick = () => { if (canPay({ Metal: bCost(pid, b, n) })) { buyBuilding(pid, b); renderPlanet(); } };
+      <div class="strip-price">Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n}<br>${priceHtml}</div>`;
+    strip.onclick = () => { if (canPay(bCostObj(pid, b, ti, n))) { buyBuilding(pid, b); renderPlanet(); } };
     attachTip(strip, () => tipBuilding(pid, b));
     bl.appendChild(strip);
   });
