@@ -93,6 +93,9 @@ const TECHS = [
   { id: "t_sci2",  name: "Academy Worlds", cost: { Science: 3000 }, desc: "Science output ×3.", req: "t_sci1", effect: "sci", val: 3 },
   { id: "t_off",   name: "Deep-Space Logs", cost: { Science: 250 }, desc: "Offline progress at 75% instead of 50%.", effect: "offline" },
   { id: "t_click_yield", name: "Resonant Mining", cost: { Science: 1500 }, desc: "Each colony click also yields Metal.", req: "t_mine1", effect: "resonant" },
+  { id: "t_comet1", name: "Comet Magnet",   cost: { Science: 600 },  desc: "Golden Comets appear 2× more often.", req: "t_sci1", effect: "comet_freq", val: 2 },
+  { id: "t_comet2", name: "Golden Radar",   cost: { Science: 1800 }, desc: "Comets stay on screen much longer.", req: "t_comet1", effect: "comet_life", val: 2.2 },
+  { id: "t_comet3", name: "Comet Swarm",    cost: { Science: 6000 }, desc: "Comets appear 3× more often again.", req: "t_comet2", effect: "comet_freq", val: 3 },
 ];
 
 const MASTERY = [
@@ -179,6 +182,7 @@ function newState() {
     buildings: {},     // "planetId:buildingId" -> count
     labs: 0,
     upgrades: {},      // upgrade id -> level (repeatable)
+    msUpg: [],         // milestone upgrade ids owned (one-shot)
     techs: [],         // tech ids owned
     masteries: [],     // mastery ids owned (persist through ascension)
     shards: 0,
@@ -224,6 +228,37 @@ function globalProdMult() {
 /* Colony Synergy: every 25 colonists boosts the whole empire by 5%. */
 function synergyMult() { return 1 + 0.05 * Math.floor(totalBuildings() / 25); }
 function nextSynergyAt() { return (Math.floor(totalBuildings() / 25) + 1) * 25; }
+
+/* Building milestone upgrades: at 10/25/50/100/200 owned, a one-shot x2 production upgrade unlocks. */
+const MS_STEPS = [10, 25, 50, 100, 200];
+const ROMAN = ["I", "II", "III", "IV", "V"];
+function msOwned(id) { return S.msUpg.includes(id); }
+function msMult(pid, b) {
+  let m = 1;
+  MS_STEPS.forEach((n, i) => { if (msOwned(`ms:${pid}:${b.id}:${n}`)) m *= 2; });
+  return m;
+}
+function msUpgradesFor(pid, b) {
+  const have = S.buildings[pid + ":" + b.id] || 0;
+  return MS_STEPS.map((n, i) => ({
+    id: `ms:${pid}:${b.id}:${n}`,
+    n, have,
+    name: `${b.name} Overdrive ${ROMAN[i]}`,
+    desc: `${b.name} production \u00D72.`,
+    cost: Math.ceil(b.baseCost * n * 12),
+    owned: msOwned(`ms:${pid}:${b.id}:${n}`),
+    icon: iconFor(pid, b.id),
+    locked: have < n,
+  })).filter(u => u.locked ? false : true && !u.owned);
+}
+function techEffectVal(effect) {
+  let v = 1;
+  for (const t of S.techs) {
+    const def = TECHS.find(x => x.id === t);
+    if (def && def.effect === effect) v *= def.val;
+  }
+  return v;
+}
 
 function mOwned(id) { return S.masteries.includes(id); }
 
@@ -275,7 +310,7 @@ function clickPower(planet) {
 function planetRate(planet) {
   let sum = 0;
   for (const b of PLANET(planet).buildings) {
-    sum += (S.buildings[planet + ":" + b.id] || 0) * b.rate;
+    sum += (S.buildings[planet + ":" + b.id] || 0) * b.rate * msMult(planet, b);
   }
   return sum * prodMult(planet) * achMult() * buffMult();
 }
@@ -363,7 +398,7 @@ function renderAch() {
 }
 
 function scheduleComet() {
-  S.nextComet = Date.now() + (2 + Math.random() * 4) * 60000; // every 2–6 min
+  S.nextComet = Date.now() + (2 + Math.random() * 4) * 60000 / techEffectVal("comet_freq");
 }
 
 function spawnComet() {
@@ -372,7 +407,7 @@ function spawnComet() {
   el.src = pixelCometURL();
   el.style.setProperty("--y0", 10 + Math.random() * 50 + "vh");
   document.body.appendChild(el);
-  const done = setTimeout(() => el.remove(), 11000);
+  const done = setTimeout(() => el.remove(), 11000 * techEffectVal("comet_life"));
   el.onclick = e => {
     clearTimeout(done);
     el.remove();
@@ -680,7 +715,7 @@ function attachTip(el, fn) {
 
 function tipBuilding(pid, b) {
   const have = S.buildings[pid + ":" + b.id] || 0;
-  const each = b.rate * prodMult(pid) * achMult() * buffMult();
+  const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
   const total = each * have;
   const share = planetRate(pid) > 0 ? Math.round(100 * total / planetRate(pid)) : 0;
   const c1 = bCost(pid, b, 1);
@@ -919,7 +954,7 @@ function renderPlanet(forced) {
     const n = S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : S.buyMode;
     const cost = bCost(pid, b, n);
     const can = canPay({ Metal: cost });
-    const each = b.rate * prodMult(pid) * achMult() * buffMult();
+    const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
     const strip = document.createElement("div");
     strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
     strip.innerHTML = `
@@ -946,6 +981,22 @@ function renderPlanet(forced) {
     tile.innerHTML = `<img src="${iconForUpg(u.type)}" width="26" height="26" alt="">${lvl > 0 ? `<span class="tile-lv">Lv${lvl}</span>` : ""}`;
     tile.onclick = () => { if (canPay({ Metal: upgCost(u) })) { buyUpgrade(u); renderPlanet(); } };
     attachTip(tile, () => tipUpgrade(u));
+    ul.appendChild(tile);
+  }
+  // milestone upgrades (unlocked at 10/25/50/100/200 of a building)
+  const msTiles = [];
+  for (const b of p.buildings) msTiles.push(...msUpgradesFor(pid, b));
+  for (const m of msTiles) {
+    const can = canPay({ Metal: m.cost });
+    const tile = document.createElement("div");
+    tile.className = "upg-tile ms-tile" + (can ? "" : " grayed");
+    tile.innerHTML = `<img src="${m.icon}" width="26" height="26" alt="">`;
+    tile.onclick = () => {
+      if (canPay({ Metal: m.cost })) { S.msUpg.push(m.id); renderPlanet(); }
+    };
+    attachTip(tile, () => `<div class="tt-name">${m.name}</div>
+      <div class="tt-sub">${m.desc} Unlocked at ${m.n} owned (you have ${m.have}).</div>
+      <div class="tt-cost">Cost: ${fmt(m.cost)} Metal</div>`);
     ul.appendChild(tile);
   }
 }
