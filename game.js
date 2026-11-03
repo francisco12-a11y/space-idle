@@ -680,7 +680,7 @@ function tipUpgrade(u) {
 function shadeColor(hex, f) {
   const v = parseInt(hex.slice(1), 16);
   const ch = s => Math.min(255, Math.max(0, Math.round(((v >> s) & 255) * f)));
-  return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+  return "#" + [16, 8, 0].map(s => ch(s).toString(16).padStart(2, "0")).join("");
 }
 
 /* unique 12x12 pixel icon per building */
