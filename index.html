@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=24">
+<link rel="stylesheet" href="style.css?v=26">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -24,7 +24,7 @@
   </div>
   <div id="res-chips" class="chips"></div>
   <div class="topbar">
-    <button id="save-btn" title="Save now">💾 Save</button>
+    <button id="save-btn" title="Save now">Save</button>
     <button id="reset-btn" class="danger" title="Wipe progress">Reset</button>
   </div>
 </header>
@@ -50,17 +50,17 @@
 
   <section id="store-view">
     <div class="panel" id="news-ticker" title="Click for more news">
-      📰 <span id="news-text">...</span>
+      <img class="hicon" data-px="news"> <span id="news-text">...</span>
     </div>
 
     <div class="panel" id="store-panel">
-      <h3>⬆ Upgrades</h3>
+      <h3><img class="hicon" data-px="colonist"> Upgrades</h3>
       <div id="upgrades" class="upg-tiles"></div>
 
       <div class="tab-bar">
-        <button class="store-tab active" data-tab="colonists">⛏ COLONISTS</button>
-        <button class="store-tab" data-tab="research">🧪 RESEARCH</button>
-        <button class="store-tab" data-tab="ascend">✦ ASCEND</button>
+        <button class="store-tab active" data-tab="colonists"><img class="hicon" data-px="colonist"></button>
+        <button class="store-tab" data-tab="research"><img class="hicon" data-px="science"> RESEARCH</button>
+        <button class="store-tab" data-tab="ascend"><img class="hicon" data-px="shard"> ASCEND</button>
       </div>
 
       <div id="tab-colonists" class="tab-content">
@@ -90,12 +90,12 @@
 
   <aside id="sidebar">
     <div class="panel" id="ach-view">
-      <h3>🏆 Achievements <span id="ach-count"></span></h3>
+      <h3><img class="hicon" data-px="trophy"> Achievements <span id="ach-count"></span></h3>
       <div id="ach-grid"></div>
     </div>
 
     <div class="panel" id="stats-view">
-      <h3>📊 Statistics</h3>
+      <h3><img class="hicon" data-px="stats"> Statistics</h3>
       <div id="stats-list"></div>
     </div>
   </aside>
@@ -103,6 +103,6 @@
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
 
-<script src="game.js?v=24"></script>
+<script src="game.js?v=26"></script>
 </body>
 </html>

@@ -6,7 +6,7 @@ const PLANETS = [
   {
     id: "terra", name: "Terra Nova", color: "#4ecdc4", ring: false, moons: 1,
     desc: "The first colony. Rich iron deposits in the northern craters.",
-    res: "Metal", resIcon: "⚙️", resColor: "#9db4c0",
+    res: "Metal", resIcon: "metal", resColor: "#9db4c0",
     unlockCost: null,
     buildings: [
       { id: "drill", name: "Auto-Drill", baseCost: 15, mult: 1.15, rate: 0.25,  desc: "A tireless robotic drill." },
@@ -44,7 +44,7 @@ const PLANETS = [
   {
     id: "ceres", name: "Ceres Belt", color: "#8d6e63", ring: true, moons: 0,
     desc: "An asteroid swarm glittering with raw crystal.",
-    res: "Crystal", resIcon: "💎", resColor: "#7fdbff",
+    res: "Crystal", resIcon: "crystal", resColor: "#7fdbff",
     unlockCost: { Metal: 1500000, "Helium-3": 150000 },
     buildings: [
       { id: "cutter", name: "Crystal Cutter", baseCost: 20000, mult: 1.15, rate: 37,  desc: "Lasers meet rock." },
@@ -63,7 +63,7 @@ const PLANETS = [
   {
     id: "aurelia", name: "Aurelia", color: "#e8b04a", ring: true, moons: 2,
     desc: "A ringed giant. Its upper clouds condense pure antimatter.",
-    res: "Antimatter", resIcon: "✴️", resColor: "#ff6b9d",
+    res: "Antimatter", resIcon: "antimatter", resColor: "#ff6b9d",
     unlockCost: { Metal: 300000000, "Helium-3": 40000000, Crystal: 20000000 },
     buildings: [
       { id: "skimmer", name: "Cloud Skimmer", baseCost: 1500000, mult: 1.15, rate: 926, desc: "Balloon-drifts through the storm layers." },
@@ -395,7 +395,7 @@ function checkAchievements() {
     if (a.cond(S)) { S.ach.push(a.id); newly++; }
   }
   if (newly) {
-    toast(`🏆 Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`);
+    toast(`Achievement${newly > 1 ? "s" : ""} unlocked! +${newly}% production`);
     renderAch();
   }
 }
@@ -409,7 +409,7 @@ function renderAch() {
     const owned = S.ach.includes(a.id);
     const d = document.createElement("div");
     d.className = "ach" + (owned ? " owned" : "");
-    d.textContent = owned ? "🏆" : "?";
+    if (owned) d.innerHTML = ric("trophy"); else d.textContent = "?";
     d.title = owned ? `${a.name} — ${a.desc}` : `??? — ${a.desc}`;
     grid.appendChild(d);
   }
@@ -456,7 +456,7 @@ function catchComet(evt) {
   const roll = Math.random();
   if (roll < 0.45) {
     S.buffs.rushUntil = Date.now() + 30000;
-    toast("☄ COMET RUSH! All production ×7 for 30s");
+    toast("COMET RUSH! All production ×7 for 30s");
   } else if (roll < 0.8) {
     let gained = [];
     for (const pid of S.unlocked) {
@@ -466,12 +466,12 @@ function catchComet(evt) {
       S.lifetime[p.res] += amt;
       gained.push(`+${fmt(amt)} ${p.res}`);
     }
-    toast("☄ STARDUST SHOWER! " + gained.join(", "));
+    toast("STARDUST SHOWER! " + gained.join(", "));
   } else {
     S.buffs.frenzyUntil = Date.now() + 15000;
-    toast("✦ CLICK FRENZY! Mining power ×777 for 15s");
+    toast("CLICK FRENZY! Mining power ×777 for 15s");
   }
-  floatNum(evt, "☄!");
+  floatNum(evt, "COMET!");
   renderChips();
   checkAchievements();
   save();
@@ -511,7 +511,7 @@ function renderStats() {
   const rows = [
     ["Time played", fmtTime(Date.now() - S.started)],
     ["Ascensions", S.ascensions],
-    ["Shards earned", `✦ ${S.shards}`],
+    ["Shards earned", S.shards],
     ["Mine clicks", fmt(S.stats.clicks)],
     ["Comets caught", S.stats.comets],
     ["Colonists", totalBuildings()],
@@ -579,7 +579,7 @@ function mine(planet, evt, btn) {
     clearTimeout(btn._pt);
     btn._pt = setTimeout(() => btn.classList.remove("pressed"), 110);
   }
-  if (evt) floatNum(evt, "+" + fmt(amt) + " " + p.resIcon);
+  if (evt) floatNum(evt, "+" + fmt(amt) + " " + p.res);
 }
 
 function floatNum(evt, text) {
@@ -671,14 +671,14 @@ function ascend() {
 function renderPrestige() {
   const g = shardGain();
   $("shard-info").innerHTML =
-    `<span class="shards">✦ ${S.shards}</span> Ascendancy Shards` +
+    `${ric("shard")} <span class="shards">${S.shards}</span> Ascendancy Shards` +
     (S.ascensions ? ` · ${S.ascensions} ascension${S.ascensions > 1 ? "s" : ""}` : "") +
     `<br><span style="color:var(--dim)">Ascending now: +${g} shards` +
     (g < 1 ? ` — needs more lifetime Antimatter (have ${fmt(S.lifetime.Antimatter || 0)}, need ${fmt(100000)})` : "") +
     `</span>`;
   const btn = $("ascend-btn");
   btn.disabled = g < 1;
-  btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} ✦`;
+  btn.textContent = g < 1 ? "ASCEND (LOCKED)" : `ASCEND +${g} shards`;
 
   const ml = $("masteries");
   ml.innerHTML = "";
@@ -690,10 +690,10 @@ function renderPrestige() {
     div.className = "mastery" + (owned ? " owned" : "");
     div.innerHTML = `
       <div class="m-info">
-        <div class="m-name">${owned ? "✦ " : ""}${m.name}</div>
+        <div class="m-name">${owned ? ric("shard") + " " : ""}${m.name}</div>
         <div class="m-sub">${m.desc}</div>
       </div>
-      ${owned ? "" : `<button class="${S.shards >= m.cost ? "can" : ""}">${m.cost} ✦</button>`}`;
+      ${owned ? "" : `<button class="${S.shards >= m.cost ? "can" : ""}">${m.cost} ${ric("shard")}</button>`}`;
     if (!owned) {
       const mb = div.querySelector("button");
       mb.disabled = S.shards < m.cost;
@@ -766,6 +766,69 @@ function shadeColor(hex, f) {
 }
 
 /* unique 12x12 pixel icon per building */
+/* pixel UI icons (no emojis) */
+const PXI = {};
+function pxIcon(name) {
+  if (PXI[name]) return PXI[name];
+  const cv = document.createElement("canvas");
+  cv.width = 12; cv.height = 12;
+  const x = cv.getContext("2d");
+  const px = (a2, b2, w, h, c) => { x.fillStyle = c; x.fillRect(a2, b2, w, h); };
+  switch (name) {
+    case "metal":
+      px(5,0,2,1,"#9aa3c4"); px(4,1,4,1,"#9aa3c4"); px(2,2,1,1,"#9aa3c4"); px(9,2,1,1,"#9aa3c4");
+      px(2,3,8,7,"#565e85"); px(3,2,1,1,"#565e85"); px(8,2,1,1,"#565e85");
+      px(1,4,1,4,"#9aa3c4"); px(10,4,1,4,"#9aa3c4"); px(3,10,6,1,"#565e85"); px(4,11,4,1,"#9aa3c4");
+      px(3,3,6,6,"#9aa3c4"); px(4,4,4,4,"#565e85"); px(5,5,2,2,"#20263f");
+      break;
+    case "helium":
+      px(3,1,5,1,"#b8a9e8"); px(2,2,7,5,"#b8a9e8"); px(3,3,2,2,"#e6ddff"); px(3,7,2,1,"#8f7cc9");
+      px(6,6,5,1,"#9a86d8"); px(5,7,7,4,"#9a86d8"); px(6,8,2,1,"#d8ccff"); px(5,11,7,1,"#7a68b8");
+      break;
+    case "crystal":
+      px(5,0,2,1,"#e8fbff"); px(4,1,4,1,"#a5e8ff"); px(3,2,6,2,"#7fdbff"); px(2,4,8,3,"#4fc3e8");
+      px(3,7,6,2,"#2f9cc4"); px(4,9,4,2,"#1f7aa0"); px(5,11,2,1,"#1a6a8f");
+      px(4,2,1,7,"#a5e8ff"); px(5,2,1,7,"#d5f6ff");
+      break;
+    case "antimatter":
+      px(5,0,2,12,"#ff6b9d"); px(0,5,12,2,"#ff6b9d");
+      px(3,3,6,6,"#ff8fb8"); px(4,4,4,4,"#ffd166"); px(5,5,2,2,"#fff3c4");
+      px(2,2,2,2,"#ff8fb8"); px(8,2,2,2,"#ff8fb8"); px(2,8,2,2,"#ff8fb8"); px(8,8,2,2,"#ff8fb8");
+      break;
+    case "science":
+      px(4,0,4,1,"#c8d8e8"); px(5,1,2,3,"#c8d8e8"); px(3,4,6,1,"#c8d8e8");
+      px(2,5,8,6,"#3a4a68"); px(3,6,6,4,"#5ee6d0"); px(4,7,4,3,"#9ffbe8"); px(5,8,2,2,"#e8fff8");
+      break;
+    case "trophy":
+      px(3,1,6,1,"#ffd166"); px(2,2,8,3,"#ffd166"); px(1,3,1,2,"#e8a53a"); px(10,3,1,2,"#e8a53a");
+      px(3,5,6,1,"#e8a53a"); px(5,6,2,3,"#e8a53a"); px(3,9,6,2,"#a06a1f");
+      px(4,3,2,2,"#fff3c4");
+      break;
+    case "news":
+      px(1,1,10,10,"#e8e3ff"); px(2,2,6,1,"#565e85"); px(2,4,8,1,"#8a94b8"); px(2,6,8,1,"#8a94b8");
+      px(2,8,5,1,"#8a94b8"); px(8,3,2,4,"#5ee6d0");
+      break;
+    case "colonist":
+      px(1,1,2,1,"#8a94b8"); px(3,2,2,1,"#8a94b8"); px(5,3,2,1,"#8a94b8"); px(7,4,2,1,"#8a94b8"); px(9,5,2,1,"#8a94b8");
+      px(7,6,1,1,"#ffd166"); px(6,7,1,2,"#c8a048"); px(5,9,1,2,"#c8a048"); px(3,11,2,1,"#8a94b8");
+      break;
+    case "shard":
+      px(5,0,2,2,"#f0dcff"); px(3,2,6,2,"#d29bff"); px(2,4,8,4,"#8a5ec4"); px(3,8,6,2,"#6a3fa0"); px(5,10,2,2,"#5a3590");
+      px(4,3,4,4,"#b678ff"); px(5,4,2,2,"#f0dcff");
+      break;
+    case "stats":
+      px(2,8,2,3,"#5ee6d0"); px(5,5,2,6,"#ffd166"); px(8,2,2,9,"#ef476f"); px(1,11,10,1,"#565e85");
+      break;
+    case "rocket":
+      px(5,0,2,2,"#e8e3ff"); px(4,2,4,4,"#c8d0e8"); px(3,4,1,4,"#ef476f"); px(8,4,1,4,"#ef476f");
+      px(5,6,2,3,"#5ee6d0"); px(3,10,2,1,"#ef476f"); px(7,10,2,1,"#ef476f"); px(5,10,2,1,"#565e85");
+      break;
+  }
+  PXI[name] = cv.toDataURL();
+  return PXI[name];
+}
+const RES_KEY = { Metal: "metal", "Helium-3": "helium", Crystal: "crystal", Antimatter: "antimatter", Science: "science" };
+function ric(name) { return `<img class="ric" src="${pxIcon(name)}" alt="">`; }
 const ICON_CACHE = {};
 function iconFor(pid, bid) {
   const key = pid + ":" + bid;
@@ -905,12 +968,12 @@ function renderChips() {
     const p = PLANET(pid);
     box.insertAdjacentHTML("beforeend",
       `<div class="chip" style="color:${p.resColor}" title="${p.res} — from ${p.name}">
-        <span>${p.resIcon}</span><span class="val" id="chip-${p.res}">0</span><span class="rate" id="chiprate-${p.res}"></span>
+        ${ric(p.resIcon)}<span class="val" id="chip-${p.res}">0</span><span class="rate" id="chiprate-${p.res}"></span>
       </div>`);
   }
   box.insertAdjacentHTML("beforeend",
     `<div class="chip" style="color:var(--accent2)" title="Science — from Research Labs">
-      <span>🧪</span><span class="val" id="chip-Science">0</span><span class="rate" id="chiprate-Science"></span>
+      ${ric("science")}<span class="val" id="chip-Science">0</span><span class="rate" id="chiprate-Science"></span>
     </div>`);
   box.insertAdjacentHTML("beforeend",
     `<div class="chip buff-chip" id="chip-buff" style="display:none"></div>`);
@@ -924,7 +987,7 @@ function renderNav() {
     const unlocked = S.unlocked.includes(p.id);
     b.innerHTML = unlocked
       ? `<span class="dot" style="background:${p.color};color:${p.color}"></span>${p.name}`
-      : `❔ Unknown`;
+      : `· Unknown`;
     b.className = (unlocked ? "" : "locked") + (S.current === p.id ? " active" : "");
     b.onclick = () => {
       if (unlocked) { S.current = p.id; renderNav(); renderPlanet(); renderResearch(); }
@@ -967,12 +1030,12 @@ function renderPlanet(forced) {
   lockedNote.style.display = "none";
 
   const curIcons = PLANET(pid).res !== "Metal"
-    ? `<span style="color:var(--dim)">tiers 1-2 cost</span> ⚙ Metal · <span style="color:var(--dim)">tiers 3+ cost</span> ${p.resIcon} ${p.res}`
-    : `<span style="color:var(--dim)">buildings cost</span> ⚙ Metal`;
+    ? `<span style="color:var(--dim)">tiers 1-2 cost</span> ${ric("metal")} Metal · <span style="color:var(--dim)">tiers 3+ cost</span> ${ric(p.resIcon)} ${p.res}`
+    : `<span style="color:var(--dim)">buildings cost</span> ${ric("metal")} Metal`;
   $("planet-costs").innerHTML = curIcons;
 
   const rate = planetRate(pid);
-  resLine.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
+  resLine.innerHTML = `${ric(p.resIcon)} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
   $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine \u00B7 </span>+${fmt(clickPower(pid))} ${p.res} per click`;
 
   // buildings: compact CC strips - the whole row buys
@@ -986,7 +1049,7 @@ function renderPlanet(forced) {
     const each = b.rate * msMult(pid, b) * prodMult(pid) * achMult() * buffMult();
     const priceHtml = Object.entries(cost).map(([k, v]) => {
       const p2 = PLANETS.find(pp => pp.res === k);
-      return `<b>${fmt(v)}</b> ${p2 ? p2.resIcon : "\u2699"}${k !== "Metal" ? ` <span style="font-size:14px">${k}</span>` : ""}`;
+      return `<b>${fmt(v)}</b> ${ric(p2 ? p2.resIcon : "metal")}${k !== "Metal" ? ` <span style="font-size:14px">${k}</span>` : ""}`;
     }).join(" ");
     const strip = document.createElement("div");
     strip.className = "store-strip" + (can ? " can" : "") + (have > 0 ? " owned-b" : "");
@@ -1084,8 +1147,8 @@ function renderResearch() {
     <div style="display:flex;gap:14px;align-items:center">
       <img src="${pixelPlanetURL(next, 48)}" width="48" height="48" style="image-rendering:pixelated">
       <div class="info">
-        <div class="name">🚀 Colonize: ${next.name}</div>
-        <div class="sub">${next.desc} — produces ${next.resIcon} ${next.res}</div>
+        <div class="name">${ric("rocket")} Colonize: ${next.name}</div>
+        <div class="sub">${next.desc} — produces ${ric(next.resIcon)} ${next.res}</div>
       </div>
       <button class="${can ? "can" : ""}">Travel — ${costStr(unlockCost(next))}</button>
     </div>`;
@@ -1125,15 +1188,15 @@ function renderTick() {
     const now = Date.now();
     const rush = Math.max(0, (S.buffs.rushUntil || 0) - now);
     const frenzy = Math.max(0, (S.buffs.frenzyUntil || 0) - now);
-    if (rush > 0) { bc.style.display = ""; bc.textContent = `☄ RUSH ×7 ${Math.ceil(rush / 1000)}s`; }
-    else if (frenzy > 0) { bc.style.display = ""; bc.textContent = `✦ FRENZY ×777 ${Math.ceil(frenzy / 1000)}s`; }
+    if (rush > 0) { bc.style.display = ""; bc.textContent = `COMET RUSH ×7 ${Math.ceil(rush / 1000)}s`; }
+    else if (frenzy > 0) { bc.style.display = ""; bc.textContent = `CLICK FRENZY ×777 ${Math.ceil(frenzy / 1000)}s`; }
     else bc.style.display = "none";
   }
   const cur = S.current && S.unlocked.includes(S.current) ? S.current : null;
   if (cur) {
     const p = PLANET(cur);
     const rl = $("planet-resource");
-    if (rl) rl.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(planetRate(cur))}/s</span>`;
+    if (rl) rl.innerHTML = `${ric(p.resIcon)} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(planetRate(cur))}/s</span>`;
     $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(cur))} ${p.res} per click`;
   }
 }
@@ -1191,6 +1254,7 @@ function init() {
   setInterval(rotateNews, 9000);
   setInterval(renderStats, 3000);
   $("news-ticker").onclick = () => rotateNews(true);
+  document.querySelectorAll(".hicon[data-px]").forEach(img => img.src = pxIcon(img.dataset.px));
   document.querySelectorAll(".store-tab").forEach(t => {
     t.onclick = () => {
       document.querySelectorAll(".store-tab").forEach(x => x.classList.remove("active"));

@@ -349,3 +349,8 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 
 .ms-tile { border-color: #8a5ec4; }
 .ms-tile:hover { border-color: #c9a6ff; }
+
+.ric { width: 20px; height: 20px; image-rendering: pixelated; vertical-align: -4px; }
+.hicon { width: 16px; height: 16px; image-rendering: pixelated; vertical-align: -3px; margin-right: 5px; }
+.strip-price .ric { width: 17px; height: 17px; vertical-align: -3px; }
+.ach img { width: 20px; height: 20px; image-rendering: pixelated; }
