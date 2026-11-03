@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=42">
+<link rel="stylesheet" href="style.css?v=44">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -19,7 +19,9 @@
     <h1>STELLAR ASCENT</h1>
   </div>
   <div class="topbar">
-    <button id="ascend-open">ASCENSION</button>
+    <button id="ascend-open"><img class="hicon" data-px="shard"> ASCENSION</button>
+    <button id="ach-open"><img class="hicon" data-px="trophy"> ACHIEVEMENTS <span id="ach-count"></span></button>
+    <button id="stats-open"><img class="hicon" data-px="stats"> STATS</button>
     <button id="mute-btn" title="Toggle sound">Sound: ON</button>
     <button id="save-btn" title="Save now">Save</button>
     <button id="reset-btn" class="danger" title="Wipe progress">Reset</button>
@@ -59,19 +61,6 @@
     </div>
   </section>
 
-  <aside id="sidebar">
-    <div class="panel side-menu">
-      <h3><img class="hicon" data-px="colonist"> More</h3>
-      <button class="menu-btn" id="ach-open">
-        <img class="hicon" data-px="trophy"> Achievements
-        <span class="menu-sub" id="ach-count">0/30</span>
-      </button>
-      <button class="menu-btn" id="stats-open">
-        <img class="hicon" data-px="stats"> Statistics
-        <span class="menu-sub" id="stats-sub">view</span>
-      </button>
-    </div>
-  </aside>
 </main>
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 60% RATE</small></footer>
@@ -104,6 +93,6 @@
   </div>
 </div>
 
-<script src="game.js?v=42"></script>
+<script src="game.js?v=44"></script>
 </body>
 </html>

@@ -84,8 +84,8 @@ button.danger:hover { border-color: var(--danger); color: var(--danger); }
 main.game-grid {
   max-width: 1440px; margin: 0 auto; padding: 18px 20px;
   display: grid; gap: 0 16px; align-items: start;
-  grid-template-columns: minmax(340px, 1fr) minmax(400px, 1.25fr) minmax(300px, 0.85fr);
-  grid-template-areas: "nav nav nav" "clicker store sidebar";
+  grid-template-columns: minmax(380px, 1fr) minmax(460px, 1.2fr);
+  grid-template-areas: "nav nav" "clicker store";
 }
 #planet-nav { grid-area: nav; }
 #clicker-view { grid-area: clicker; }
@@ -291,8 +291,8 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 
 @media (max-width: 1180px) {
   main.game-grid {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas: "nav nav" "clicker clicker" "store sidebar";
+    grid-template-columns: 1fr;
+    grid-template-areas: "nav" "clicker" "store";
   }
 }
 @media (max-width: 760px) {
@@ -456,3 +456,9 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; 
 .menu-sub { float: right; color: var(--dim); font-size: 16px; }
 #ach-grid { display: grid; grid-template-columns: repeat(auto-fill, 40px); gap: 8px; justify-content: center; }
 #ach-view .ach, #ach-grid .ach { width: 40px; height: 40px; font-size: 18px; }
+
+/* v4.3: single wide layout, header nav */
+main.game-grid { max-width: 1150px; }
+header button .hicon { margin-right: 4px; }
+#ach-count { color: var(--accent2); font-family: "VT323", monospace; font-size: 15px; margin-left: 2px; }
+.store-panel-wide #store-panel { max-width: 100%; }
