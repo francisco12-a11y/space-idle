@@ -147,7 +147,7 @@ function newState() {
     lifetime: { Metal: 0, "Helium-3": 0, Crystal: 0, Antimatter: 0, Science: 0 },
     buildings: {},     // "planetId:buildingId" -> count
     labs: 0,
-    upgrades: [],      // upgrade ids owned
+    upgrades: {},      // upgrade id -> level (repeatable)
     techs: [],         // tech ids owned
     masteries: [],     // mastery ids owned (persist through ascension)
     shards: 0,
@@ -203,7 +203,7 @@ function frenzyMult() { return Date.now() < (S.buffs.frenzyUntil || 0) ? 777 : 1
 
 function clickMult(planet) {
   let m = 1;
-  for (const u of PLANET(planet).upgrades) if (S.upgrades.includes(u.id) && u.type === "click") m *= u.val;
+  for (const u of PLANET(planet).upgrades) if (u.type === "click") m *= Math.pow(u.val, upgLevel(u.id));
   for (const t of S.techs) {
     const def = TECHS.find(x => x.id === t);
     if (def && def.effect === "click") m *= def.val;
@@ -212,9 +212,12 @@ function clickMult(planet) {
   return m;
 }
 
+function upgLevel(id) { return S.upgrades[id] || 0; }
+function upgCost(u) { return Math.ceil(u.cost * Math.pow(2.2, upgLevel(u.id))); }
+
 function prodMult(planet) {
   let m = globalProdMult();
-  for (const u of PLANET(planet).upgrades) if (S.upgrades.includes(u.id) && u.type === "prod") m *= u.val;
+  for (const u of PLANET(planet).upgrades) if (u.type === "prod") m *= Math.pow(u.val, upgLevel(u.id));
   return m;
 }
 
@@ -385,6 +388,7 @@ function load() {
   if (!raw) return;
   try {
     const data = JSON.parse(raw);
+    if (Array.isArray(data.upgrades)) data.upgrades = {}; // v0.5→v0.6 migration: repeatable upgrades restart
     S = Object.assign(newState(), data);
     const elapsed = Math.min((Date.now() - S.lastTick) / 1000, 86400);
     if (elapsed > 10) {
@@ -446,9 +450,11 @@ function buyBuilding(planet, b) {
 }
 
 function buyUpgrade(u) {
-  if (S.upgrades.includes(u.id) || !canPay({ Metal: u.cost })) return;
-  pay({ Metal: u.cost });
-  S.upgrades.push(u.id);
+  const lvl = upgLevel(u.id);
+  const cost = upgCost(u);
+  if (!canPay({ Metal: cost })) return;
+  pay({ Metal: cost });
+  S.upgrades[u.id] = lvl + 1;
 }
 
 function buyTech(t) {
@@ -671,30 +677,32 @@ function renderPlanet(forced) {
   const p = PLANET(pid);
   const unlocked = S.unlocked.includes(pid);
 
-  $("planet-art-img").src = pixelPlanetURL(p, 120);
-  $("planet-art-img").style.width = "120px";
-  $("planet-art-img").style.height = "120px";
+  $("planet-art-img").src = pixelPlanetURL(p, 230);
+  $("planet-art-img").style.width = "230px";
+  $("planet-art-img").style.height = "230px";
   $("planet-name").textContent = p.name;
   $("planet-desc").textContent = p.desc;
 
-  const view = $("planet-view");
   const resLine = $("planet-resource");
-  const minePanel = $("mine-panel");
+  const lockedNote = $("locked-note");
   const bPanel = $("buildings-panel");
   const uPanel = $("upgrades-panel");
 
   if (!unlocked) {
-    resLine.innerHTML = `<span style="color:var(--danger)">LOCKED — travel requires: ${costStr(unlockCost(p))}</span>`;
-    minePanel.style.display = "none";
+    resLine.innerHTML = `<span style="color:var(--danger)">⛔ LOCKED — colonization requires: ${costStr(unlockCost(p))}</span>`;
+    $("mine-info").textContent = "";
+    lockedNote.style.display = "";
+    lockedNote.innerHTML = `<span style="color:var(--dim)">Colonists, upgrades and mining unlock on this planet once colonized.</span>`;
     bPanel.style.display = "none";
     uPanel.style.display = "none";
     return;
   }
-  minePanel.style.display = ""; bPanel.style.display = ""; uPanel.style.display = "";
+  lockedNote.style.display = "none";
+  bPanel.style.display = ""; uPanel.style.display = "";
 
   const rate = planetRate(pid);
   resLine.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(rate)}/s</span>`;
-  $("mine-info").textContent = `+${fmt(clickPower(pid))} ${p.res} per click${techOwned("t_click_yield") && p.res !== "Metal" ? " (+ Metal)" : ""}`;
+  $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(pid))} ${p.res} per click`;
 
   // buildings
   const bl = $("buildings");
@@ -721,36 +729,27 @@ function renderPlanet(forced) {
     bl.appendChild(row);
   }
 
-  // upgrades
+  // repeatable upgrades
   const ul = $("upgrades");
   ul.innerHTML = "";
-  let anyUpg = false;
   for (const u of p.upgrades) {
-    const owned = S.upgrades.includes(u.id);
-    if (owned) {
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `<div class="info"><div class="name">${u.name} ✔</div><div class="sub">${u.desc}</div></div>`;
-      ul.appendChild(row);
-      continue;
-    }
-    anyUpg = true;
-    const can = canPay({ Metal: u.cost });
+    const lvl = upgLevel(u.id);
+    const cost = upgCost(u);
+    const can = canPay({ Metal: cost });
     const row = document.createElement("div");
     row.className = "row";
     row.innerHTML = `
-      <div class="info"><div class="name">${u.name}</div><div class="sub">${u.desc}</div></div>
-      <button class="${can ? "can" : ""}">Buy — ${fmt(u.cost)} Metal</button>`;
+      <div class="info">
+        <div class="name">${u.name} ${lvl > 0 ? `<span class="lvl-badge">Lv ${lvl}</span>` : ""}</div>
+        <div class="sub">${u.desc} <span style="color:var(--accent2)">Now ×${fmt(Math.pow(u.val, lvl))} → next ×${fmt(Math.pow(u.val, lvl + 1))}</span></div>
+      </div>
+      <button class="${can ? "can" : ""}">Buy — ${fmt(cost)} Metal
+        <span class="cost">cost ×2.2 each level</span>
+      </button>`;
     const btn = row.querySelector("button");
     btn.disabled = !can;
     btn.onclick = () => { buyUpgrade(u); renderPlanet(); };
     ul.appendChild(row);
-  }
-  if (!anyUpg) {
-    const d = document.createElement("div");
-    d.className = "sub";
-    d.textContent = "All upgrades on this planet are owned.";
-    ul.appendChild(d);
   }
 }
 
@@ -854,7 +853,7 @@ function renderTick() {
     const p = PLANET(cur);
     const rl = $("planet-resource");
     if (rl) rl.innerHTML = `${p.resIcon} ${p.res}: <span style="color:${p.resColor}">${fmt(S.res[p.res])}</span><span class="rate">+${fmt(planetRate(cur))}/s</span>`;
-    $("mine-info").textContent = `+${fmt(clickPower(cur))} ${p.res} per click`;
+    $("mine-info").innerHTML = `<span style="color:var(--dim)">click the planet to mine · </span>+${fmt(clickPower(cur))} ${p.res} per click`;
   }
 }
 
@@ -886,7 +885,7 @@ function init() {
   load();
   renderNav(); renderPlanet(); renderResearch(); renderPrestige(); renderAch();
 
-  $("mine-btn").onclick = e => mine(S.current, e, $("mine-btn"));
+  $("big-planet").onclick = e => mine(S.current, e, $("big-planet"));
   $("ascend-btn").onclick = ascend;
   document.querySelectorAll(".buy").forEach(b => {
     b.onclick = () => {

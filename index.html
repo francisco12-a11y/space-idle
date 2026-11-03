@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stellar Ascent — Idle Space Colony</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=05">
+<link rel="stylesheet" href="style.css?v=06">
 </head>
 <body>
 <canvas id="starfield"></canvas>
@@ -25,73 +27,63 @@
   </div>
 </header>
 
-<main>
+<main class="game-grid">
   <nav id="planet-nav"></nav>
 
-  <section id="planet-view">
-    <div class="planet-header panel glow-panel">
-      <div class="planet-orbit">
-        <img id="planet-art-img" width="120" height="120" alt="">
-      </div>
+  <section id="clicker-view">
+    <div class="panel glow-panel planet-header">
+      <button id="big-planet" title="Click to mine!">
+        <img id="planet-art-img" width="230" height="230" alt="">
+      </button>
       <div class="planet-text">
         <h2 id="planet-name"></h2>
         <p id="planet-desc"></p>
         <div id="planet-resource" class="resource-line"></div>
+        <div id="mine-info"></div>
       </div>
     </div>
-
-    <div class="panel" id="mine-panel">
-      <div class="mine-wrap">
-        <button id="mine-btn">
-          <span class="mine-ring"></span>
-          <span class="mine-core">⛏<br>MINE</span>
-        </button>
-        <span id="mine-info"></span>
-      </div>
-    </div>
-
-    <div class="cols">
-      <div class="panel" id="buildings-panel">
-        <h3>Colonists
-          <span class="buy-mode">
-            <button data-buy="1" class="buy active">×1</button>
-            <button data-buy="10" class="buy">×10</button>
-            <button data-buy="max" class="buy">MAX</button>
-          </span>
-        </h3>
-        <div id="buildings"></div>
-      </div>
-
-      <div>
-        <div class="panel" id="upgrades-panel">
-          <h3>Upgrades</h3>
-          <div id="upgrades"></div>
-        </div>
-
-      <div class="panel" id="ach-view">
-        <h3>🏆 Achievements <span id="ach-count"></span></h3>
-        <div id="ach-grid"></div>
-      </div>
-
-        <div class="panel" id="prestige-view">
-          <h3>✦ Ascendancy</h3>
-          <div id="shard-info"></div>
-          <button id="ascend-btn">ASCEND</button>
-          <div id="masteries"></div>
-        </div>
-
-        <div class="panel" id="research-view">
-          <h3>🧪 Research Lab</h3>
-          <div id="techs"></div>
-          <div id="next-planet" class="next-planet"></div>
-        </div>
-      </div>
-    </div>
+    <div id="locked-note" class="panel" style="display:none"></div>
   </section>
+
+  <aside id="sidebar">
+    <div class="panel" id="upgrades-panel">
+      <h3>⬆ Upgrades</h3>
+      <div id="upgrades"></div>
+    </div>
+
+    <div class="panel" id="buildings-panel">
+      <h3>Colonists
+        <span class="buy-mode">
+          <button data-buy="1" class="buy active">×1</button>
+          <button data-buy="10" class="buy">×10</button>
+          <button data-buy="max" class="buy">MAX</button>
+        </span>
+      </h3>
+      <div id="buildings"></div>
+    </div>
+
+    <div class="panel" id="research-view">
+      <h3>🧪 Research Lab</h3>
+      <div id="techs"></div>
+      <div id="next-planet" class="next-planet"></div>
+    </div>
+
+    <div class="panel" id="prestige-view">
+      <h3>✦ Ascendancy</h3>
+      <div id="shard-info"></div>
+      <button id="ascend-btn">ASCEND</button>
+      <div id="masteries"></div>
+    </div>
+
+    <div class="panel" id="ach-view">
+      <h3>🏆 Achievements <span id="ach-count"></span></h3>
+      <div id="ach-grid"></div>
+    </div>
+  </aside>
 </main>
 
 <footer><small>AUTOSAVES EVERY 10s · PROGRESS CONTINUES OFFLINE AT 50% RATE</small></footer>
 
-<script src="game.js?v=05"></script>
+<script src="game.js?v=06"></script>
 </body>
 </html>

@@ -81,9 +81,15 @@ button:disabled {
 button.danger:hover { border-color: var(--danger); color: var(--danger); }
 
 /* ---- layout ---- */
-main { max-width: 1080px; margin: 0 auto; padding: 18px 20px; }
-.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; align-items: start; }
-
+main.game-grid {
+  max-width: 1200px; margin: 0 auto; padding: 18px 20px;
+  display: grid; grid-template-columns: 1fr 420px; gap: 0 18px;
+  align-items: start;
+  grid-template-areas: "nav nav" "clicker sidebar";
+}
+#planet-nav { grid-area: nav; }
+#clicker-view { grid-area: clicker; }
+#sidebar { grid-area: sidebar; }
 #planet-nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
 #planet-nav button { display: flex; align-items: center; gap: 8px; font-size: 20px; }
 #planet-nav button .dot { width: 10px; height: 10px; image-rendering: pixelated; }
@@ -104,40 +110,33 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 20px; }
   display: flex; justify-content: space-between; align-items: center;
 }
 
-/* ---- planet header ---- */
-.planet-header { display: flex; gap: 20px; align-items: center; }
-.planet-orbit { position: relative; flex-shrink: 0; }
+/* ---- big clickable planet (cookie-clicker style) ---- */
+.planet-header { display: flex; gap: 20px; align-items: center; flex-direction: column; text-align: center; }
+#big-planet {
+  width: 250px; height: 250px; padding: 0; border-radius: 50%;
+  background: radial-gradient(circle, rgba(94,230,208,0.06), transparent 70%);
+  border: none; box-shadow: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .08s, filter .1s;
+}
+#big-planet:hover { filter: brightness(1.15); }
+#big-planet.pressed { transform: scale(0.93); filter: brightness(1.5) drop-shadow(0 0 25px rgba(94,230,208,0.6)); }
 #planet-art-img { image-rendering: pixelated; display: block; }
+.planet-text { width: 100%; }
 .planet-text h2 {
   margin: 0 0 4px; font-family: "Press Start 2P", monospace;
   font-size: 15px;
 }
 .planet-text p { margin: 0; color: var(--dim); font-size: 19px; }
-.resource-line { margin-top: 8px; font-size: 24px; }
-.resource-line .rate { color: var(--dim); font-size: 18px; margin-left: 8px; }
+.resource-line { margin-top: 8px; font-size: 26px; }
+.resource-line .rate { color: var(--dim); font-size: 19px; margin-left: 8px; }
+#mine-info { margin-top: 4px; font-size: 18px; }
 
-/* ---- mine button ---- */
-.mine-wrap { display: flex; align-items: center; gap: 20px; }
-#mine-btn {
-  width: 112px; height: 112px; border-radius: 0; padding: 0; flex-shrink: 0;
-  background: var(--p1); position: relative;
-  border: 3px solid var(--accent);
-  box-shadow: 0 0 0 3px #0d2f2a, inset 0 -6px 0 rgba(0,0,0,0.35), inset 0 4px 0 rgba(255,255,255,0.12), 0 5px 0 rgba(0,0,0,0.5);
+.lvl-badge {
+  font-size: 15px; color: #0b3a34; background: var(--accent);
+  padding: 0 6px; margin-left: 4px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
 }
-#mine-btn { border-color: var(--accent); transition: border-color .1s, box-shadow .1s; }
-#mine-btn:hover { border-color: #9ffbe8; }
-#mine-btn.pressed {
-  border-color: #ffffff;
-  box-shadow: 0 0 0 3px #0d2f2a, inset 0 -6px 0 rgba(0,0,0,0.35), inset 0 4px 0 rgba(255,255,255,0.25), 0 0 22px rgba(94, 230, 208, 0.55);
-}
-.mine-core { transition: transform .1s; }
-#mine-btn.pressed .mine-core { transform: scale(1.12); }
-.mine-core {
-  display: block; font-family: "Press Start 2P", monospace; font-size: 12px;
-  color: var(--accent); line-height: 1.6; text-shadow: 2px 2px 0 #0b3a34;
-}
-.mine-ring { display: none; }
-#mine-info { color: var(--dim); font-size: 19px; }
 
 /* ---- rows ---- */
 .buy-mode { display: flex; gap: 4px; }
@@ -179,6 +178,12 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 20px; }
 .mastery.owned .m-name { color: #d29bff; }
 .mastery button { min-width: 90px; color: #d29bff; }
 .mastery button.can { border-color: #d29bff; }
+
+.lvl-badge {
+  font-size: 15px; color: #0b3a34; background: var(--accent);
+  padding: 0 6px; margin-left: 4px;
+  box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+}
 
 .next-planet {
   margin-top: 12px; padding: 12px;
@@ -235,8 +240,8 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   to { transform: translate(calc(100vw + 120px), 30vh) rotate(360deg); }
 }
 
-@media (max-width: 860px) {
-  .cols { grid-template-columns: 1fr; }
+@media (max-width: 980px) {
+  main.game-grid { grid-template-columns: 1fr; grid-template-areas: "nav" "clicker" "sidebar"; }
   header { flex-wrap: wrap; }
   .chips { order: 3; width: 100%; }
 }
