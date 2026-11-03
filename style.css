@@ -125,8 +125,8 @@ main.game-grid {
 #planet-art-img { image-rendering: pixelated; display: block; }
 .planet-text { width: 100%; }
 .planet-text h2 {
-  margin: 0 0 4px; font-family: "Press Start 2P", monospace;
-  font-size: 15px;
+  margin: 0 0 6px; font-family: "Press Start 2P", monospace;
+  font-size: 14px;
 }
 .planet-text p { margin: 0; color: var(--dim); font-size: 16px; }
 .resource-line { margin-top: 10px; font-size: 32px; font-weight: 700; }
@@ -223,8 +223,8 @@ main.game-grid {
   margin-top: 12px; padding: 12px;
   background: var(--p1); border: 2px dashed var(--border-hi);
 }
-.next-planet .name { font-size: 21px; }
-.next-planet .sub { font-size: 17px; color: var(--dim); }
+.next-planet .name { font-size: 16px; }
+.next-planet .sub { font-size: 14px; color: var(--dim); }
 .next-planet > div { display: flex; gap: 14px; align-items: center; }
 .next-planet .info { flex: 1; }
 .next-planet img { image-rendering: pixelated; }

@@ -858,9 +858,9 @@ function renderPlanet(forced) {
   const p = PLANET(pid);
   const unlocked = S.unlocked.includes(pid);
 
-  $("planet-art-img").src = pixelPlanetURL(p, 230);
-  $("planet-art-img").style.width = "230px";
-  $("planet-art-img").style.height = "230px";
+  $("planet-art-img").src = pixelPlanetURL(p, 190);
+  $("planet-art-img").style.width = "190px";
+  $("planet-art-img").style.height = "190px";
   const glow = $("world-glow");
   if (glow) glow.style.background =
     `radial-gradient(55vw 45vh at 15% 15%, ${p.color}26, transparent 60%),` +
