@@ -331,15 +331,30 @@ function bCost(planet, b, n) {
   return Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
 }
 
-/* tier index >= 2 (i.e. 3rd building onward) also costs the planet's own resource */
-function hasResCost(pid, ti) { return PLANET(pid).res !== "Metal" && ti >= 2; }
-function resBase(pid, b) { return Math.ceil(b.baseCost * 0.35); }
+/* tier index >= 2 (3rd building onward) costs every resource up to this planet's own:
+   Luna = Metal+He-3, Ceres = Metal+He-3+Crystal, Aurelia = all four. */
+function hasResCost(pid, ti) { return PLANETS.indexOf(PLANET(pid)) >= 1 && ti >= 2; }
+function costCurrencies(pid) {
+  const pi = PLANETS.indexOf(PLANET(pid));
+  return PLANETS.slice(0, pi + 1).map(p => p.res);
+}
+function resBase(pid, b, res) {
+  // secondary resources scale down the deeper the chain: each adds 0.28, Metal keeps 0.5
+  const cur = costCurrencies(pid);
+  const idx = cur.indexOf(res);
+  return Math.ceil(b.baseCost * (idx === 0 ? 1 : Math.max(0.18, 0.3 - (idx - 1) * 0.04)));
+}
 
 function bCostObj(pid, b, ti, n) {
   const have = S.buildings[pid + ":" + b.id] || 0;
   const r = b.mult;
-  const obj = { Metal: Math.ceil(b.baseCost * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1)) };
-  if (hasResCost(pid, ti)) obj[PLANET(pid).res] = Math.ceil(resBase(pid, b) * Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1));
+  const growth = Math.pow(r, have) * (Math.pow(r, n) - 1) / (r - 1);
+  const obj = {};
+  if (hasResCost(pid, ti)) {
+    for (const res of costCurrencies(pid)) obj[res] = Math.ceil(resBase(pid, b, res) * growth);
+  } else {
+    obj.Metal = Math.ceil(b.baseCost * growth);
+  }
   return obj;
 }
 
@@ -349,9 +364,11 @@ function maxAffordable(planet, b) {
   const ti = PLANET(planet).buildings.indexOf(b);
   let n = Math.floor(Math.log(S.res.Metal * (r - 1) / (b.baseCost * Math.pow(r, have)) + 1) / Math.log(r));
   if (hasResCost(planet, ti)) {
-    const res = PLANET(planet).res;
-    const n2 = Math.floor(Math.log((S.res[res] || 0) * (r - 1) / (resBase(planet, b) * Math.pow(r, have)) + 1) / Math.log(r));
-    n = Math.min(n, n2);
+    for (const res of costCurrencies(planet)) {
+      if (res === "Metal") continue;
+      const n2 = Math.floor(Math.log((S.res[res] || 0) * (r - 1) / (resBase(planet, b, res) * Math.pow(r, have)) + 1) / Math.log(r));
+      n = Math.min(n, n2);
+    }
   }
   return Math.max(0, Math.min(n, 5000));
 }
