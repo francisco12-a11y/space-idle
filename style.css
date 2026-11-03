@@ -274,6 +274,21 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   to { transform: translate(calc(100vw + 120px), 30vh) rotate(360deg); }
 }
 
+/* building icons + tooltips */
+.b-icon { image-rendering: pixelated; flex-shrink: 0; }
+#tooltip {
+  position: fixed; z-index: 60; max-width: 300px;
+  background: #141226; border: 2px solid var(--border-hi);
+  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  padding: 10px 12px; font-size: 17px; pointer-events: none;
+}
+#tooltip .tt-name { font-size: 19px; color: var(--accent2); }
+#tooltip .tt-sub { color: var(--dim); margin: 2px 0 6px; }
+#tooltip .tt-line { padding: 1px 0; }
+#tooltip .tt-line b { color: var(--accent); }
+#tooltip .tt-cost { margin-top: 6px; color: var(--accent2); font-size: 15px; }
+#world-glow { position: fixed; inset: 0; z-index: -1; pointer-events: none; transition: background 1s; }
+
 @media (max-width: 1180px) {
   main.game-grid {
     grid-template-columns: 1fr 1fr;

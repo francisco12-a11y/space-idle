@@ -629,7 +629,116 @@ function renderPrestige() {
 
 /* ============ RENDER ============ */
 
+/* ============ TOOLTIPS ============ */
+
+function moveTip(e) {
+  const t = $("tooltip");
+  if (!t || t.style.display !== "block") return;
+  const pad = 14;
+  let left = e.clientX + pad, top = e.clientY + pad;
+  const r = t.getBoundingClientRect();
+  if (left + r.width > innerWidth - 8) left = e.clientX - r.width - pad;
+  if (top + r.height > innerHeight - 8) top = e.clientY - r.height - pad;
+  t.style.left = left + "px";
+  t.style.top = top + "px";
+}
+
+function attachTip(el, fn) {
+  el.addEventListener("mouseenter", e => {
+    const t = $("tooltip");
+    t.innerHTML = fn();
+    t.style.display = "block";
+    moveTip(e);
+  });
+  el.addEventListener("mousemove", moveTip);
+  el.addEventListener("mouseleave", () => { $("tooltip").style.display = "none"; });
+}
+
+function tipBuilding(pid, b) {
+  const have = S.buildings[pid + ":" + b.id] || 0;
+  const each = b.rate * prodMult(pid) * achMult() * buffMult();
+  const total = each * have;
+  const share = planetRate(pid) > 0 ? Math.round(100 * total / planetRate(pid)) : 0;
+  const c1 = bCost(pid, b, 1);
+  return `<div class="tt-name">${b.name} <span style="color:var(--dim)">×${have}</span></div>
+    <div class="tt-sub">${b.desc}</div>
+    <div class="tt-line">Each produces <b>${fmt(each)}/s</b></div>
+    ${have ? `<div class="tt-line">You own <b>${have}</b>, producing <b>${fmt(total)}/s</b> (${share}% of this planet's output)</div>` : ""}
+    <div class="tt-cost">Buy 1: ${fmt(c1)} Metal · next 10: ${fmt(bCost(pid, b, 10))} Metal</div>`;
+}
+
+function tipUpgrade(u) {
+  const lvl = upgLevel(u.id);
+  return `<div class="tt-name">${u.name} ${lvl ? `<span style="color:var(--accent2)">Lv ${lvl}</span>` : ""}</div>
+    <div class="tt-sub">${u.desc}</div>
+    <div class="tt-line">Current effect: <b>×${fmt(Math.pow(u.val, lvl))}</b></div>
+    <div class="tt-line">Next level: <b>×${fmt(Math.pow(u.val, lvl + 1))}</b></div>
+    <div class="tt-cost">Cost: ${fmt(upgCost(u))} Metal (×2.2 per level)</div>`;
+}
+
 /* pixel-art planet sprites, generated per planet */
+function shadeColor(hex, f) {
+  const v = parseInt(hex.slice(1), 16);
+  const ch = s => Math.min(255, Math.max(0, Math.round(((v >> s) & 255) * f)));
+  return `rgb(${ch(16)},${ch(8)},${ch(0)})`;
+}
+
+/* unique 12x12 pixel icon per building */
+const ICON_CACHE = {};
+function iconFor(pid, bid) {
+  const key = pid + ":" + bid;
+  if (ICON_CACHE[key]) return ICON_CACHE[key];
+  const p = PLANET(pid);
+  const c = p.color, hi = shadeColor(c, 1.45), lo = shadeColor(c, 0.5);
+  const gr = "#9aa3c4", gd = "#565e85", wl = "#e8e3ff", dk = "#20263f";
+  const cv = document.createElement("canvas");
+  cv.width = 12; cv.height = 12;
+  const x = cv.getContext("2d");
+  const px = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
+  switch (bid) {
+    case "drill": px(5,0,2,1,gd); px(3,1,6,1,gr); px(3,2,6,2,c); px(4,4,4,1,lo); px(5,5,2,3,c); px(4,8,4,1,lo); px(5,9,2,2,hi); break;
+    case "rig": px(2,2,2,9,gd); px(8,2,2,9,gd); px(1,1,10,1,gr); px(4,3,4,2,c); px(4,6,4,2,lo); px(4,9,4,2,hi); break;
+    case "quarry": px(1,2,10,2,gr); px(2,4,8,2,c); px(3,6,6,2,lo); px(4,8,4,2,hi); px(5,10,2,1,dk); break;
+    case "cannon": px(1,7,3,4,gd); px(3,5,3,2,gr); px(5,4,6,2,c); px(5,6,4,1,lo); px(10,4,1,2,wl); break;
+    case "elevator": px(5,0,2,11,gd); px(4,1,4,1,gr); px(4,10,4,1,gr); px(5,3,2,3,c); px(5,6,2,2,hi); break;
+    case "forge": px(1,6,10,5,gd); px(2,4,8,2,gr); px(4,2,4,2,c); px(3,1,2,1,hi); px(7,1,2,1,hi); px(5,7,2,2,lo); break;
+    case "probe": px(5,0,2,2,gd); px(2,2,8,3,c); px(1,3,2,1,wl); px(9,3,2,1,wl); px(4,5,4,2,lo); px(5,7,2,4,gd); break;
+    case "scoop": px(1,1,10,2,gr); px(2,3,8,2,c); px(3,5,6,3,lo); px(4,8,4,1,hi); px(5,9,2,2,gd); break;
+    case "ranch": px(1,3,10,2,gd); px(2,5,8,6,gr); px(3,6,2,2,hi); px(6,6,2,2,c); px(9,6,1,3,wl); px(4,9,4,1,lo); break;
+    case "driver": px(1,9,10,2,gd); px(2,7,3,2,gr); px(4,5,3,2,c); px(6,3,3,2,lo); px(9,2,2,1,wl); break;
+    case "fplant": px(2,2,8,8,gd); px(3,3,6,6,gr); px(4,4,4,4,c); px(5,5,2,2,hi); px(5,0,2,2,gd); px(5,10,2,1,gd); break;
+    case "breeder": px(3,0,6,1,lo); px(1,1,10,2,c); px(0,3,12,2,lo); px(1,5,10,2,c); px(3,7,6,2,lo); px(5,9,2,2,hi); break;
+    case "cutter": px(1,10,3,1,gd); px(2,7,2,3,gr); px(4,1,1,8,wl); px(5,0,2,2,c); px(6,2,4,2,hi); px(7,4,3,1,lo); break;
+    case "sifter": px(1,1,10,2,gd); px(2,3,8,7,gr); px(3,4,2,1,c); px(6,4,2,1,c); px(9,4,1,1,c); px(3,6,2,1,lo); px(6,6,2,1,lo); px(3,8,2,1,hi); px(6,8,2,1,hi); break;
+    case "crawn": px(1,9,3,2,gd); px(8,9,3,2,gd); px(3,6,6,3,c); px(2,4,8,2,lo); px(4,2,4,2,hi); px(5,1,2,1,wl); break;
+    case "highway": px(1,8,10,3,gd); px(1,6,10,1,gr); px(2,4,2,1,c); px(6,4,2,1,c); px(9,3,2,2,wl); px(4,1,1,2,lo); break;
+    case "foundry": px(1,2,10,9,gd); px(2,3,8,2,gr); px(3,5,3,2,c); px(7,5,2,2,lo); px(3,8,6,2,hi); px(5,0,2,2,gd); break;
+    case "lattice": px(5,0,2,2,hi); px(2,2,2,2,c); px(8,2,2,2,c); px(5,3,2,2,lo); px(2,6,2,2,c); px(8,6,2,2,c); px(5,6,2,2,hi); px(5,9,2,2,lo); px(0,4,1,1,gd); px(11,7,1,1,gd); break;
+    case "skimmer": px(4,0,4,4,c); px(3,1,6,2,c); px(3,4,6,2,lo); px(5,6,2,3,gd); px(3,9,6,1,gr); px(5,10,2,1,gd); break;
+    case "trap": px(2,1,3,5,hi); px(7,1,3,5,hi); px(2,6,8,2,c); px(4,8,4,2,lo); px(5,10,2,1,wl); break;
+    case "carrier": px(3,1,6,2,gr); px(2,3,8,4,c); px(1,5,10,2,lo); px(3,7,6,1,hi); px(4,8,1,2,gd); px(7,8,1,2,gd); px(9,4,2,1,wl); break;
+    case "harvest": px(2,0,8,2,c); px(3,2,6,2,lo); px(4,4,4,2,hi); px(5,6,2,3,c); px(4,9,4,2,gd); break;
+    case "eye": px(3,2,6,6,c); px(2,3,8,4,c); px(4,4,4,2,wl); px(5,4,2,2,dk); px(5,8,2,2,gd); px(2,9,8,1,gd); break;
+    case "continuum": px(5,0,2,3,hi); px(3,2,6,3,c); px(1,4,10,2,lo); px(3,6,6,3,c); px(5,9,2,2,hi); px(4,5,4,2,wl); break;
+    default: px(3,3,6,6,c);
+  }
+  ICON_CACHE[key] = cv.toDataURL();
+  return ICON_CACHE[key];
+}
+
+function iconForUpg(type) {
+  const key = "upg:" + type;
+  if (ICON_CACHE[key]) return ICON_CACHE[key];
+  const cv = document.createElement("canvas");
+  cv.width = 12; cv.height = 12;
+  const x = cv.getContext("2d");
+  const px = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
+  const A = "#ffd166", B = "#b5892e", W = "#e8e3ff";
+  if (type === "click") { px(4,1,2,6,A); px(3,2,4,1,A); px(2,7,5,2,B); px(7,6,3,3,W); px(9,9,2,2,B); }
+  else { px(5,0,2,2,W); px(2,2,8,2,A); px(1,4,10,4,B); px(2,8,8,2,A); px(5,10,2,1,W); px(5,4,2,4,W); }
+  ICON_CACHE[key] = cv.toDataURL();
+  return ICON_CACHE[key];
+}
 function pixelPlanetURL(p, size) {
   const n = 26; // logical pixel grid
   const cv = document.createElement("canvas");
@@ -752,6 +861,10 @@ function renderPlanet(forced) {
   $("planet-art-img").src = pixelPlanetURL(p, 230);
   $("planet-art-img").style.width = "230px";
   $("planet-art-img").style.height = "230px";
+  const glow = $("world-glow");
+  if (glow) glow.style.background =
+    `radial-gradient(55vw 45vh at 15% 15%, ${p.color}26, transparent 60%),` +
+    `radial-gradient(50vw 40vh at 85% 75%, ${shadeColor(p.color, 0.6)}1f, transparent 60%)`;
   $("planet-name").textContent = p.name;
   $("planet-desc").textContent = p.desc;
 
@@ -787,7 +900,7 @@ function renderPlanet(forced) {
     const row = document.createElement("div");
     row.className = "row building-row" + (have > 0 ? " owned-b" : "");
     row.innerHTML = `
-      <div class="tier-chip" style="background:${p.color}" title="Tier ${ti + 1}">${ti + 1}</div>
+      <img class="b-icon" src="${iconFor(pid, b.id)}" width="36" height="36" alt="">
       <div class="info">
         <div class="name">${b.name} <span class="own-count">×${have}</span></div>
         <div class="sub">${b.desc} — +${fmt(b.rate * prodMult(pid) * achMult() * buffMult())}/s each</div>
@@ -799,6 +912,7 @@ function renderPlanet(forced) {
     const btn = row.querySelector("button");
     btn.disabled = !can;
     btn.onclick = () => { buyBuilding(pid, b); renderPlanet(); };
+    attachTip(row, () => tipBuilding(pid, b));
     bl.appendChild(row);
   });
 
@@ -812,6 +926,7 @@ function renderPlanet(forced) {
     const row = document.createElement("div");
     row.className = "row";
     row.innerHTML = `
+      <img class="b-icon" src="${iconForUpg(u.type)}" width="28" height="28" alt="">
       <div class="info">
         <div class="name">${u.name} ${lvl > 0 ? `<span class="lvl-badge">Lv ${lvl}</span>` : ""}</div>
         <div class="sub">${u.desc} <span style="color:var(--accent2)">Now ×${fmt(Math.pow(u.val, lvl))} → next ×${fmt(Math.pow(u.val, lvl + 1))}</span></div>
@@ -822,6 +937,7 @@ function renderPlanet(forced) {
     const btn = row.querySelector("button");
     btn.disabled = !can;
     btn.onclick = () => { buyUpgrade(u); renderPlanet(); };
+    attachTip(row, () => tipUpgrade(u));
     ul.appendChild(row);
   }
 }
