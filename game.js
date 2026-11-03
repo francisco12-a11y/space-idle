@@ -57,7 +57,7 @@ const BUILDINGS = [
 ];
 const COST_MULT = 1.15;
 const MS_STEPS = [1, 10, 25, 50, 100, 200];
-const MS_MULT = [10, 60, 500, 5000, 60000, 1e6];
+const MS_MULT = [8, 50, 450, 5000, 60000, 1e6];
 const MS_NAMES = ["Tungsten", "Iridium", "Quantum", "Photonic", "Exotic", "Transcendent"];
 
 /* ============ STATE ============ */
@@ -69,7 +69,7 @@ function newState() {
     clickCount: 0, handMade: 0,
     buildings: {}, upgrades: [], ach: [], tree: [],
     comets: 0, shards: 0, shardsEarned: 0, ascensions: 0,
-    buffs: {}, nextComet: 0,
+    buffs: {}, nextComet: 0, lastCatch: 0, cometChain: 0,
     buyMode: 1, mute: false,
     lastTick: Date.now(), started: Date.now(),
   };
@@ -192,7 +192,7 @@ function allUpgrades() {
       desc: "Clicking power ×2.",
       cost: Math.ceil(100 * Math.pow(14, i)),
       icon: "click",
-      unlocked: S.clickCount >= [0, 50, 200, 500, 1000, 2000, 3500, 5000, 7000, 9000, 11000, 13000, 15000, 17500, 20000, 23000, 26000, 30000, 35000, 40000][i],
+      unlocked: S.clickCount >= [0, 30, 150, 400, 1000, 2000, 3500, 5000, 7000, 9000, 11000, 13000, 15000, 17500, 20000, 23000, 26000, 30000, 35000, 40000][i],
       bought: S.upgrades.includes(`click:${i}`),
       kind: "click", ref: null,
     });
@@ -596,8 +596,16 @@ function spawnComet() {
 function catchComet(evt) {
   initAudio();
   S.comets++;
+  // chain: catching within 2 min of the last one stacks the next buff's duration
+  const now = Date.now();
+  if (S.lastCatch && now - S.lastCatch < 120000) {
+    S.cometChain = Math.min((S.cometChain || 0) + 1, 4);
+  } else S.cometChain = 0;
+  S.lastCatch = now;
+  const chainMult = 1 + (S.cometChain || 0);
+  if (S.cometChain > 0) toast(`COMET CHAIN ×${S.cometChain + 1}! Buff lasts longer`);
   const roll = Math.random();
-  const durMult = treeOwned("h10") ? 1.5 : 1;
+  const durMult = (treeOwned("h10") ? 1.5 : 1) * chainMult;
   if (roll < 0.45) {
     S.buffs.rushUntil = Date.now() + 30000 * durMult;
     toast("COMET RUSH! Production ×7 for 30s");
