@@ -19,8 +19,8 @@ body {
     radial-gradient(70vw 60vh at 80% 0%, #221a3f, var(--bg) 65%);
   color: var(--text);
   font-family: "VT323", monospace;
-  font-size: 21px;
-  line-height: 1.25;
+  font-size: 18px;
+  line-height: 1.35;
   image-rendering: pixelated;
 }
 
@@ -46,7 +46,7 @@ header {
 }
 .brand { display: flex; align-items: center; gap: 10px; }
 .brand h1 {
-  margin: 0; font-family: "Press Start 2P", monospace; font-size: 13px;
+  margin: 0; font-family: "Press Start 2P", monospace; font-size: 12px;
   color: var(--accent); text-shadow: 3px 3px 0 #0b3a34;
 }
 .chips { display: flex; gap: 8px; flex: 1; flex-wrap: wrap; }
@@ -55,10 +55,10 @@ header {
   padding: 3px 10px;
   background: var(--p1);
   border: 2px solid var(--border);
-  font-size: 20px;
+  font-size: 17px;
 }
 .chip .val { min-width: 40px; }
-.chip .rate { color: var(--dim); font-size: 17px; }
+.chip .rate { color: var(--dim); font-size: 14px; }
 .topbar { display: flex; gap: 8px; }
 
 /* ---- buttons ---- */
@@ -67,7 +67,7 @@ button {
   border: 2px solid var(--border);
   box-shadow: inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.35), 0 3px 0 rgba(0,0,0,0.4);
   padding: 5px 12px; cursor: pointer;
-  font-family: "VT323", monospace; font-size: 19px;
+  font-family: "VT323", monospace; font-size: 16px;
   transition: filter .1s, transform .05s;
 }
 button:hover:not(:disabled) { filter: brightness(1.25); border-color: var(--border-hi); }
@@ -92,7 +92,7 @@ main.game-grid {
 #store-view { grid-area: store; }
 #sidebar { grid-area: sidebar; }
 #planet-nav { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-#planet-nav button { display: flex; align-items: center; gap: 8px; font-size: 20px; }
+#planet-nav button { display: flex; align-items: center; gap: 7px; font-size: 16px; padding: 5px 13px; }
 #planet-nav button .dot { width: 10px; height: 10px; image-rendering: pixelated; }
 #planet-nav button.active { border-color: var(--accent); color: var(--accent); filter: brightness(1.2); }
 #planet-nav button.locked { opacity: 0.4; }
@@ -102,19 +102,19 @@ main.game-grid {
   border: 3px solid var(--border);
   box-shadow: inset 0 3px 0 rgba(255,255,255,0.05), inset 0 -3px 0 rgba(0,0,0,0.3), 0 4px 0 rgba(0,0,0,0.35);
   padding: 14px 16px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 .panel h3 {
   margin: 0 0 10px; font-family: "Press Start 2P", monospace;
-  font-size: 11px; color: var(--accent2);
+  font-size: 10px; color: var(--accent2);
   text-shadow: 2px 2px 0 rgba(0,0,0,0.5);
   display: flex; justify-content: space-between; align-items: center;
 }
 
 /* ---- big clickable planet (cookie-clicker style) ---- */
-.planet-header { display: flex; gap: 20px; align-items: center; flex-direction: column; text-align: center; }
+.planet-header { display: flex; gap: 16px; align-items: center; flex-direction: column; text-align: center; padding: 20px 16px; }
 #big-planet {
-  width: 250px; height: 250px; padding: 0; border-radius: 50%;
+  width: 200px; height: 200px; padding: 0; border-radius: 50%;
   background: radial-gradient(circle, rgba(94,230,208,0.06), transparent 70%);
   border: none; box-shadow: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -128,10 +128,10 @@ main.game-grid {
   margin: 0 0 4px; font-family: "Press Start 2P", monospace;
   font-size: 15px;
 }
-.planet-text p { margin: 0; color: var(--dim); font-size: 19px; }
-.resource-line { margin-top: 8px; font-size: 26px; }
-.resource-line .rate { color: var(--dim); font-size: 19px; margin-left: 8px; }
-#mine-info { margin-top: 4px; font-size: 18px; }
+.planet-text p { margin: 0; color: var(--dim); font-size: 16px; }
+.resource-line { margin-top: 10px; font-size: 32px; font-weight: 700; }
+.resource-line .rate { color: var(--dim); font-size: 16px; margin-left: 8px; font-weight: 400; }
+#mine-info { margin-top: 6px; font-size: 15px; }
 
 .lvl-badge {
   font-size: 15px; color: #0b3a34; background: var(--accent);
@@ -141,21 +141,21 @@ main.game-grid {
 
 /* ---- rows ---- */
 .buy-mode { display: flex; gap: 4px; }
-.buy { padding: 2px 9px; font-size: 17px; }
+.buy { padding: 2px 9px; font-size: 14px; }
 .buy.active { border-color: var(--accent2); color: var(--accent2); filter: brightness(1.2); }
 
 .row {
   display: flex; justify-content: space-between; align-items: center;
-  gap: 10px; padding: 8px 10px; margin-bottom: 8px;
+  gap: 10px; padding: 8px 10px; margin-bottom: 7px;
   background: var(--p1); border: 2px solid var(--border);
 }
 .row:hover { border-color: var(--border-hi); }
-.row .name { font-size: 21px; }
-.row .sub { font-size: 17px; color: var(--dim); }
-.row button { min-width: 175px; text-align: left; font-size: 17px; }
+.row .name { font-size: 18px; }
+.row .sub { font-size: 14.5px; color: var(--dim); }
+.row button { min-width: 160px; text-align: left; font-size: 15px; }
 .row button.can { border-color: var(--accent); color: var(--accent); filter: brightness(1.1); animation: canPulse 1.6s steps(2) infinite; }
 @keyframes canPulse { 50% { box-shadow: 0 0 10px rgba(94, 230, 208, 0.25); } }
-.row .cost { font-size: 15px; color: var(--dim); display: block; }
+.row .cost { font-size: 13px; color: var(--dim); display: block; }
 
 /* building rows: tier chip + owned count */
 .building-row { align-items: center; }
@@ -167,7 +167,7 @@ main.game-grid {
   filter: saturate(0.85);
 }
 .own-count {
-  font-size: 22px; color: var(--text); margin-left: 6px;
+  font-size: 18px; color: var(--text); margin-left: 6px;
   font-variant-numeric: tabular-nums;
 }
 .building-row.owned-b { border-left: 4px solid var(--border-hi); }
@@ -175,15 +175,15 @@ main.game-grid {
 /* news ticker */
 #news-ticker { cursor: pointer; border-style: dashed; }
 #news-ticker:hover { border-style: solid; border-color: var(--border-hi); }
-#news-text { color: var(--dim); font-style: italic; }
+#news-text { color: var(--dim); font-style: italic; font-size: 16px; }
 .news-fade { animation: newsFade .5s ease-out; }
 @keyframes newsFade { from { opacity: 0; transform: translateY(4px); } }
 
 /* stats panel */
 .stat-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid rgba(120,140,200,0.08); }
 .stat-row:last-child { border-bottom: none; }
-.stat-k { color: var(--dim); font-size: 17px; }
-.stat-v { font-size: 17px; }
+.stat-k { color: var(--dim); font-size: 15px; }
+.stat-v { font-size: 15px; }
 
 /* sidebar rows: narrower buttons so tech/mastery rows fit the column */
 #sidebar .row { flex-wrap: wrap; }
@@ -206,11 +206,11 @@ main.game-grid {
   background: var(--p1); border: 2px solid var(--border);
 }
 .mastery .m-info { flex: 1; }
-.mastery .m-name { font-size: 20px; }
-.mastery .m-sub { font-size: 16px; color: var(--dim); }
+.mastery .m-name { font-size: 17px; }
+.mastery .m-sub { font-size: 14px; color: var(--dim); }
 .mastery.owned { border-color: #8a5ec4; background: #2a1f42; }
 .mastery.owned .m-name { color: #d29bff; }
-.mastery button { min-width: 90px; color: #d29bff; }
+.mastery button { min-width: 70px; color: #d29bff; font-size: 15px; }
 .mastery button.can { border-color: #d29bff; }
 
 .lvl-badge {
@@ -229,7 +229,7 @@ main.game-grid {
 .next-planet .info { flex: 1; }
 .next-planet img { image-rendering: pixelated; }
 
-footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; letter-spacing: 2px; }
+footer { text-align: center; color: var(--dim); padding: 14px; font-size: 13px; letter-spacing: 2px; }
 
 
 .float-num {
@@ -280,9 +280,9 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   position: fixed; z-index: 60; max-width: 300px;
   background: #141226; border: 2px solid var(--border-hi);
   box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
-  padding: 10px 12px; font-size: 17px; pointer-events: none;
+  padding: 10px 12px; font-size: 15px; pointer-events: none;
 }
-#tooltip .tt-name { font-size: 19px; color: var(--accent2); }
+#tooltip .tt-name { font-size: 17px; color: var(--accent2); }
 #tooltip .tt-sub { color: var(--dim); margin: 2px 0 6px; }
 #tooltip .tt-line { padding: 1px 0; }
 #tooltip .tt-line b { color: var(--accent); }
@@ -304,7 +304,7 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
 /* upgrade icon tiles (dark pixel theme) */
 .upg-tiles { display: flex; flex-wrap: wrap; gap: 8px; }
 .upg-tile {
-  width: 52px; height: 56px;
+  width: 48px; height: 52px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   background: var(--p2); border: 2px solid var(--border); cursor: pointer;
   box-shadow: inset 0 2px 0 rgba(255,255,255,0.06), inset 0 -2px 0 rgba(0,0,0,0.3), 0 3px 0 rgba(0,0,0,0.35);
@@ -313,4 +313,4 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
 .upg-tile:hover { border-color: var(--border-hi); filter: brightness(1.2); transform: translateY(-2px); }
 .upg-tile:active { transform: translateY(1px); }
 .upg-tile.grayed { opacity: 0.35; filter: grayscale(0.7); }
-.tile-lv { font-size: 13px; color: var(--accent2); }
+.tile-lv { font-size: 12px; color: var(--accent2); }
