@@ -72,7 +72,12 @@ button {
 }
 button:hover:not(:disabled) { filter: brightness(1.25); border-color: var(--border-hi); }
 button:active:not(:disabled) { transform: translateY(2px); box-shadow: inset 0 2px 0 rgba(255,255,255,0.08), inset 0 -2px 0 rgba(0,0,0,0.35); }
-button:disabled { opacity: 0.45; cursor: default; }
+button:disabled {
+  opacity: 1; cursor: default;
+  background: #191627; color: #55506e; border-color: #332d4a;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.02), inset 0 -2px 0 rgba(0,0,0,0.3);
+  filter: none;
+}
 button.danger:hover { border-color: var(--danger); color: var(--danger); }
 
 /* ---- layout ---- */
@@ -119,7 +124,14 @@ main { max-width: 1080px; margin: 0 auto; padding: 18px 20px; }
   border: 3px solid var(--accent);
   box-shadow: 0 0 0 3px #0d2f2a, inset 0 -6px 0 rgba(0,0,0,0.35), inset 0 4px 0 rgba(255,255,255,0.12), 0 5px 0 rgba(0,0,0,0.5);
 }
+#mine-btn { border-color: var(--accent); transition: border-color .1s, box-shadow .1s; }
 #mine-btn:hover { border-color: #9ffbe8; }
+#mine-btn.pressed {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 3px #0d2f2a, inset 0 -6px 0 rgba(0,0,0,0.35), inset 0 4px 0 rgba(255,255,255,0.25), 0 0 22px rgba(94, 230, 208, 0.55);
+}
+.mine-core { transition: transform .1s; }
+#mine-btn.pressed .mine-core { transform: scale(1.12); }
 .mine-core {
   display: block; font-family: "Press Start 2P", monospace; font-size: 12px;
   color: var(--accent); line-height: 1.6; text-shadow: 2px 2px 0 #0b3a34;
@@ -184,7 +196,7 @@ footer { text-align: center; color: var(--dim); padding: 14px; font-size: 15px; 
   position: fixed; pointer-events: none; z-index: 30;
   font-family: "Press Start 2P", monospace; font-size: 11px;
   color: var(--accent); text-shadow: 2px 2px 0 #0b3a34;
-  animation: floatup 0.9s steps(8) forwards;
+  animation: floatup 0.9s ease-out forwards;
 }
 @keyframes floatup { to { transform: translateY(-46px); opacity: 0; } }
 

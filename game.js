@@ -270,13 +270,18 @@ function load() {
 
 /* ============ ACTIONS ============ */
 
-function mine(planet, evt) {
+function mine(planet, evt, btn) {
   if (!planet || !PLANET(planet)) planet = S.unlocked.includes(S.current) ? S.current : "terra";
   const p = PLANET(planet);
   const amt = clickPower(planet);
   S.res[p.res] += amt;
   S.lifetime[p.res] += amt;
   if (techOwned("t_click_yield")) S.res.Metal += amt;
+  if (btn) {
+    btn.classList.add("pressed");
+    clearTimeout(btn._pt);
+    btn._pt = setTimeout(() => btn.classList.remove("pressed"), 110);
+  }
   if (evt) floatNum(evt, "+" + fmt(amt) + " " + p.resIcon);
 }
 
@@ -284,10 +289,10 @@ function floatNum(evt, text) {
   const el = document.createElement("div");
   el.className = "float-num";
   el.textContent = text;
-  el.style.left = (evt.clientX - 10) + "px";
+  el.style.left = (evt.clientX - 10 + (Math.random() * 24 - 12)) + "px";
   el.style.top = (evt.clientY - 20) + "px";
   document.body.appendChild(el);
-  setTimeout(() => el.remove(), 800);
+  setTimeout(() => el.remove(), 900);
 }
 
 function buyBuilding(planet, b) {
@@ -389,12 +394,16 @@ function renderPrestige() {
         <div class="m-sub">${m.desc}</div>
       </div>
       ${owned ? "" : `<button class="${S.shards >= m.cost ? "can" : ""}">${m.cost} ✦</button>`}`;
-    if (!owned) div.querySelector("button").onclick = () => {
-      if (S.shards < m.cost) return;
-      S.shards -= m.cost;
-      S.masteries.push(m.id);
-      renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
-    };
+    if (!owned) {
+      const mb = div.querySelector("button");
+      mb.disabled = S.shards < m.cost;
+      mb.onclick = () => {
+        if (S.shards < m.cost) return;
+        S.shards -= m.cost;
+        S.masteries.push(m.id);
+        renderPrestige(); renderNav(); renderPlanet(); renderResearch(); save();
+      };
+    }
     ml.appendChild(div);
   }
 }
@@ -563,7 +572,9 @@ function renderPlanet(forced) {
         Buy ${S.buyMode === "max" ? maxAffordable(pid, b) : n} — ${fmt(cost)} Metal
         <span class="cost">produces ${fmt(b.rate * prodMult(pid) * (S.buyMode === "max" ? Math.max(1, maxAffordable(pid, b)) : n))}/s total</span>
       </button>`;
-    row.querySelector("button").onclick = () => { buyBuilding(pid, b); renderPlanet(); renderNav(); };
+    const btn = row.querySelector("button");
+    btn.disabled = !can;
+    btn.onclick = () => { buyBuilding(pid, b); renderPlanet(); };
     bl.appendChild(row);
   }
 
@@ -587,7 +598,9 @@ function renderPlanet(forced) {
     row.innerHTML = `
       <div class="info"><div class="name">${u.name}</div><div class="sub">${u.desc}</div></div>
       <button class="${can ? "can" : ""}">Buy — ${fmt(u.cost)} Metal</button>`;
-    row.querySelector("button").onclick = () => { buyUpgrade(u); renderPlanet(); };
+    const btn = row.querySelector("button");
+    btn.disabled = !can;
+    btn.onclick = () => { buyUpgrade(u); renderPlanet(); };
     ul.appendChild(row);
   }
   if (!anyUpg) {
@@ -610,7 +623,9 @@ function renderResearch() {
     <div class="info"><div class="name">Research Lab <span class="sub">×${S.labs}</span></div>
     <div class="sub">+${fmt(labRate())}/s Science — Metal & Crystal cost</div></div>
     <button class="${canPay(lc) ? "can" : ""}">Buy 1 — ${fmt(lc.Metal)} Metal, ${fmt(lc.Crystal)} Crystal</button>`;
-  labRow.querySelector("button").onclick = () => { buyLab(); renderResearch(); };
+  const labBtn = labRow.querySelector("button");
+  labBtn.disabled = !canPay(lc);
+  labBtn.onclick = () => { buyLab(); renderResearch(); };
   tl.appendChild(labRow);
 
   for (const t of TECHS) {
@@ -625,7 +640,11 @@ function renderResearch() {
       ? `<div class="info"><div class="name">${t.name} ✔</div><div class="sub">${t.desc}</div></div>`
       : `<div class="info"><div class="name">${t.name}</div><div class="sub">${t.desc}</div></div>
          <button class="${canPay(t.cost) ? "can" : ""}">${cstr}</button>`;
-    if (!owned) row.querySelector("button").onclick = () => { buyTech(t); renderResearch(); };
+    if (!owned) {
+      const tb = row.querySelector("button");
+      tb.disabled = !canPay(t.cost);
+      tb.onclick = () => { buyTech(t); renderResearch(); };
+    }
     tl.appendChild(row);
   }
 
@@ -647,7 +666,9 @@ function renderResearch() {
       </div>
       <button class="${can ? "can" : ""}">Travel — ${costStr(unlockCost(next))}</button>
     </div>`;
-  np.querySelector("button").onclick = () => { travel(next.id); renderNav(); renderPlanet(); renderResearch(); };
+  const travelBtn = np.querySelector("button");
+  travelBtn.disabled = !can;
+  travelBtn.onclick = () => { travel(next.id); renderNav(); renderPlanet(); renderResearch(); };
 }
 
 /* ============ TICK ============ */
@@ -713,7 +734,7 @@ function init() {
   load();
   renderNav(); renderPlanet(); renderResearch(); renderPrestige();
 
-  $("mine-btn").onclick = e => mine(S.current, e);
+  $("mine-btn").onclick = e => mine(S.current, e, $("mine-btn"));
   $("ascend-btn").onclick = ascend;
   document.querySelectorAll(".buy").forEach(b => {
     b.onclick = () => {
